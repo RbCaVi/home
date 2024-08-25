@@ -22,10 +22,23 @@
 |*|  * docCookies.keys()
 |*|
 \*/
+
+// edited by Robert Vail
+
 var docCookies = {
   getItem: function (sKey) {
-    if (!sKey) { return null; }
-    return decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
+    var cookies = document.cookie;
+    var entries = cookies.split(';');
+    for (var i = 0; i < entries.length; i++) {
+      var entry = entries[i];
+      var eqidx = entry.indexOf('=');
+      var key = entry.substring(0, eqidx).trim();
+      var value = entry.substring(eqidx + 1).trim();
+      if (key == sKey) {
+        return value;
+      }
+    }
+    return null;
   },
   setItem: function (sKey, sValue, vEnd, sPath, sDomain, bSecure) {
     if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return false; }
@@ -52,21 +65,51 @@ var docCookies = {
           break;
       }
     }
-    document.cookie = encodeURIComponent(sKey) + "=" + encodeURIComponent(sValue) + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
+    document.cookie = sKey + "=" + sValue + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
     return true;
   },
   removeItem: function (sKey, sPath, sDomain) {
     if (!this.hasItem(sKey)) { return false; }
-    document.cookie = encodeURIComponent(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "");
+    document.cookie = sKey + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "");
     return true;
   },
   hasItem: function (sKey) {
     if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return false; }
-    return (new RegExp("(?:^|;\\s*)" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+    var cookies = document.cookie;
+    var entries = cookies.split(';');
+    for (var i = 0; i < entries.length; i++) {
+      var entry = entries[i];
+      var eqidx = entry.indexOf('=');
+      var key = entry.substring(0, eqidx).trim();
+      if (key == sKey) {
+        return true;
+      }
+    }
+    return false;
   },
   keys: function () {
-    var aKeys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, "").split(/\s*(?:\=[^;]*)?;\s*/);
-    for (var nLen = aKeys.length, nIdx = 0; nIdx < nLen; nIdx++) { aKeys[nIdx] = decodeURIComponent(aKeys[nIdx]); }
-    return aKeys;
+    var keys = [];
+    var cookies = document.cookie;
+    var entries = cookies.split(';');
+    for (var i = 0; i < entries.length; i++) {
+      var entry = entries[i];
+      var eqidx = entry.indexOf('=');
+      var key = entry.substring(0, eqidx).trim();
+      keys.push(key);
+    }
+    return keys;
+  }
+  entries: function () {
+    var entries = [];
+    var cookies = document.cookie;
+    var entries = cookies.split(';');
+    for (var i = 0; i < entries.length; i++) {
+      var entry = entries[i];
+      var eqidx = entry.indexOf('=');
+      var key = entry.substring(0, eqidx).trim();
+      var value = entry.substring(eqidx + 1).trim();
+      entries.push([key, value]);
+    }
+    return entries;
   }
 };
