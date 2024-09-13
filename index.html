@@ -40,5 +40,21 @@
 			<li><a href = "https://rbcavi.github.io/factorio-viewer/viewer.html">Factorio Viewer</a> - it has the icons and data for every item and recipe in a few modpacks.</li>
 		</ul>
 	</p>
+	<p>
+		<h1>Factorio</h1>
+		(DISCLAIMER: this is completely from my not very good memory)
+		i got the demo of factorio (the single big world before the current campaign)
+		and really liked it and explored the whole map, but i (of course) eventually got bored at the end and kind of forgot about it for a while.
+		a year or two later, i found it again and downloaded a version (1.1.19 i think) that had the current demo maps.
+		i played through that demo as well and got to the end. <b>it was then when i started to do dubiously legal things.</b>
+		i inspected the campaign world zip file and found the lua files that control the allowed researches but didn't know what the names of the other researches were.
+		i eventually found the various lua files in data/base/ and somehow figured out how to get the names of all the researches.
+		(i think i was like 12 and i didn't know how to program very well so i just copied the names from one file into another)
+		so i played until where the end of the demo would be and realized there was no oil. so i went "i know! i'll use coal liquefaction and supply a bunch of heavy oil at the start!"
+		i don't remember how far i got but i don't think i launched a rocket. i got bored again and found mods.
+		i didn't know how the mods were supposed to be loaded, but i found a page somewhere (probably the factorio wiki) that had info about the data lifecycle, so i manually resolved dependencies and requires and had my first "modded" factorio.
+		i ran into several problems though, like absolute requires (the __mod__ kind and the ones that are absolute from the mod root) and later, events. i had to go through every occurrence of require and script.on_* and fix them.
+		
+	</p>
 </body>
 </html>
