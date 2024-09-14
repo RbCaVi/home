@@ -1,0 +1,24 @@
+/* (not cheese) */
+
+* {
+	font-family: sans-serif;
+	color: #00ff00;
+	background: #333333;
+}
+
+.factorio-thing b, .factorio-thing i {
+	color: #e69100;
+}
+
+.factorio-thing span.highlight {
+	color: #e69100;
+}
+
+div.image-container {
+    border: #e0dbff 10px solid;
+    padding: 10px;
+    margin: 10px;
+    width: min-content;
+    align-content: center;
+    text-align: center;
+}
