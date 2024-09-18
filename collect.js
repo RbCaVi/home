@@ -3,13 +3,23 @@
 const collect_version = 3;
 const collect_prefix = 'collect-' + collect_version + '-'
 
-function init_collect() {
+function collect_init() {
 	localStorage.setItem('collect-version', collect_version);
+	localStorage.setItem(collect_prefix + 'items', '[]');
+}
+
+function collect_reset() {
+	collect_init();
+	const things = document.querySelectorAll('[oncollect]');
+	for (const thing of things) {
+		const collect_event = new Event('collect-reset');
+		thing.dispatchEvent(collect_event);
+	}
 }
 
 const version = +localStorage.getItem('collect-version');
 if (version == 0) {
-	init_collect();
+	collect_init();
 }
 
 if (version < 2) {
