@@ -23,7 +23,7 @@
 		- one of my teachers
 	</blockquote>
 	<p>
-		Check out <a href = "https://github.com/RbCaVi">my programs!</a> <code>(i might have a "browser minigame" here eventually)</code>
+		Check out <a href = "https://github.com/RbCaVi">my programs!</a> <code>(i might have some "collectibles" here eventually)</code>
 	</p>
 	<p>
 		uhhhhhhhhhhhh yeah...... there's stuff somewhere, but it's not here yet. :(
@@ -92,9 +92,12 @@
 		currently SEJS has a minimal item / recipe browser and some (not working properly) recipe calculator functionality.
 		i <b>am</b> planning to add more stuff <i>"soon"</i>, like custom modpack support, a mod data generator/extractor, and a blueprint editor.
 	</div>
-	<button onclick = "collect('cheese')">CLICK THIS BUTTON!</button>
-	<button onclick = "collect_reset()">reset</button>
-	<p oncollect id = "cheesed"></p>
+	<div>
+		check it out! persistent thing (collectible).
+		<button onclick = "collect('cheese')">CLICK THIS BUTTON!</button>
+		<button onclick = "collect_reset()">reset</button>
+		<p oncollect id = "cheesed"></p>
+	</div>
 </body>
 <script type = "text/javascript">
 	const p1 = document.querySelector('#cheesed');
@@ -104,7 +107,7 @@
 		}
 	});
 	p1.addEventListener('collect-reset', function (e) {
-		this.textContent = '';
+		this.textContent = 'no cheese';
 	});
 </script>
 </html>
