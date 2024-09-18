@@ -22,3 +22,8 @@ div.image-container {
     align-content: center;
     text-align: center;
 }
+
+a {
+    color: #17fdff;
+    font-weight: 1000;
+}
