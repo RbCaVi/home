@@ -6,11 +6,11 @@
 	background: #333333;
 }
 
-.factorio-thing b, .factorio-thing i {
+#factorio-thing b, .factorio-thing i {
 	color: #e69100;
 }
 
-.factorio-thing span.highlight {
+#factorio-thing span.highlight {
 	color: #e69100;
 }
 
@@ -26,4 +26,16 @@ div.image-container {
 a {
     color: #17fdff;
     font-weight: 1000;
+}
+
+#collectible-box {
+	text-align: center;
+}
+
+#cheese-button {
+	background: green;
+}
+
+#cheesed {
+	color: #ffa314;
 }

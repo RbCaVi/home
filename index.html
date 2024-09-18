@@ -46,7 +46,7 @@
 			<li><a href = "https://rbcavi.github.io/factorio-viewer/viewer.html">Factorio Viewer</a> - it has the icons and data for every item and recipe in a few modpacks.</li>
 		</ul>
 	</p>
-	<div class = "factorio-thing">
+	<div id = "factorio-thing">
 		<h1>Factorio</h1>
 		(DISCLAIMER: this part is from my not very good memory)
 		i got the demo of factorio (the single big world before the current campaign)
@@ -92,11 +92,13 @@
 		currently SEJS has a minimal item / recipe browser and some (not working properly) recipe calculator functionality.
 		i <b>am</b> planning to add more stuff <i>"soon"</i>, like custom modpack support, a mod data generator/extractor, and a blueprint editor.
 	</div>
-	<div>
-		check it out! persistent thing (collectible).
-		<button onclick = "collect('cheese')">CLICK THIS BUTTON!</button>
-		<button onclick = "collect_reset()">reset</button>
-		<p oncollect id = "cheesed"></p>
+	<div id = "collectible-box">
+		<p>
+			check it out! persistent thing (collectible).
+		</p>
+		<button id = "cheese-button" onclick = "collect('cheese')">CLICK THIS BUTTON!</button>
+		<button id = "reset-button" onclick = "collect_reset()">reset</button>
+		<p oncollect id = "cheesed">no cheese</p>
 	</div>
 </body>
 <script type = "text/javascript">
