@@ -1,11 +1,17 @@
 // collectibles
 
 const collect_version = 3;
-const collect_prefix = 'collect-' + collect_version + '-'
+const collect_prefix = 'collect-' + collect_version + '-';
+
+let collect_items;
 
 function collect_init() {
 	localStorage.setItem('collect-version', collect_version);
 	localStorage.setItem(collect_prefix + 'items', '[]');
+}
+
+function collect_setup() {
+	collect_items = JSON.parse(localStorage.getItem(collect_prefix + 'items'));
 }
 
 function collect_reset() {
@@ -15,6 +21,7 @@ function collect_reset() {
 		const collect_event = new Event('collect-reset');
 		thing.dispatchEvent(collect_event);
 	}
+	collect_setup();
 }
 
 const version = +localStorage.getItem('collect-version');
@@ -32,7 +39,7 @@ if (version < 3) {
 	localStorage.setItem(collect_prefix + 'items', '[]');
 }
 
-const collect_items = JSON.parse(localStorage.getItem(collect_prefix + 'items'));
+collect_setup();
 
 function collect(item) {
 	if (!collect_items.includes(item)) {
