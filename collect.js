@@ -28,13 +28,33 @@ function collect(item) {
 	if (!collect_items.includes(item)) {
 		collect_items.push(item);
 		localStorage.setItem(collect_prefix + 'items', JSON.stringify(collect_items));
+		const collect_event = new Event('collect-get');
+		collect_event.data = item;
+		window.dispatchEvent(collect_event);
 	}
 }
 
-function collect_has(id) {
-	for (const item of collect_items) {
-		if (item == id) {
-			return true;
-		}
-	}
+function collect_has(item) {
+	return collect_items.includes(item);
 }
+
+window.addEventListener('collect-get', function(e) {
+	console.log(e.data, 'collected');
+});
+
+window.addEventListener('collect-get', function(e) {
+	const things = document.querySelectorAll('[oncollect]');
+	for (const thing of things) {
+		const collect_event = new Event('collect');
+		collect_event.data = e.data;
+		thing.dispatchEvent(collect_event);
+	}
+});
+
+window.addEventListener('load', function() {
+	for (const item of collect_items) {
+		const collect_event = new Event('collect-get');
+		collect_event.data = item;
+		window.dispatchEvent(collect_event);
+	}
+});
