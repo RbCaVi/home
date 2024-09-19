@@ -98,7 +98,10 @@
 		</p>
 		<button id = "cheese-button" onclick = "collect('cheese')">CLICK THIS BUTTON!</button>
 		<button id = "reset-button" onclick = "collect_reset()">reset</button>
+		<p oncollect class = "bread"></p>
 		<p oncollect id = "cheesed">no cheese</p>
+		<p oncollect class = "bread"></p>
+		<button id = "bread-button" onclick = "collect('bread')">(click this too)</button>
 	</div>
 	<!--
 When I started computers, I thought uhhhh……. I forgor (I was like 8).
@@ -125,5 +128,16 @@ subcapitalized
 	p1.addEventListener('collect-reset', function (e) {
 		this.textContent = 'no cheese';
 	});
+	const ps = document.querySelectorAll('.bread');
+	for (const p of ps) {
+		p.addEventListener('collect', function (e) {
+			if (e.data == 'bread') {
+				this.textContent = 'bread';
+			}
+		});
+		p.addEventListener('collect-reset', function (e) {
+			this.textContent = '';
+		});
+	}
 </script>
 </html>
