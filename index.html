@@ -13,31 +13,33 @@
 		const apikey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFyeW5ndnBwemF2dWd6ZGVoZXVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjc1NjUzMzEsImV4cCI6MjA0MzE0MTMzMX0.1H1MWNCfd0cro4TBk4ak529iMPlpN8RahITQuvCrXR0';
 
 		fetch(`${url}/rpc/inc_counter`, {
-		  method: "POST",
-		  body: '{"cid": 1}',
-		  headers: {
+			method: "POST",
+			body: '{"cid": 1}',
+			headers: {
 				apikey: apikey,
-		    "Content-Type": "application/json",
-		  },
+				"Content-Type": "application/json",
+			},
 		}).then(() => {
 			return fetch(`${url}/counters?id=eq.1&select=count`, {
-			  headers: {
+				headers: {
 					apikey: apikey,
-			  },
+				},
 			});
 		}).then((res) => {
 			return res.json()
 		}).then((data) => {
 			console.log(data[0].count);
-		})
+			document.querySelector('#counter').textContent = data[0].count
+		});
 	</script>
 </head>
 <body>
-<div class="image-container">
+	<div class="image-container">
 		<img src="grabbyhand.png"><br>
 		<span>Fig. 1. - an image i drew in 5 minutes with paint (it's&nbsp;"my&nbsp;symbol")</span>
 	</div>
 	<h1>MY page!!!!!!!</h1>
+	<p>your visitor number <span id = "counter">uhhh... idk</span></p>
 	<p>
 		it seems this user likes to keep an air of mystery about them...
 	</p>
