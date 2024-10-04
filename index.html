@@ -8,6 +8,29 @@
 	<script type="text/javascript" src="hash.js"></script>
 	<link rel="stylesheet" href="cheese.css">
 	<title>HI!!!!!!!! (im R)</title>
+	<script type="text/javascript">
+		const url = 'https://qryngvppzavugzdeheuk.supabase.co/rest/v1';
+		const apikey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFyeW5ndnBwemF2dWd6ZGVoZXVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjc1NjUzMzEsImV4cCI6MjA0MzE0MTMzMX0.1H1MWNCfd0cro4TBk4ak529iMPlpN8RahITQuvCrXR0';
+
+		fetch(`${url}/rpc/inc_counter`, {
+		  method: "POST",
+		  body: '{"cid": 1}',
+		  headers: {
+				apikey: apikey,
+		    "Content-Type": "application/json",
+		  },
+		}).then(() => {
+			return fetch(`${url}/counters?id=eq.1&select=count`, {
+			  headers: {
+					apikey: apikey,
+			  },
+			});
+		}).then((res) => {
+			return res.json()
+		}).then((data) => {
+			console.log(data[0].count);
+		})
+	</script>
 </head>
 <body>
 <div class="image-container">
