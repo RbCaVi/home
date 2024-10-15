@@ -13,8 +13,10 @@
 </head>
 <body>
 	<h1>chat box thing</h1>
+	<p>contact me on discord if you need a password reset or something</p>
 	<input type="text" id = "username">
 	<input type="text" id = "password">
+	<button onclick = "doCreate()">create account</button>
 	<button onclick = "doLogin()">login</button>
 	<div id = "success"></div>
 	<input type="text" id = "message">
@@ -88,12 +90,27 @@
 		await refreshMessages();
 	}
 	async function doLogin() { // aaaa name collision
+			const success = document.querySelector('#success');
+			success.textContent = '';
 			const usernameinput = document.querySelector('#username');
 			const passwordinput = document.querySelector('#password');
 			const username = usernameinput.value;
 			const password = passwordinput.value;
 			token = await login(username, password);
+			if (token == null) {
+				success.textContent = 'failed';
+			} else {
+				success.textContent = 'yes';
+			}
+	}
+	async function doCreate() { // aaaa name collision
 			const success = document.querySelector('#success');
+			success.textContent = '';
+			const usernameinput = document.querySelector('#username');
+			const passwordinput = document.querySelector('#password');
+			const username = usernameinput.value;
+			const password = passwordinput.value;
+			await makeaccount(username, password);
 			if (token == null) {
 				success.textContent = 'failed';
 			} else {
