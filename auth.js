@@ -2,14 +2,14 @@ function makeaccount(user, pass) {
   // make sure there isn't already a user by that name
   const phash = hash(pass);
   const chash = hash(user + hash(pass)); // "use the username as a salt"
-  return db_call('create_user', {user, hash: chash});
+  return db_call('create_user', {username: user, passhash: chash});
 }
 
 // login and get a token + userid
 function login(user, pass) {
   const phash = hash(pass);
   const chash = hash(user + hash(pass)); // "use the username as a salt"
-  return db_call('login', {user, hash: chash});
+  return db_call('login', {username: user, passhash: chash});
 }
 
 function refresh(token) {
@@ -23,13 +23,13 @@ function logout(token) {
 function changepass(token, user, pass) {
   const phash = hash(pass);
   const chash = hash(user + hash(pass)); // "use the username as a salt"
-  return db_call('change_pass', {user, hash: chash, token});
+  return db_call('change_pass', {username: user, passhash: chash, token});
 }
 
 async function getsessions(user) {
   const escapeduser = user.replace('"', '\\"');
-  const uid = db_select('users', {user: `eq.'${escapeduser}'`, select: "id"})[0];
-  return db_select('sessions', {user: `eq.'${uid}'`, select: "tokenhash,expire"});
+  const uid = (await db_select('users', {username: `eq.${escapeduser}`, select: "id"}))[0].id;
+  return db_select('sessions', {user: `eq.${uid}`, select: "tokenhash,expire"});
 }
 
 function endsession(token, sessionhash) {
