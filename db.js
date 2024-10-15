@@ -9,7 +9,7 @@ function db_call(func, data) {
 			apikey: apikey,
 			"Content-Type": "application/json",
     }
-	});
+	}).then(res => res.json());
 }
 
 function db_select(table, params) {
@@ -18,5 +18,5 @@ function db_select(table, params) {
 		headers: {
 			apikey: apikey,
 		},
-	});
+	}).then(res => res.json());
 }

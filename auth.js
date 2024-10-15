@@ -9,11 +9,11 @@ function makeaccount(user, pass) {
 function login(user, pass) {
   const phash = hash(pass);
   const chash = hash(user + hash(pass)); // "use the username as a salt"
-  return db_call('login', {user, hash: chash}).then(res => res.json());
+  return db_call('login', {user, hash: chash});
 }
 
 function refresh(token) {
-  return db_call('refresh_token', {token}).then(res => res.json().token);
+  return db_call('refresh_token', {token}).then(data => data.token);
 }
 
 function logout(token) {
