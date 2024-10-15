@@ -4,12 +4,18 @@ const apikey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 function db_call(func, data) {
   return fetch(`${url}/rpc/${func}`, {
 		method: "POST",
-		body: data,
+		body: JSON.stringify(data),
 		headers: {
 			apikey: apikey,
 			"Content-Type": "application/json",
     }
-	}).then(res => res.json());
+	}).then(async res => {
+		try {
+			return await res.json()
+		} catch {
+			return null;
+		}
+	});
 }
 
 function db_select(table, params) {
