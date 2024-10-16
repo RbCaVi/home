@@ -1,15 +1,16 @@
+function hashcreds(user, pass) {
+  const chash = hash(user + hash(pass)); // "use the username as a salt"
+  return {username: user, passhash: chash}
+}
+
 function makeaccount(user, pass) {
   // make sure there isn't already a user by that name
-  const phash = hash(pass);
-  const chash = hash(user + hash(pass)); // "use the username as a salt"
-  return db_call('create_user', {username: user, passhash: chash});
+  return db_call('create_user', hashcreds(user, pass));
 }
 
 // login and get a token + userid
 function login(user, pass) {
-  const phash = hash(pass);
-  const chash = hash(user + hash(pass)); // "use the username as a salt"
-  return db_call('login', {username: user, passhash: chash});
+  return db_call('login', hashcreds(user, pass));
 }
 
 function refresh(token) {
@@ -21,9 +22,7 @@ function logout(token) {
 }
 
 function changepass(token, user, pass) {
-  const phash = hash(pass);
-  const chash = hash(user + hash(pass)); // "use the username as a salt"
-  return db_call('change_pass', {username: user, passhash: chash, token});
+  return db_call('change_pass', {...hashcreds(user, pass), token});
 }
 
 async function getsessions(user) {
