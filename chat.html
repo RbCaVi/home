@@ -85,6 +85,7 @@
 		});
 	}
 	setInterval(refreshMessages, 5000);
+	refreshMessages();
 	async function sendMessage(message) {
 		await sendmessage(token, chatid, message);
 		await refreshMessages();
