@@ -57,7 +57,7 @@
 	}
 </script>
 <script type = "text/javascript">
-	let chatid = 2;
+	let chatid = +new URLSearchParams(window.location.search).get("chat") ?? 2;
 	let token = '';
 	function refreshMessages() {
 		return seemessages(chatid).then(messages => {
