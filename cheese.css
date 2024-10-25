@@ -39,3 +39,7 @@ a {
 #cheesed {
 	color: #ffa314;
 }
+
+.chat-message {
+	white-space: break-spaces;
+}
