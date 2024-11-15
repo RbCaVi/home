@@ -1,3 +1,5 @@
+const big = 2 ** 32;
+
 /*
     cyrb53a beta (c) 2023 bryc (github.com/bryc)
     License: Public domain (or MIT if needed). Attribution appreciated.
@@ -17,5 +19,7 @@ const hash = function(str, seed = 0) {
   h1 ^= Math.imul(h1 ^ (h2 >>> 15), 0x735a2d97);
   h2 ^= Math.imul(h2 ^ (h1 >>> 15), 0xcaf649a9);
   h1 ^= h2 >>> 16; h2 ^= h1 >>> 16;
+  if (h1 < 0) {h1 += big;}
+  if (h2 < 0) {h2 += big;}
   return h2.toString(16) + h1.toString(16);
 };
