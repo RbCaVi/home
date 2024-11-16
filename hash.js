@@ -23,3 +23,5 @@ const hash = function(str, seed = 0) {
   if (h2 < 0) {h2 += big;}
   return h2.toString(16) + h1.toString(16);
 };
+
+globalThis.hash = hash

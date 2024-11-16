@@ -82,3 +82,7 @@ function decrypt(encoded, key) {
 function verify(encoded, key) {
 	return encoded.slice(0, 16) == hash(key);
 }
+
+globalThis.encrypt = encrypt
+globalThis.decrypt = decrypt
+globalThis.verify = verify
