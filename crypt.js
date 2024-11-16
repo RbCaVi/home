@@ -73,5 +73,12 @@ function decrypt(encoded, key) {
 	for (let i = 0; i < message.length; i++) {
 		message[i] ^= longkey[i];
 	}
+	if (!(message.slice(0, 8).every(x => x == 0))) {
+		throw new Error('wrong decryption key!');
+	}
 	return decodeURIComponent(message.slice(8).map(x => '%' + ashex(x)).join(''));
+}
+
+function verify(encoded, key) {
+	return encoded.slice(0, 16) == hash(key);
 }
