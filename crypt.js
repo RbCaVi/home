@@ -93,4 +93,6 @@ function verify(encoded, key) {
 
 globalThis.encrypt = encrypt
 globalThis.decrypt = decrypt
+globalThis.encryptdata = encryptdata
+globalThis.decryptdata = decryptdata
 globalThis.verify = verify
