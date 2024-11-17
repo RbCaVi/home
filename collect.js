@@ -1,6 +1,6 @@
 // collectibles
 
-const collect_version = 3;
+const collect_version = 4;
 const collect_prefix = 'collect-' + collect_version + '-';
 
 let collect_items;
@@ -39,11 +39,17 @@ if (version < 3) {
 	localStorage.setItem(collect_prefix + 'items', '[]');
 }
 
+if (version < 4) {
+	localStorage.setItem('collect-version', collect_version);
+	const collect_items = JSON.parse(localStorage.getItem(collect_prefix + 'items'));
+	localStorage.setItem(collect_prefix + 'items', JSON.stringify(collect_items.map(i => [i, undefined])));
+}
+
 collect_setup();
 
-function collect(item) {
-	if (!collect_items.includes(item)) {
-		collect_items.push(item);
+function collect(item, secret) {
+	if (!collect_items.map(([i, s]) => i).includes(item)) {
+		collect_items.push([item, secret]);
 		localStorage.setItem(collect_prefix + 'items', JSON.stringify(collect_items));
 		const collect_event = new Event('collect-get');
 		collect_event.data = item;
@@ -52,7 +58,7 @@ function collect(item) {
 }
 
 function collect_has(item) {
-	return collect_items.includes(item);
+	return collect_items.map(([i, s]) => i).includes(item);
 }
 
 window.addEventListener('collect-get', function(e) {
