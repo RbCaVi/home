@@ -22,5 +22,5 @@ function secrets_get(item, key) {
 
 // take that
 function datatourl(data) {
-	URL.createObjectURL(new Blob([Int8Array.from(data).buffer]));
+	return URL.createObjectURL(new Blob([Int8Array.from(data).buffer]));
 }
