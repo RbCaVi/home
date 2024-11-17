@@ -50,7 +50,11 @@ function strtoutf8(s) {
 }
 
 function encrypt(message, key) {
-	message = [0, 0, 0, 0, 0, 0, 0, 0].concat(strtoutf8(message));
+	return encryptdata(strtoutf8(message), key);
+}
+
+function encryptdata(message, key) {
+	message = [0, 0, 0, 0, 0, 0, 0, 0].concat(message);
 	longkey = []
 	for (let i = 0; i < (message.length + 8) / 8; i++) {
 		longkey = longkey.concat(hashtonumbers(hash(key, i)));
@@ -62,6 +66,10 @@ function encrypt(message, key) {
 }
 
 function decrypt(encoded, key) {
+	return decodeURIComponent(decryptdata(encoded, key).map(x => '%' + ashex(x)).join(''));
+}
+
+function decryptdata(encoded, key) {
 	const message = [];
 	for (let i = 0; i < encoded.length / 2; i++) {
 		message.push(parseInt(encoded.slice(i * 2, (i + 1) * 2), 16));
@@ -76,7 +84,7 @@ function decrypt(encoded, key) {
 	if (!(message.slice(0, 8).every(x => x == 0))) {
 		throw new Error('wrong decryption key!');
 	}
-	return decodeURIComponent(message.slice(8).map(x => '%' + ashex(x)).join(''));
+	return message.slice(8);
 }
 
 function verify(encoded, key) {
