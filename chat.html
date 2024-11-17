@@ -14,10 +14,13 @@
 <body>
 	<h1>chat box thing</h1>
 	<p>contact me on discord if you need a password reset or something</p>
-	<input type="text" id = "username">
-	<input type="text" id = "password">
+	<span>username:</span><input type="text" id = "username">
+	<span>password:</span><input type="text" id = "password">
 	<button onclick = "doCreate()">create account</button>
 	<button onclick = "doLogin()">login</button>
+	<br>
+	<span>reset token:</span><input type="text" id = "resettoken">
+	<button onclick = "do_reset_pass()">reset password</button>
 	<div id = "success"></div>
 	<input type="text" id = "message">
 	<button onclick = "sendMessage(document.querySelector('#message').value)">send</button>
@@ -111,8 +114,24 @@
 			const passwordinput = document.querySelector('#password');
 			const username = usernameinput.value;
 			const password = passwordinput.value;
-			await makeaccount(username, password);
-			if (token == null) {
+			const status = await makeaccount(username, password);
+			if (!status) {
+				success.textContent = 'failed';
+			} else {
+				success.textContent = 'yes';
+			}
+	}
+	async function do_reset_pass() { // inconsistency
+			const success = document.querySelector('#success');
+			success.textContent = '';
+			const usernameinput = document.querySelector('#username');
+			const passwordinput = document.querySelector('#password');
+			const resettokeninput = document.querySelector('#resettoken');
+			const username = usernameinput.value;
+			const password = passwordinput.value;
+			const resettoken = resettokeninput.value;
+			const status = await resetpass(resettoken, username, password);
+			if (!status) {
 				success.textContent = 'failed';
 			} else {
 				success.textContent = 'yes';

@@ -34,3 +34,7 @@ async function getsessions(user) {
 function endsession(token, sessionhash) {
   return db_call('end_session', {token, sessionhash});
 }
+
+function resetpass(token, user, pass) {
+  return db_call('reset_password', {token: token, ...hashcreds(user, pass)})
+}
