@@ -21,7 +21,7 @@ const hash = function(str, seed = 0) {
   h1 ^= h2 >>> 16; h2 ^= h1 >>> 16;
   if (h1 < 0) {h1 += big;}
   if (h2 < 0) {h2 += big;}
-  return h2.toString(16) + h1.toString(16);
+  return (2 * big + h2).toString(16).slice(1) + (2 * big + h1).toString(16).slice(1);
 };
 
 globalThis.hash = hash
