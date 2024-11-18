@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="cheese.css">
+	<title>i played factorio once</title>
+</head>
+<body>
+	<a href="/">BACK HOME</a>
+	<div id = "factorio-thing">
+		<h1>Factorio</h1>
+		(DISCLAIMER: this part is from my not very good memory)
+		i got the demo of factorio (the single big world before the current campaign)
+		and really liked it and explored the whole map, but i (of course) eventually got bored at the end and kind of forgot about it for a while.
+		a year or two later, i found it again and downloaded a version (1.1.19 i think) that had the current demo maps.
+		i played through that demo as well and got to the end.<br>
+		<b>it was then when i started to do dubiously legal things.</b>
+		<br>
+		i inspected the campaign world zip file and found the lua files that control the allowed researches but didn't know what the names of the other researches were.
+		i eventually found the various lua files in data/base/ and somehow figured out how to get the names of all the researches.
+		(i think i was like 11 and i didn't know how to program very well so i just copied the names from one file into another)
+		<br>
+		i played until where the end of the demo would be and realized there was no oil. so i went "i know! i'll use coal liquefaction and supply a bunch of heavy oil at the start!"
+		i don't remember how far i got but i don't think i launched a rocket. i got bored again and found mods.
+		i didn't know how the mods were supposed to be loaded, but i found a page somewhere (probably the factorio wiki) that had info about the data lifecycle,
+		so i manually resolved dependencies and requires and had my first "modded" factorio.
+		<br>
+		i ran into several problems though, like absolute requires (the __mod__ kind and the ones that are absolute from the mod root) and later, events.
+		i had to go through every occurrence of require and script.on_* and fix them. the requires were simple, just write the correct path, but the script.on_*s were harder.
+		i eventually found a file in core that can do all the work (except for event filters) and used "hacks" to make it work.
+		after all that, i had a working "modded" demo of factorio. i don't remember the mod / modpack it was though. :(
+		<br>
+		then after a few months of making modded demos with different mods, i forgot about it again (i think).
+		i eventually found it yet again and made a python script to do some of the processing for me (fixing requires and script.on_*).
+		<br>
+		and i got more mods and factorio 1.1.72.
+		around this time, i got space exploration and really liked it. the wiki was kind of empty though, so i decided to write a script to fix that!
+		<br>
+		(this is the part where i have actual info about the dates)
+		<br>
+		i first uploaded it to github in jan 2023, and worked on it up until aug/sep 2023.
+		it was called SEAutoUpdate and it could handle recipes and basic items (like iron plate and energy science, but not gun or boiler).
+		<br>
+		i ran it on several batches of items and recipes in april 2023 (it seems so long ago from sep 2024).
+		it eventually got the attention of the space exploration people and i got a wiki role on their discord.
+		<br>
+		i then immediately converted it to js, renamed it SEJS, fixed a bunch of bugs, refactored the code, and tried to make it a web app but got foiled by cross origin stuff.
+		i realized the wiki editor would have to be either a embedded page or somehow a js gui application (which is really hard to make with just node js for some reason),
+		so i dropped the wiki editor project and made it just a general factorio info site.
+		<br>
+		i also made a set of node js and lua scripts to simulate the whole factorio data lifecycle instead of extracting the data table from factorio like a "normal person", so i don't have to deal with running factorio.
+		(i just realized, while writing this, that because the process is now hosted on github actions, i can extract the data table from factorio as many times as i want and it won't kill <i>my</i> computer)
+		currently SEJS has a minimal item / recipe browser and some (not working properly) recipe calculator functionality.
+		i <b>am</b> planning to add more stuff <i>"soon"</i>, like custom modpack support, a mod data generator/extractor, and a blueprint editor.
+	</div>
+</body>
+</html>
