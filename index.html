@@ -13,11 +13,9 @@
 	<link rel="stylesheet" href="cheese.css">
 	<title>HI!!!!!!!! (im R)</title>
 	<script type="text/javascript">
-		db_call('inc_counter', {cid: 1}).then(() => {
-			return db_select('counters', {id: 'eq.1', select: 'count'});
-		}).then((data) => {
-			console.log(data[0].count);
-			document.querySelector('#counter').textContent = data[0].count
+		db_call('inc_counter', {cid: 1}).then((data) => {
+			console.log(data);
+			document.querySelector('#counter').textContent = data;
 		});
 	</script>
 </head>
