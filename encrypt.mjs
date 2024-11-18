@@ -50,6 +50,7 @@ const secrets = {
 	password: {type: 'text', content: 'the password is "password"', key: 'password'},
 	data: {type: 'data', content: [17, 81, 6, 125], key: 'data'},
 	url1: {type: 'text', content: 'https://www.youtube.com/watch?v=g8jWi6ipSew', key: 'weeeeee'},
+	"me-flavor": {type: 'text', content: 'You Found A <b>Rick Astley</b>! (wait, that\'s not me)', key: 'weeeeee'},
 };
 
 const encryptedsecrets = {};
