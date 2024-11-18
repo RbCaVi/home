@@ -128,6 +128,14 @@
 		<p oncollect id = "cheesed">no cheese</p>
 		<p oncollect class = "bread"></p>
 		<button id = "bread-button" onclick = "collect('bread')">(click this too)</button>
+  <br>
+	 <span>key:</span><input type="text" id = "me-key">
+		<button onclick = "collect('me', document.querySelector('#me-key').value)">submit</button>
+  <div id = "me" style = "display: none;">
+   <img oncollect id = "me-img"><br>
+   <span id = "me-text"></span> 
+   <!-- the password is my true name -->
+  </div>
 	</div>
 	<!--
 When I started computers, I thought uhhhh……. I forgor (I was like 8).
@@ -178,5 +186,19 @@ subcapitalized
 			this.textContent = '';
 		});
 	}
+	const image = document.querySelector('#me-img');
+	image.addEventListener('collect', async function (e) {
+		if (e.data == 'me') {
+   try {
+    this.src = datatourl(await secrets_get('me', e.secret));
+    document.querySelector('#me-text').innerHTML = await secrets_get('me-flavor', e.secret);
+    document.querySelector('#me').style.display = 'block';
+   } catch (e) {}
+		}
+	});
+ image.addEventListener('collect-reset', function (e) {
+    document.querySelector('#me-text').textContent = '';
+    document.querySelector('#me').style.display = 'none';
+ });
 </script>
 </html>
