@@ -4,9 +4,12 @@ async function secrets_init() {
 	secrets = await ((await fetch('./secrets.json')).json());
 }
 
-secrets_init();
+const secretpromise = secrets_init();
 
-function secrets_get(item, key) {
+async function secrets_get(item, key) {
+ if (secrets == undefined) {
+  await secretpromise;
+ }
 	const [type, encrypted] = secrets[item];
 	switch (type) {
 	case 'text':
