@@ -20,6 +20,8 @@ fetch('dialogue-1.txt').then(
  d => window.text = d
 ).then(
  d => window.dialogue = parseDialogue(d)
+).then(
+ () => converse('greeting', 1)
 );
 
 async function converse(key, speed = 1) {
@@ -56,8 +58,13 @@ async function render(screen, speed) {
  await say(content, document.querySelector('#dialogue'), speed);
 }
 
+let skip = false;
+
 function wait(n) {
  if (n <= 0 || isNaN(n)) {
+  return;
+ }
+ if (skip) {
   return;
  }
  return new Promise(res => setTimeout(res, n));
@@ -140,6 +147,74 @@ async function say(content, container, speed) {
  }
 }
 
-async function setCharacters() {}
+const modifiers = ['flipped', 'out'];
+
+const urls = {
+ r_normal: 'dialogue-assets/r_normal.gif',
+ r_excited: 'dialogue-assets/r_excited.gif',
+ r_question: 'dialogue-assets/r_question.gif',
+ r_xd: 'dialogue-assets/r_normal.gif',
+ r_wave: 'dialogue-assets/r_normal.gif',
+ r_question: 'dialogue-assets/r_confused.gif',
+ r_confused: 'dialogue-assets/r_confused.gif',
+ r_stress: 'dialogue-assets/r_stress.gif',
+};
+
+async function setCharacters(characters) {
+ document.querySelector('#characters').textContent = '';
+ for (let c of characters) {
+  let speaking = false;
+  if (c.startsWith('*')) {
+   speaking = true;
+   c = c.slice(1);
+  }
+  const ms = [];
+  for (const m of modifiers) {
+   if (c.startsWith(m + '-')) {
+    ms.push(m);
+    c = c.slice(m.length + 1);
+   }
+  }
+  const container = document.createElement('div');
+  const img = document.createElement('img');
+  img.src = urls[c];
+  if (ms.includes('flipped')) {
+   container.classList.add('flipped');
+  }
+  container.append(img);
+  document.querySelector('#characters').append(container);
+  if (!speaking) {
+   stopAnim(img);
+  }
+  console.log(c);
+ }
+}
+
+// https://dev.to/grahamthedev/stopping-gif-animations-on-dev-to-for-those-who-prefer-reduced-motion-59pg
+var stopAnim = function (img) {
+ var coverImage = function () {
+  var width = img.width;
+  var height = img.height;
+  var canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+  canvas.style.position = 'absolute';
+  canvas.style.top = "0";
+  //canvas.style.left = "50%";
+  //canvas.style.transform = "translate(-50%, 0)";
+  var parent = img.parentNode;
+  parent.style.position = "relative";
+  parent.style.display = "block";
+  parent.insertBefore(canvas, img);
+  img.style.opacity = 0.01;
+ };
+
+ if (img.complete) {
+  coverImage();
+ } else {
+  img.addEventListener('load', coverImage, true);
+ }
+}
 </script>
 </html>
