@@ -1,0 +1,74 @@
+greeting
+- *r_excited {
+hi i'm rbcavi!
+}
+- *r_normal {
+i made this dialogue thing from scratch.
+no frameworks,
+no libraries,
+just html, css, and js.
+}
+- *r_question {
+it has features like choices!
+which will you choose?
+<left left> or <right right>?
+}
+
+left
+- *r_normal {
+i see you've chosen the left path.
+keep going, there's more.
+}
+- *r_xd {
+you've been hit with the illusion of choice!
+take that!
+(try the right path next time)
+}
+> center
+
+right
+- *r_normal {
+so you picked the right path.
+maybe try the left path next time?
+}
+> center
+
+center
+- r_normal *flipped-r_normal {
+hi it's me again.
+there can also be two characters on screen at one time.
+(of course this is a feature)
+}
+- *r_confused flipped-r_normal {
+what?
+}
+- r_normal *flipped-r_stress {
+%2%uh um uh% %0.5%i have to go now.% $r_normal *flipped-out-r_stress$$*r_normal$
+bye to you too (i guess)!
+}
+> options
+
+options
+- r_normal {
+anyway, as you can see, mid text animations are also a thing.
+finally (i think), i have "options"
+
+i have a [cube <look look> <touch touch>] for you to examine.
+}
+- r_wave {
+bye!
+}
+
+look
+- cube {
+the cube is green.
+it reminds you of a certain @webcomic@https://www.homestuck.com@.
+}
+> options
+
+touch
+- cube {
+you touch the #green#cube#.
+it is nonexistent.
+}
+> options
