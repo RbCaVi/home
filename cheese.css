@@ -43,3 +43,22 @@ a {
 .chat-message {
 	white-space: break-spaces;
 }
+
+.bold {
+ font-weight: bold;
+}
+
+.choice-2 {
+ position: relative;
+}
+
+.choice-2 > :first-child {
+ position: absolute;
+ display: none;
+}
+
+.choice-2:hover > :first-child {
+ display: block;
+ top: 1em;
+ left: 0;
+}

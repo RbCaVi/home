@@ -5,12 +5,141 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script type="text/javascript" src="parsedialogue.js"></script>
 	<link rel="stylesheet" href="cheese.css">
-	<title>W chat</title>
+	<title>talking demo</title>
 </head>
 <body>
 	<a href="/">BACK HOME</a>
-	<div id = "dialogue" style = "width: 800px; height 600px;"></div>
-	<div id = "textbox" style = "width: 800px; height 200px;"></div>
+	<div id = "characters" style = "width: 400px; height: 300px; border: 1px solid white;"></div>
+	<div id = "dialogue" style = "width: 400px; height: 100px; white-space: break-spaces; border: 1px solid white;"></div>
+ <button id = "nextbutton" style = "display: none;">next</button>
 </body>
+<script>
+fetch('dialogue-1.txt').then(
+ r => r.text()
+).then(
+ d => window.text = d
+).then(
+ d => window.dialogue = parseDialogue(d)
+);
 
+async function converse(key, speed = 1) {
+ const segment = window.dialogue[key];
+ document.querySelector('#nextbutton').removeEventListener('click', document.querySelector('#nextbutton').f);
+ await render(segment.screens[0], speed);
+ for (const screen of segment.screens.slice(1)) {
+  await showNextButton();
+  await render(screen, speed);
+ }
+ if ('next' in segment) {
+  await showNextButton();
+  await converse(segment.next, speed);
+ }
+}
+
+async function showNextButton() {
+ document.querySelector('#nextbutton').style.display = 'inline-block';
+ return new Promise(res => {
+  const f = () => {
+   document.querySelector('#nextbutton').removeEventListener('click', f);
+   document.querySelector('#nextbutton').style.display = 'none';
+   res();
+  };
+  document.querySelector('#nextbutton').f = f;
+  document.querySelector('#nextbutton').addEventListener('click', f);
+ });
+}
+
+async function render(screen, speed) {
+ const {characters, content} = screen;
+ document.querySelector('#dialogue').textContent = '';
+ await setCharacters(characters);
+ await say(content, document.querySelector('#dialogue'), speed);
+}
+
+function wait(n) {
+ if (n <= 0 || isNaN(n)) {
+  return;
+ }
+ return new Promise(res => setTimeout(res, n));
+}
+
+async function say(content, container, speed) {
+ if (typeof content == 'string') {
+  for (const c of content) {
+   container.append(c);
+   await wait(20 * speed);
+  }
+ } else if (typeof content == 'object' && !Array.isArray(content)) {
+  switch (content.type) {
+  case '_': {
+   await wait(+content.content * speed);
+   break;
+  } case '$': {
+   await setCharacters(content.content.split(' ').filter(s => s.length > 0));
+   break;
+  } case '%': {
+   await say(content.content, container, speed * +content.modifier);
+   break;
+  } case '[': {
+   const [style] = content.content[0].split(' ', 1);
+   const text = [content.content[0].slice(content.content[0].indexOf(' ') + 1), ...content.content.slice(1)];
+   const c = document.createElement('span');
+   c.classList.add(style);
+   container.append(c);
+   await say(text, c, speed);
+   break;
+  } case '@': {
+   const c = document.createElement('a');
+   c.href = content.modifier;
+   c.target="_blank";
+   c.rel="noopener noreferrer";
+   container.append(c);
+   await say(content.content, c, speed);
+   break;
+  } case '<': {
+   if (content.content[0] == '' && typeof content.content[1] == 'object' && content.content[1].type == '<') {
+    const options = document.createElement('div');
+    let i;
+    for (i = 0; i < content.content.length; i++) {
+     if (typeof content.content[i] == 'string' && content.content[i].trim() == '') {
+      continue;
+     }
+     if (!Array.isArray(content.content[i]) && content.content[i].type == '<') {
+      const [target] = content.content[i].content[0].trim().split(' ', 1);
+      const text = [content.content[i].content[0].trim().slice(content.content[i].content[0].trim().indexOf(' ') + 1), ...content.content[i].content.slice(1)];
+      const c = document.createElement('div');
+      c.addEventListener('click', () => converse(target, speed));
+      options.append(c);
+      await say(text, c, 0);
+      continue;
+     }
+     break;
+    }
+    const c = document.createElement('span');
+    c.classList.add('choice-2');
+    container.append(c);
+    c.append(options);
+    await say([content.content[i].trim(), ...content.content.slice(i + 1)], c, speed);
+   } else {
+    const [target] = content.content[0].trim().split(' ', 1);
+    const text = [content.content[0].trim().slice(content.content[0].trim().indexOf(' ') + 1), ...content.content.slice(1)];
+    const c = document.createElement('span');
+    c.classList.add('choice-1');
+    c.addEventListener('click', () => converse(target, speed));
+    container.append(c);
+    await say(text, c, speed);
+   }
+   break;
+  } default:
+   throw new Error('yuor fualt!!!!');
+  }
+ } else {
+  for (const part of content) {
+   await say(part, container, speed);
+  }
+ }
+}
+
+async function setCharacters() {}
+</script>
 </html>

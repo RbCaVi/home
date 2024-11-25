@@ -32,9 +32,10 @@ function parseScreen(str) {
  return [rest, {characters: chars, content: parseBrackets(content.slice(1, -1).trim())}];
 }
 
+// got the base for this function from google ai
 function getBrackets(str) {
  const stack = [];
- const brackets = { '<': '>', '{': '}', '[': ']' };
+ const brackets = {'<': '>', '{': '}', '[': ']', '$': '$'};
  let gotBackslash = false;
  let out = ''
  
@@ -49,15 +50,22 @@ function getBrackets(str) {
    }
    out += c;
   }
-  if (!gotBackslash && (c in brackets)) {
-   stack.push(c);
-  } else if (!gotBackslash && Object.values(brackets).includes(c)) {
-   if (brackets[stack.pop()] !== c) {
-    throw new Error('brackets do not match :(');
-   }
-   if (stack.length === 0) {
+  if (!gotBackslash && Object.values(brackets).includes(c)) {
+   let x;
+   if (brackets[x = stack.pop()] !== c) {
+    if (c in brackets) {
+     if (x != undefined) {
+      stack.push(x);
+     }
+     stack.push(c);
+    } else {
+     throw new Error('brackets do not match :(');
+    }
+   } else if (stack.length == 0) {
     return [str.slice(out.length), out];
    }
+  } else if (!gotBackslash && (c in brackets)) {
+   stack.push(c);
   } else if (c == '\\') {
    gotBackslash = !gotBackslash;
   } else {
@@ -78,8 +86,8 @@ function isEscaped(s, i) {
  return escaped;
 }
 
-function indexOfUnescaped(s, c) {
- for (let i = str.indexOf(c); i != -1; i = str.index(c, i + 1)) {
+function indexOfUnescaped(s, c, i) {
+ for (i = s.indexOf(c, i); i != -1; i = s.index(c, i + 1)) {
   if (!isEscaped(s, i)) {
    return i;
   }
@@ -88,14 +96,20 @@ function indexOfUnescaped(s, c) {
 }
 
 function parseBrackets(str) {
- const brackets = { '<': '>', '{': '}', '[': ']' };
- const is = Object.keys(brackets).map(b => str.indexOf(b)).filter(i => i != -1);
+ const brackets = {'<': '>', '{': '}', '[': ']', '$': '$'};
+ const is = Object.keys(brackets).map(b => indexOfUnescaped(str, b)).filter(i => i != -1);
  if (is.length == 0) {
   return parseSettings(str);
  }
  const i = Math.min(...is);
  const [rest, bs] = getBrackets(str.slice(i));
- return [...parseSettings(str.slice(0, i)), {type: bs.slice(0, 1), content: parseBrackets(bs.slice(1, -1))}, ...parseBrackets(rest)];
+ let content;
+ if (bs.slice(0, 1) == '$') {
+  content = bs.slice(1, -1);
+ } else {
+  content = parseBrackets(bs.slice(1, -1));
+ }
+ return [...parseSettings(str.slice(0, i)), {type: bs.slice(0, 1), content}, ...parseBrackets(rest)];
 }
 
 function parseDialogue(str) {
@@ -107,8 +121,35 @@ function parseDialogue(str) {
 }
 
 function parseSettings(str) {
- for (let i = 0; i < str.length; i++) {
-  
+ const is = [...'@$%_'].map(b => indexOfUnescaped(str, b)).filter(i => i != -1);
+ if (is.length == 0) {
+  return [str];
  }
- return [str];
+ const i = Math.min(...is);
+ const c = str.slice(i, i + 1);
+ let thing, rest;
+ switch (c) {
+ case '@': case '%': {
+  const i2 = indexOfUnescaped(str, c, i + 1);
+  const i3 = indexOfUnescaped(str, c, i2 + 1);
+  if (i2 == -1 || i3 == -1) {
+   thing = c;
+   rest = str.slice(i + 1);
+   break;
+  }
+  thing = {type: c, content: parseSettings(str.slice(i + 1, i2)), modifier: str.slice(i2 + 1, i3)};
+  rest = str.slice(i3 + 1);
+  break;
+ } case '$': case '_': {
+  const i2 = indexOfUnescaped(str, c, i + 1);
+  if (i2 == -1) {
+   thing = c;
+   rest = str.slice(i + 1);
+   break;
+  }
+  thing = {type: c, content: parseSettings(str.slice(i + 1, i2))};
+  rest = str.slice(i2 + 1);
+  break;
+ }}
+ return [str.slice(0, i), thing, ...parseSettings(rest)];
 }

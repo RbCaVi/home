@@ -4,14 +4,14 @@ hi i'm rbcavi!
 }
 - *r_normal {
 i made this dialogue thing from scratch.
-no frameworks,
-no libraries,
+no frameworks,_200_
+no libraries,_200_
 just html, css, and js.
 }
 - *r_question {
 it has features like choices!
 which will you choose?
-<left left> or <right right>?
+<left the left path> or <right the right path>?
 }
 
 left
@@ -43,8 +43,9 @@ there can also be two characters on screen at one time.
 what?
 }
 - r_normal *flipped-r_stress {
-%2%uh um uh% %0.5%i have to go now.% $r_normal *flipped-out-r_stress$$*r_normal$
-bye to you too (i guess)!
+%uh... um uh%5% %i have to go now.%0.5% $r_normal *flipped-out-r_stress$$*r_normal$
+%. . . %10%
+bye to you too! (i guess)
 }
 > options
 
@@ -53,7 +54,7 @@ options
 anyway, as you can see, mid text animations are also a thing.
 finally (i think), i have "options"
 
-i have a [cube <look look> <touch touch>] for you to examine.
+i have a <<look look> <touch touch> cube> for you to examine.
 }
 - r_wave {
 bye!
@@ -68,7 +69,7 @@ it reminds you of a certain @webcomic@https://www.homestuck.com@.
 
 touch
 - cube {
-you touch the #green#cube#.
+you touch the [green [bold cube]].
 it is nonexistent.
 }
 > options
