@@ -3,7 +3,7 @@ greeting
 hi i'm rbcavi!
 }
 - *r_normal {
-i made this dialogue thing from scratch.
+i made this dialogue thing from scratch._200_
 no frameworks,_200_
 no libraries,_200_
 just html, css, and js.
@@ -43,14 +43,14 @@ there can also be two characters on screen at one time.
 what?
 }
 - r_normal *flipped-r_stress {
-%uh... um uh%5% %i have to go now.%0.5% $r_normal *flipped-out-r_stress$$*r_normal$
-%. . . %10%
+%uh... um uh%5% %i have to go now.%0.5% $r_normal *flipped-out-r_stress$
+$r_normal$%. . . %10%$*r_normal$
 bye to you too! (i guess)
 }
 > options
 
 options
-- r_normal {
+- *r_normal {
 anyway, as you can see, mid text animations are also a thing.
 finally (i think), i have "options"
 
@@ -70,6 +70,6 @@ it reminds you of a certain @webcomic@https://www.homestuck.com@.
 touch
 - cube {
 you touch the [green [bold cube]].
-it is nonexistent.
+it is completely intangible.
 }
 > options
