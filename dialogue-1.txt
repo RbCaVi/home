@@ -20,7 +20,7 @@ i see you've chosen the left path.
 keep going, there's more.
 }
 - *r_xd {
-you've been hit with the illusion of choice!
+you've been hit with the illusion of @choice@https://xkcd.com/1350/@!
 take that!
 (try the right path next time)
 }
