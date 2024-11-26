@@ -43,8 +43,8 @@ there can also be two characters on screen at one time.
 what?
 }
 - r_normal *flipped-r_stress {
-%uh... um uh%5% %i have to go now.%0.5% $r_normal *flipped-out-r_stress$
-$r_normal$%. . . %10%$*r_normal$
+%uh... um uh %5%%i have to go now.%0.5% $r_normal *flipped-out-r_stress$
+$r_normal$%... %30%$*r_normal$
 bye to you too! (i guess)
 }
 > options
