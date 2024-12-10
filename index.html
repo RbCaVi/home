@@ -29,15 +29,15 @@
 	<p>
 		it seems this user likes to keep an air of mystery about them...
 	</p>
- <div>
-  status
+	<div>
+		status
 		<ul>
-			<li>im going to colege!!! (semester 1)</li>
-			<li>still a minor, cannot drink alchohol :)</li>
-			<li>i can drive!</li>
-			<li>programming</li>
+			<li>im going to colege!!! (the finals 1 of 8)</li>
+			<li>still a minor, don't yearn for the mines :)</li>
+			<li>certified driver</li>
+			<li>professional bracket typer</li>
 		</ul>
- </div>
+	</div>
 	<blockquote>
 		"This is the whitest presentation I have ever seen."
 		- one of my teachers
@@ -61,9 +61,9 @@
 	<p>
 		<a href="dialogue.html">"dialogue" engine</a> (also written from "scratch")
 	</p>
- <p>
-  <a href = "changelog.html">i made changes since nov 18 2024</a>
- </p>
+	<p>
+		<a href = "changelog.html">i made changes since dec 9 2024</a>
+	</p>
 	<p>
 		Here's my other pages (i have no style).
 		<ul>
@@ -78,6 +78,7 @@
 			<li><a href = "https://discord.gg/3AevFCRsMn">go bother this guy (he makes games)</a></li>
 			<li><a href = "https://redinator2000.itch.io/roody2d">roody 2d</a> - it's really fun (and you can "hack" the demo to get almost everything)</li>
 			<li><a href = "https://factorio.com/">factorio</a> - it's also really fun (and you can "hack" the demo to get almost everything)</li>
+			<li style = "display: none;"><a href = "https://www.fractalthorns.com/">fractal thorns</a> - story and art</li>
 		</ul>
 	</p>
 	<p>
@@ -89,11 +90,13 @@
 		<ul>
 			<li><a href = "https://rbcavi.github.io/FRCCards">FRC::Cards</a> - i was involved in FRC for one season and i saw someone made cards, so i made a generator. (it was hard to make because i drew everything with primitives) it doesn't work for everyone for some reason.</li>
 			<li><a href = "https://rbcavi.github.io/factorio-viewer/viewer.html">Factorio Viewer</a> - it has the icons and data for every item and recipe in a few modpacks.</li>
-			<li>cx - programming language (""'unfinished'"' (not even started)) - i have so many ideas</li>
-			<li>3dSDL - my first (and only) opengl project</li>
-			<li>parserlang - other programming language - "for writing a parser"</li>
-			<li>roody-graphics - various tools for the hit game roody:2d by redinator2000 - save reader / writer, very basic "gui" save editor, roody:2d block renderer</li>
-			<li>sltkr2d - not actually my project - but i contributed some code and bugfixes</li>
+			<li><a href = "https://github.com/RbCaVi/CX">cx</a> - programming language (""'unfinished'"' (not even started)) - i have so many ideas</li>
+			<li><a href = "https://github.com/RbCaVi/3dSDL">3dSDL</a> - my first (and only) opengl project</li>
+			<li><a href = "https://github.com/RbCaVi/parserlang">parserlang</a> - other programming language - for "writing a parser" for cx</li>
+			<li><a href = "https://github.com/RbCaVi/roody-graphics">roody-graphics</a> - various tools for the hit game roody:2d by redinator2000 - save reader / writer, very basic "gui" save editor, roody:2d block renderer</li>
+			<li><a href = "https://github.com/Sear-0887/SLTKR2D">sltkr2d</a> - not actually my project - but i contributed some code and bugfixes</li>
+			<li><a href = "https://github.com/RbCaVi/vroom">vroom</a> - graphics engine - collaboration with <a href = "https://androsis.carrd.co/">Androsis</a></li>
+			<li><a href = "https://github.com/RbCaVi/raypath">raypath</a> - path tracing + ray marching in opengl - based on vroom</li>
 		</ul>
 	</p>
 	<p>
@@ -109,14 +112,14 @@
 		<p oncollect id = "cheesed">no cheese</p>
 		<p oncollect class = "bread"></p>
 		<button id = "bread-button" onclick = "collect('bread')">(click this too)</button>
-  <br>
-	 <span>key:</span><input type="text" id = "me-key">
+		<br>
+		<span>key:</span><input type="text" id = "me-key">
 		<button onclick = "collect('me', document.querySelector('#me-key').value)">submit</button>
-  <div id = "me" style = "display: none;">
-   <img oncollect id = "me-img"><br>
-   <span id = "me-text"></span> 
-   <!-- the password is my true name -->
-  </div>
+		<div id = "me" style = "display: none;">
+			<img oncollect id = "me-img"><br>
+			<span id = "me-text"></span> 
+			<!-- the password is my true name -->
+		</div>
 	</div>
 	<!--
 When I started computers, I thought uhhhh……. I forgor (I was like 8).
@@ -170,16 +173,16 @@ subcapitalized
 	const image = document.querySelector('#me-img');
 	image.addEventListener('collect', async function (e) {
 		if (e.data == 'me') {
-   try {
-    this.src = datatourl(await secrets_get('me', e.secret));
-    document.querySelector('#me-text').innerHTML = await secrets_get('me-flavor', e.secret);
-    document.querySelector('#me').style.display = 'block';
-   } catch (e) {}
+			try {
+				this.src = datatourl(await secrets_get('me', e.secret));
+				document.querySelector('#me-text').innerHTML = await secrets_get('me-flavor', e.secret);
+				document.querySelector('#me').style.display = 'block';
+			} catch (e) {}
 		}
 	});
- image.addEventListener('collect-reset', function (e) {
-    document.querySelector('#me-text').textContent = '';
-    document.querySelector('#me').style.display = 'none';
- });
+	image.addEventListener('collect-reset', function (e) {
+		document.querySelector('#me-text').textContent = '';
+		document.querySelector('#me').style.display = 'none';
+	});
 </script>
 </html>
