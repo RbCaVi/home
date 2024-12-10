@@ -17,7 +17,7 @@ which will you choose?
 left
 - *r_normal {
 i see you've chosen the left path.
-keep going, there's more.
+keep going.
 }
 - *r_xd {
 you've been hit with the illusion of @choice@https://xkcd.com/1350/@!
