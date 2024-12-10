@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="cheese.css">
+	<title>some technical info about parserlang</title>
+</head>
+<body>
+  <a href="./">BACK HOME</a>
+  <h1>parserlang</h1>
+  <p>(dm me if you have a better name)</p>
+  <h2>things you probably already know:</h2>
+  <ul>
+    <li>parserlang is a programming language</li>
+    <li>i made it to write parsers</li>
+  </ul>
+  <p>anyway, on to the things you may not know</p>
+  <h2>things you may not know: pv</h2>
+  <p>
+    because i made it to write parsers, one of the features i have planned is simple backtracking
+  </p>
+  <p>
+    like when you're (i was) writing a recursive descent parser with parser combinators, the concat combinator is hard to write in a non recursive way (you have to write your own stack)
+  </p>
+  <p>
+    so that's one feature i planned
+  </p>
+  <p>
+    then to have backtracking in a "sane" way, the values have to be immutable
+  </p>
+  <p>
+    at some point i thought "oh jq does basically the same thing right?" and copied the entire jv (jq value) implementation and called it pv
+  </p>
+  <p>
+    (and quickly found out how much the different jv kinds (types) reference internal details)
+  </p>
+  <p>
+    so i just copied (most of) the header files and some of the implementation for the more complex kinds
+  </p>
+  <p>
+    but now i'm mostly done with rewriting jv in a way that i like
+  </p>
+  <p>
+    so it has immutable values like jv and 7 kinds: null, bool, int, double, string, array, object - the only change i made is split number into int and float
+  </p>
+  <p>
+    it also has some functions with single or double dispatch - equal, hash, to_string
+  </p>
+  <h2>pl</h2>
+  <p>
+    now on top of pv i made pl, which is a based stack vm (like lua)
+  </p>
+  <p>
+    it's not too unusual (i think) - there are a couple of opcode sections:
+  </p>
+  <ul>
+    <li>stack manipulation - dup swap pop</li>
+    <li>empty constructors - null bool int double array object</li>
+    <li>push global value? (not sure if this is something i will use)</li>
+    <li>various array and object functions - set get len etc.</li>
+    <li>number operators - <code>+</code> <code>-</code> <code>*</code> <code>/</code> etc.</li>
+    <li>call (of course)</li>
+    <li>jumps - conditional and unconditional</li>
+    <li>iteration - constructor and usage (and backtracking iteration but i haven't added that yet)</li>
+    <li>two return opcodes - return/yield and end generator</li>
+  </ul>
+  <p>
+    there are also two additional kinds - func and iter (function and iterator obviously)
+  </p>
+  <p>
+    i currently have functional iteration and function calls - both as normal function and as generator
+  </p>
+  <p>
+    there's also an assembler, which takes code like this:
+  </p>
+  <p style = "white-space: pre; font-family: monospace;">def n1 num 4
+def n2 num 34
+def a arr n1 n2
+
+defglobals add a
+defmain main
+
+func add
+  // takes 2 arguments
+  add
+  ret
+endfunc
+
+func main
+  pushglobal 0
+  pushint 15
+  pushint 52
+  call 2
+  ret
+endfunc</p>
+  <p>
+    and a debug code executor (which can execute that assembled code):
+  </p>
+  <p style = "white-space: pre; font-family: monospace;">main bytecode:
+PUSHGLOBAL 0
+PUSHINT 15
+PUSHINT 52
+CALL 2
+RET
+
+return value:
+.: 67
+
+global 0:
+.: idk it has kind 8 (pl_func)
+
+global 1:
+.: []
+./0: 4.000000
+./1: 34.000000</p>
+  <h2>oOoOoOoOo the compiler</h2>
+  <p>
+    and finally, i'm writing a compiler
+  </p>
+</body>
+</html>
