@@ -115,7 +115,7 @@ function initScene(gl, shaderInfo, buffers) {
     );
 }
 
-function drawScene(gl, shaderInfo, squareRotation) {
+function drawScene(gl, shaderInfo, squareRotation, translation) {
     // Clear the canvas before we start drawing on it.
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -128,7 +128,7 @@ function drawScene(gl, shaderInfo, squareRotation) {
     mat4.translate(
         modelViewMatrix, // destination matrix
         modelViewMatrix, // matrix to translate
-        [0.0, 0.0, -6.0],
+        [...translation, -6.0],
     ); // amount to translate
 
     mat4.rotate(
@@ -246,6 +246,7 @@ async function main() {
     initScene(gl, shaderInfo, buffers);
 
     let squareRotation = 0.0;
+    let translation = [0.0, 0.0];
     let deltaTime = 0;
 
     let then = 0;
@@ -255,7 +256,23 @@ async function main() {
         deltaTime = now - then;
         then = now;
 
-        drawScene(gl, shaderInfo, squareRotation);
+        if (keyPressed("ArrowUp") && !keyPressed("ArrowDown")) {
+            translation[1] += 0.1;
+        }
+
+        if (keyPressed("ArrowDown") && !keyPressed("ArrowUp")) {
+            translation[1] -= 0.1;
+        }
+
+        if (keyPressed("ArrowLeft") && !keyPressed("ArrowRight")) {
+            translation[0] -= 0.1;
+        }
+
+        if (keyPressed("ArrowRight") && !keyPressed("ArrowLeft")) {
+            translation[0] += 0.1;
+        }
+
+        drawScene(gl, shaderInfo, squareRotation, translation);
         squareRotation += deltaTime;
 
         requestAnimationFrame(render);
