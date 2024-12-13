@@ -207,7 +207,6 @@ function initIndexBuffer(gl) {
   return indexBuffer;
 }
 
-
 function initScene(gl, shaderInfo, buffers, indexBuffer, texture) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
     gl.clearDepth(1.0); // Clear everything
@@ -242,12 +241,11 @@ function initScene(gl, shaderInfo, buffers, indexBuffer, texture) {
     // Bind the texture to texture unit 0
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
-    // Tell the shader we bound the texture to texture unit 0
-    gl.uniform1i(shaderInfo.uniforms.uSampler, 0);
-
-
     // Tell WebGL to use our program when drawing
     gl.useProgram(shaderInfo.shader);
+
+    // Tell the shader we bound the texture to texture unit 0
+    gl.uniform1i(shaderInfo.uniforms.uSampler, 0);
 
     // Set the shader uniforms
     gl.uniformMatrix4fv(
@@ -345,7 +343,7 @@ function setPositionAttribute(gl, buffers, shaderInfo) {
 // Initialize a texture and load an image.
 // When the image finished loading copy it into the texture.
 //
-function loadTexture(gl, url) {
+function loadTexture(gl, imagePromise) {
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
@@ -362,12 +360,12 @@ function loadTexture(gl, url) {
     const srcFormat = gl.RGBA;
     const srcType = gl.UNSIGNED_BYTE;
     const pixel = new Uint8Array([
-        255, 0, 255, 255,    0, 0, 0, 255,    255, 0, 255, 255,    0, 0, 0, 255,
-        0, 0, 0, 255,    255, 0, 255, 255,    0, 0, 0, 255,    255, 0, 255, 255,
-        255, 0, 255, 255,    0, 0, 0, 255,    255, 0, 255, 255,    0, 0, 0, 255,
-        0, 0, 0, 255,    255, 0, 255, 255,    0, 0, 0, 255,    255, 0, 255, 255,
+        255, 0, 255, 255,  0, 0, 0, 255,      255, 0, 255, 255,  0, 0, 0, 255,
+        0, 0, 0, 255,      255, 0, 255, 255,  0, 0, 0, 255,      255, 0, 255, 255,
+        255, 0, 255, 255,  0, 0, 0, 255,      255, 0, 255, 255,  0, 0, 0, 255,
+        0, 0, 0, 255,      255, 0, 255, 255,  0, 0, 0, 255,      255, 0, 255, 255,
     ]);
-        gl.texImage2D(
+    gl.texImage2D(
         gl.TEXTURE_2D,
         level,
         internalFormat,
@@ -378,9 +376,12 @@ function loadTexture(gl, url) {
         srcType,
         pixel,
     );
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-    const image = new Image();
-    image.onload = () => {
+    imagePromise.then((image) => {
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(
             gl.TEXTURE_2D,
@@ -403,11 +404,19 @@ function loadTexture(gl, url) {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         }
-    };
-    image.src = url;
+    });
 
     return texture;
+}
+
+function loadImage(url) {
+    return new Promise(res => {
+        const image = new Image();
+        image.onload = () => res(image);
+        image.src = url;
+    });
 }
 
 function isPowerOf2(value) {
@@ -489,7 +498,7 @@ async function main() {
         void main(void) {
             highp vec4 texelColor = texture2D(uSampler, vTextureCoord);
 
-            gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+            gl_FragColor = vec4((texelColor.rgb * texelColor.a + vec3(1.0, 1.0, 1.0) * (1.0 - texelColor.a)) * vLighting, texelColor.a);
         }
     `;
     
@@ -503,7 +512,7 @@ async function main() {
     // Flip image pixels into the bottom-to-top order that WebGL expects.
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     // Load texture
-    const texture = loadTexture(gl, "dialogue-assets/cube.png");
+    const texture = loadTexture(gl, loadImage("dialogue-assets/cube.png").then(im => createImageBitmap(im, 100, 50, 200, 200)));
 
     
     initScene(gl, shaderInfo, initBuffers(gl), initIndexBuffer(gl), texture);
