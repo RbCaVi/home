@@ -176,6 +176,15 @@ function getShaderVars(gl, shader, vars) {
     }
 }
 
+const keysPressed = {};
+
+addEventListener("keydown", e => keysPressed[event.code] = true);
+addEventListener("keyup", e => keysPressed[event.code] = false);
+
+function keyPressed(key) {
+    return keysPressed[key] === true;
+}
+
 function main() {
     const canvas = document.querySelector("#canvas");
     const gl = canvas.getContext("webgl");
