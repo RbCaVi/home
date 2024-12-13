@@ -116,9 +116,7 @@ function initScene(gl, shaderInfo, buffers) {
 }
 
 function drawScene(gl, shaderInfo) {
-
     // Clear the canvas before we start drawing on it.
-
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // Set the drawing position to the "identity" point, which is
@@ -130,7 +128,7 @@ function drawScene(gl, shaderInfo) {
     mat4.translate(
         modelViewMatrix, // destination matrix
         modelViewMatrix, // matrix to translate
-        [-0.0, 0.0, -6.0 + Math.random()],
+        [0.0, 0.0, -6.0 + Math.random()],
     ); // amount to translate
 
     // Set the shader uniforms
@@ -229,7 +227,7 @@ async function main() {
         }
     `;
     
-    const shader = initShaderProgram(gl, vertSource, fragSource);
+    const shader = compileShader(gl, vertSource, fragSource);
     
     const shaderInfo = getShaderVars(gl, shader, {
         attributes: ["aVertexPosition", "aVertexColor"],
@@ -244,7 +242,7 @@ async function main() {
     }
 }
 
-function initShaderProgram(gl, vertSource, fragSource) {
+function compileShader(gl, vertSource, fragSource) {
     const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vertSource);
     const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fragSource);
     const shaderProgram = gl.createProgram();
