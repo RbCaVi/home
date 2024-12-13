@@ -115,7 +115,7 @@ function initScene(gl, shaderInfo, buffers) {
     );
 }
 
-function drawScene(gl, shaderInfo) {
+function drawScene(gl, shaderInfo, squareRotation) {
     // Clear the canvas before we start drawing on it.
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -128,8 +128,16 @@ function drawScene(gl, shaderInfo) {
     mat4.translate(
         modelViewMatrix, // destination matrix
         modelViewMatrix, // matrix to translate
-        [0.0, 0.0, -6.0 + Math.random()],
+        [0.0, 0.0, -6.0],
     ); // amount to translate
+
+    mat4.rotate(
+        modelViewMatrix, // destination matrix
+        modelViewMatrix, // matrix to rotate
+        squareRotation, // amount to rotate in radians
+        [0, 0, 1],
+    ); // axis to rotate around
+
 
     // Set the shader uniforms
     gl.uniformMatrix4fv(
@@ -236,10 +244,24 @@ async function main() {
     
     const buffers = initBuffers(gl);
     initScene(gl, shaderInfo, buffers);
-    while (true) {
-        drawScene(gl, shaderInfo);
-        await wait(1000);
+
+    let squareRotation = 0.0;
+    let deltaTime = 0;
+
+    let then = 0;
+
+    function render(now) {
+        now *= 0.001; // convert to seconds
+        deltaTime = now - then;
+        then = now;
+
+        drawScene(gl, shaderInfo, squareRotation);
+        squareRotation += deltaTime;
+
+        requestAnimationFrame(render);
     }
+
+    requestAnimationFrame((now) => {then = now * 0.001; render(now);});
 }
 
 function compileShader(gl, vertSource, fragSource) {
