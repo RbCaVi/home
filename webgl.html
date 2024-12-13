@@ -35,37 +35,37 @@ function arrangeBuffers(buffers) {
 
 function initBuffers(gl) {
     const positions = [
-        // Front face
+        // Front
         [-1.0, -1.0, 1.0],
         [1.0, -1.0, 1.0],
         [1.0, 1.0, 1.0],
         [-1.0, 1.0, 1.0],
 
-        // Back face
+        // Back
         [-1.0, -1.0, -1.0],
         [-1.0, 1.0, -1.0],
         [1.0, 1.0, -1.0],
         [1.0, -1.0, -1.0],
 
-        // Top face
+        // Top
         [-1.0, 1.0, -1.0],
         [-1.0, 1.0, 1.0],
         [1.0, 1.0, 1.0],
         [1.0, 1.0, -1.0],
 
-        // Bottom face
+        // Bottom
         [-1.0, -1.0, -1.0],
         [1.0, -1.0, -1.0],
         [1.0, -1.0, 1.0],
         [-1.0, -1.0, 1.0],
 
-        // Right face
+        // Right
         [1.0, -1.0, -1.0],
         [1.0, 1.0, -1.0],
         [1.0, 1.0, 1.0],
         [1.0, -1.0, 1.0],
 
-        // Left face
+        // Left
         [-1.0, -1.0, -1.0],
         [-1.0, -1.0, 1.0],
         [-1.0, 1.0, 1.0],
@@ -80,38 +80,81 @@ function initBuffers(gl) {
         [1.0, 0.0],
         [1.0, 1.0],
         [0.0, 1.0],
+
         // Back
         [0.0, 0.0],
         [1.0, 0.0],
         [1.0, 1.0],
         [0.0, 1.0],
+
         // Top
         [0.0, 0.0],
         [1.0, 0.0],
         [1.0, 1.0],
         [0.0, 1.0],
+
         // Bottom
         [0.0, 0.0],
         [1.0, 0.0],
         [1.0, 1.0],
         [0.0, 1.0],
+
         // Right
         [0.0, 0.0],
         [1.0, 0.0],
         [1.0, 1.0],
         [0.0, 1.0],
+
         // Left
         [0.0, 0.0],
         [1.0, 0.0],
         [1.0, 1.0],
         [0.0, 1.0],
     ];
+
+    const vertexNormals = [
+        // Front
+        [0.0, 0.0, 1.0],
+        [0.0, 0.0, 1.0],
+        [0.0, 0.0, 1.0],
+        [0.0, 0.0, 1.0],
+
+        // Back
+        [0.0, 0.0, -1.0],
+        [0.0, 0.0, -1.0],
+        [0.0, 0.0, -1.0],
+        [0.0, 0.0, -1.0],
+
+        // Top
+        [0.0, 1.0, 0.0],
+        [0.0, 1.0, 0.0],
+        [0.0, 1.0, 0.0],
+        [0.0, 1.0, 0.0],
+
+        // Bottom
+        [0.0, -1.0, 0.0],
+        [0.0, -1.0, 0.0],
+        [0.0, -1.0, 0.0],
+        [0.0, -1.0, 0.0],
+
+        // Right
+        [1.0, 0.0, 0.0],
+        [1.0, 0.0, 0.0],
+        [1.0, 0.0, 0.0],
+        [1.0, 0.0, 0.0],
+
+        // Left
+        [-1.0, 0.0, 0.0],
+        [-1.0, 0.0, 0.0],
+        [-1.0, 0.0, 0.0],
+        [-1.0, 0.0, 0.0],
+    ];
     
-    const {offsetsizes, stride} = arrangeBuffers({aVertexPosition: 3, aTextureCoord: 2});
+    const {offsetsizes, stride} = arrangeBuffers({aVertexPosition: 3, aTextureCoord: 2, aVertexNormal: 3});
     
     const buffer = gl.createBuffer();
 
-    setBuffers(gl, {buffer, offsetsizes, stride}, {aVertexPosition: positions, aTextureCoord: textureCoordinates});
+    setBuffers(gl, {buffer, offsetsizes, stride}, {aVertexPosition: positions, aTextureCoord: textureCoordinates, aVertexNormal: vertexNormals});
     
     return {buffer, offsetsizes, stride};
 }
@@ -251,12 +294,21 @@ function drawScene(gl, shaderInfo, squareRotation, translation) {
         [1, 0, 0],
     ); // axis to rotate around
 
+    const normalMatrix = mat4.create();
+    mat4.invert(normalMatrix, modelViewMatrix);
+    mat4.transpose(normalMatrix, normalMatrix);
 
     // Set the shader uniforms
     gl.uniformMatrix4fv(
         shaderInfo.uniforms.uModelViewMatrix,
         false,
         modelViewMatrix,
+    );
+
+    gl.uniformMatrix4fv(
+        shaderInfo.uniforms.uNormalMatrix,
+        false,
+        normalMatrix,
     );
 
     {
@@ -401,34 +453,51 @@ async function main() {
   
     const vertSource = `
         attribute vec4 aVertexPosition;
+        attribute vec3 aVertexNormal;
         attribute vec2 aTextureCoord;
 
+        uniform mat4 uNormalMatrix;
         uniform mat4 uModelViewMatrix;
         uniform mat4 uProjectionMatrix;
 
         varying highp vec2 vTextureCoord;
+        varying highp vec3 vLighting;
 
         void main(void) {
             gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
             vTextureCoord = aTextureCoord;
+
+            // Apply lighting effect
+
+            highp vec3 ambientLight = vec3(0.3, 0.3, 0.3);
+            highp vec3 directionalLightColor = vec3(1, 1, 1);
+            highp vec3 directionalVector = normalize(vec3(0.85, 0.8, 0.75));
+
+            highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
+
+            highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
+            vLighting = ambientLight + (directionalLightColor * directional);
         }
     `;
     
     const fragSource = `
         varying highp vec2 vTextureCoord;
+        varying highp vec3 vLighting;
 
         uniform sampler2D uSampler;
 
         void main(void) {
-            gl_FragColor = texture2D(uSampler, vTextureCoord * vec2(0.75, 1.0) + vec2(0.125, 0));
+            highp vec4 texelColor = texture2D(uSampler, vTextureCoord);
+
+            gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
         }
     `;
     
     const shader = compileShader(gl, vertSource, fragSource);
     
     const shaderInfo = getShaderVars(gl, shader, {
-        attributes: ["aVertexPosition", "aTextureCoord"],
-        uniforms: ["uModelViewMatrix", "uProjectionMatrix", "uSampler"],
+        attributes: ["aVertexPosition", "aTextureCoord", "aVertexNormal"],
+        uniforms: ["uModelViewMatrix", "uProjectionMatrix", "uSampler", "uNormalMatrix"],
     });
 
     // Flip image pixels into the bottom-to-top order that WebGL expects.
