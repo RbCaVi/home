@@ -85,3 +85,7 @@ a {
 .flipped * {
   transform: scaleX(-1);
 }
+
+.discord-colored {
+    color: #5865f2;
+}
