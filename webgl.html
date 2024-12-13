@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="cheese.css">
+	<title>internet picture communication</title>
+    <script
+        id = "gl-matrix"
+        src = "https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"
+        integrity = "sha512-zhHQR0/H5SEBL3Wn6yYSaTTZej12z0hVZKOv3TwCUXT1z5qeqGcXJLLrbERYRScEDDpYIJhPC1fk31gqR783iQ=="
+        crossorigin = "anonymous"
+        defer></script> <!-- i didn't want to do this... -->
+</head>
+<body>
+  <a href="./">BACK HOME</a>
+  <h1>webgl thing</h1>
+  <canvas id = "canvas" width = 800 height = 800></canvas>
+</body>
+<script>
+function mergeBuffers(buffers) {
+    // buffers is an object with keys being names and values being arrays of tuples of floats
+    // returns {data, offsetsizes, stride}
+    //Object.values(buffers).map(data => data.length).every((l, _, ls) => l == l[0]); // all of the arrays are the same length
+    //Object.values(buffers).every(data => data.map(point => point.length).every((l, _, ls) => l == l[0])); // each array has consistent tuple sizes
+    
+    // create a list of empty lists with the same length as each of the buffers
+    const data = Object.values(buffers)[0].map(_ => []);
+    const offsetsizes = {};
+    
+    const entries = Object.entries(buffers); // stabilize ordering
+    for (const [name, points] of Object.entries(buffers)) {
+        offsetsizes[name] = [data[0].length * 4, points[0].length]; // i'm assuming floats are 4 bytes // it's a number of components
+        points.map((point, i) => data[i].push(...point)); // add each point to the corresponding data element
+    }
+    
+    const stride = data[0].length * 4;
+    
+    return {
+        data: [].concat(...data), // concatenate all the data elements together
+        offsetsizes, stride
+    }
+}
+
+function initBuffers(gl) {
+    const positions = [
+        [1.0, 1.0],
+        [-1.0, 1.0],
+        [1.0, -1.0],
+        [-1.0, -1.0],
+    ];
+    
+    const colors = [
+        [1.0, 1.0, 1.0, 1.0], // white
+        [1.0, 0.0, 0.0, 1.0], // red
+        [0.0, 1.0, 0.0, 1.0], // green
+        [0.0, 0.0, 1.0, 1.0], // blue
+    ];
+    
+    const {data, offsetsizes, stride} = mergeBuffers({aVertexPosition: positions, aVertexColor: colors});
+    
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+    
+    return {buffer, offsetsizes, stride};
+}
+
+function drawScene(gl, shaderInfo, buffers) {
+    gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
+    gl.clearDepth(1.0); // Clear everything
+    gl.enable(gl.DEPTH_TEST); // Enable depth testing
+    gl.depthFunc(gl.LEQUAL); // Near things obscure far things
+
+    // Clear the canvas before we start drawing on it.
+
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    // Create a perspective matrix, a special matrix that is
+    // used to simulate the distortion of perspective in a camera.
+    // Our field of view is 45 degrees, with a width/height
+    // ratio that matches the display size of the canvas
+    // and we only want to see objects between 0.1 units
+    // and 100 units away from the camera.
+
+    const fieldOfView = (45 * Math.PI) / 180; // in radians
+    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    const zNear = 0.1;
+    const zFar = 100.0;
+    const projectionMatrix = mat4.create();
+
+    // note: glMatrix always has the first argument
+    // as the destination to receive the result.
+    mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
+
+    // Set the drawing position to the "identity" point, which is
+    // the center of the scene.
+    const modelViewMatrix = mat4.create();
+
+    // Now move the drawing position a bit to where we want to
+    // start drawing the square.
+    mat4.translate(
+        modelViewMatrix, // destination matrix
+        modelViewMatrix, // matrix to translate
+        [-0.0, 0.0, -6.0],
+    ); // amount to translate
+
+    // Tell WebGL how to pull out the positions from the position
+    // buffer into the vertexPosition attribute.
+    setPositionAttribute(gl, buffers, shaderInfo);
+
+    // Tell WebGL to use our program when drawing
+    gl.useProgram(shaderInfo.shader);
+
+    // Set the shader uniforms
+    gl.uniformMatrix4fv(
+        shaderInfo.uniforms.uProjectionMatrix,
+        false,
+        projectionMatrix,
+    );
+    gl.uniformMatrix4fv(
+        shaderInfo.uniforms.uModelViewMatrix,
+        false,
+        modelViewMatrix,
+    );
+
+    {
+        const offset = 0;
+        const vertexCount = 4;
+        gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
+    }
+}
+
+// Tell WebGL how to pull out the positions from the position
+// buffer into the vertexPosition attribute.
+function setPositionAttribute(gl, buffers, shaderInfo) {
+    const {buffer, offsetsizes, stride} = buffers;
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    
+    const type = gl.FLOAT; // the data in the buffer is 32bit floats
+    const normalize = false; // don't normalize
+    
+    for (const [name, [offset, size]] of Object.entries(offsetsizes)) {
+        gl.vertexAttribPointer(
+            shaderInfo.attributes[name],
+            size,
+            type,
+            normalize,
+            stride,
+            offset,
+        );
+        gl.enableVertexAttribArray(shaderInfo.attributes[name]);
+    }
+}
+
+function getShaderVars(gl, shader, vars) {
+    // vars is an object with two keys - attributes and uniforms
+    // which are lists of names
+    const {attributes, uniforms} = vars;
+    
+    return {
+        shader,
+        attributes: Object.fromEntries(attributes.map(name => [name, gl.getAttribLocation(shader, name)])),
+        uniforms: Object.fromEntries(uniforms.map(name => [name, gl.getUniformLocation(shader, name)])),
+    }
+}
+
+function main() {
+    const canvas = document.querySelector("#canvas");
+    const gl = canvas.getContext("webgl");
+
+    if (gl === null) {
+        console.log("no webgl :(");
+        return;
+    }
+
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+  
+    const vertSource = `
+        attribute vec4 aVertexPosition;
+        attribute vec4 aVertexColor;
+
+        uniform mat4 uModelViewMatrix;
+        uniform mat4 uProjectionMatrix;
+
+        varying lowp vec4 vColor;
+
+        void main(void) {
+            gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+            vColor = aVertexColor;
+        }
+    `;
+    
+    const fragSource = `
+        varying lowp vec4 vColor;
+
+        void main(void) {
+            gl_FragColor = vColor;
+        }
+    `;
+    
+    const shader = initShaderProgram(gl, vertSource, fragSource);
+    
+    const shaderInfo = getShaderVars(gl, shader, {
+        attributes: ["aVertexPosition", "aVertexColor"],
+        uniforms: ["uModelViewMatrix", "uProjectionMatrix"],
+    });
+    
+    const buffers = initBuffers(gl);
+    drawScene(gl, shaderInfo, buffers);
+}
+
+function initShaderProgram(gl, vertSource, fragSource) {
+    const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vertSource);
+    const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fragSource);
+    const shaderProgram = gl.createProgram();
+
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+        console.log(`Unable to initialize the shader program ): ${gl.getshaderInfoLog(shaderProgram)}`,);
+        return null;
+    }
+
+    return shaderProgram;
+}
+
+function loadShader(gl, type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.log(`An error occurred compiling the shaders ): ${gl.getShaderInfoLog(shader)}`,);
+        gl.deleteShader(shader);
+        return null;
+    }
+
+    return shader;
+}
+
+new Promise(res => document.querySelector("#gl-matrix").addEventListener("load", res)).then(_=>main());
+</script>
+</html>
