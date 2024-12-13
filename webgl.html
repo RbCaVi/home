@@ -83,7 +83,7 @@ function initBuffers(gl) {
     ];
 
     // Convert the array of colors into a table for all the vertices.
-    const colors = [].concat(faceColors.map(c => [c, c, c, c]));
+    const colors = [].concat(...faceColors.map(c => [c, c, c, c]));
     
     const {offsetsizes, stride} = arrangeBuffers({aVertexPosition: 3, aVertexColor: 4});
     
