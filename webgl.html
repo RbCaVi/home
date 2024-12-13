@@ -18,28 +18,19 @@
   <canvas id = "canvas" width = 800 height = 800></canvas>
 </body>
 <script>
-function mergeBuffers(buffers) {
-    // buffers is an object with keys being names and values being arrays of tuples of floats
-    // returns {data, offsetsizes, stride}
-    //Object.values(buffers).map(data => data.length).every((l, _, ls) => l == l[0]); // all of the arrays are the same length
-    //Object.values(buffers).every(data => data.map(point => point.length).every((l, _, ls) => l == l[0])); // each array has consistent tuple sizes
-    
-    // create a list of empty lists with the same length as each of the buffers
-    const data = Object.values(buffers)[0].map(_ => []);
+function arrangeBuffers(buffers) {
+    // buffers is an object of name to size
+
+    let length = 0;
     const offsetsizes = {};
-    
-    const entries = Object.entries(buffers); // stabilize ordering
-    for (const [name, points] of Object.entries(buffers)) {
-        offsetsizes[name] = [data[0].length * 4, points[0].length]; // i'm assuming floats are 4 bytes // it's a number of components
-        points.map((point, i) => data[i].push(...point)); // add each point to the corresponding data element
+    for (const [name, size] of Object.entries(buffers)) {
+        offsetsizes[name] = [length, size]; // size is a number of components
+        length += size;
     }
-    
-    const stride = data[0].length * 4;
-    
-    return {
-        data: [].concat(...data), // concatenate all the data elements together
-        offsetsizes, stride
-    }
+
+    const stride = length;
+
+    return {offsetsizes, stride};
 }
 
 function initBuffers(gl) {
@@ -57,12 +48,32 @@ function initBuffers(gl) {
         [0.0, 0.0, 1.0, 1.0], // blue
     ];
     
-    const {data, offsetsizes, stride} = mergeBuffers({aVertexPosition: positions, aVertexColor: colors});
+    const {offsetsizes, stride} = arrangeBuffers({aVertexPosition: 2, aVertexColor: 4});
     
     const buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+
+    setBuffers(gl, {buffer, offsetsizes, stride}, {aVertexPosition: positions, aVertexColor: colors});
     
+    return {buffer, offsetsizes, stride};
+}
+
+function setBuffers(gl, bufferdata, buffers) {
+    // bufferdata is returned from initBuffers
+    const {buffer, offsetsizes, stride} = bufferdata;
+
+    //Object.values(buffers).map(data => data.length).every((l, _, ls) => l == l[0]); // all of the arrays are the same length
+    //Object.values(buffers).every(data => data.map(point => point.length).every((l, _, ls) => l == l[0])); // each array has consistent tuple sizes
+
+    const data = Object.values(buffers)[0].map(_ => Array(stride));
+
+    for (const [name, points] of Object.entries(buffers)) {
+        //points[0].length = offsetsizes[name][1] // the points are of the expected sizes
+        points.map((point, i) => point.map((e, j) => data[i][offsetsizes[name][0] + j] = e)); // add each point to the corresponding data element
+    }
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([].concat(...data)), gl.STATIC_DRAW);
+
     return {buffer, offsetsizes, stride};
 }
 
@@ -146,8 +157,8 @@ function setPositionAttribute(gl, buffers, shaderInfo) {
             size,
             type,
             normalize,
-            stride,
-            offset,
+            stride * 4,
+            offset * 4, // 4 bytes per float
         );
         gl.enableVertexAttribArray(shaderInfo.attributes[name]);
     }
