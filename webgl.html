@@ -508,7 +508,7 @@ async function main() {
     // Flip image pixels into the bottom-to-top order that WebGL expects.
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     // Load texture
-    const texture = loadTexture(gl, loadImage("dialogue-assets/cube.png").then(im => createImageBitmap(im, 100, 50, 200, 200)));
+    const texture = loadTexture(gl, loadImage("grabbyhand.png").then(im => createImageBitmap(im, 100, 50, 200, 200)));
 
     
     initScene(gl, shaderInfo, initBuffers(gl), initIndexBuffer(gl), texture);
