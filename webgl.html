@@ -215,12 +215,12 @@ function initScene(gl, shaderInfo, buffers, indexBuffer, texture) {
 
     // Create a perspective matrix, a special matrix that is
     // used to simulate the distortion of perspective in a camera.
-    // Our field of view is 45 degrees, with a width/height
+    // Our field of view is 45 degrees, or pi/4, with a width/height
     // ratio that matches the display size of the canvas
     // and we only want to see objects between 0.1 units
     // and 100 units away from the camera.
 
-    const fieldOfView = (45 * Math.PI) / 180; // in radians
+    const fieldOfView = Math.PI / 4; // in radians
     const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     const zNear = 0.1;
     const zFar = 100.0;
@@ -230,29 +230,26 @@ function initScene(gl, shaderInfo, buffers, indexBuffer, texture) {
     // as the destination to receive the result.
     mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
 
-    // Tell WebGL how to pull out the positions from the position
-    // buffer into the vertexPosition attribute.
-    setPositionAttribute(gl, buffers, shaderInfo);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    setAttributeLocations(gl, buffers, shaderInfo);
 
-    // Tell WebGL we want to affect texture unit 0
-    gl.activeTexture(gl.TEXTURE0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
 
-    // Bind the texture to texture unit 0
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-
-    // Tell WebGL to use our program when drawing
     gl.useProgram(shaderInfo.shader);
 
-    // Tell the shader we bound the texture to texture unit 0
-    gl.uniform1i(shaderInfo.uniforms.uSampler, 0);
+    bindTexture(gl, 0, shaderInfo.uniforms.uSampler, texture);
 
-    // Set the shader uniforms
+    // Set the projection matrix
     gl.uniformMatrix4fv(
         shaderInfo.uniforms.uProjectionMatrix,
         false,
         projectionMatrix,
     );
+}
+
+function bindTexture(gl, unit, location, texture) {
+    gl.activeTexture(gl.TEXTURE0 + unit);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.uniform1i(location, unit);
 }
 
 function drawScene(gl, shaderInfo, squareRotation, translation) {
@@ -317,9 +314,7 @@ function drawScene(gl, shaderInfo, squareRotation, translation) {
     }
 }
 
-// Tell WebGL how to pull out the positions from the position
-// buffer into the vertexPosition attribute.
-function setPositionAttribute(gl, buffers, shaderInfo) {
+function setAttributeLocations(gl, buffers, shaderInfo) {
     const {buffer, offsetsizes, stride} = buffers;
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     
