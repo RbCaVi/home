@@ -232,11 +232,13 @@ function initScene(gl, shaderInfo, buffers, indexBuffer, texture) {
 
     setAttributeLocations(gl, buffers, shaderInfo);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+    bindTexture(gl, 1, texture);
 
     gl.useProgram(shaderInfo.shader);
 
-    bindTexture(gl, 0, shaderInfo.uniforms.uSampler, texture);
+    gl.uniform1i(shaderInfo.uniforms.uSampler, 1);
 
     // Set the projection matrix
     gl.uniformMatrix4fv(
@@ -246,10 +248,9 @@ function initScene(gl, shaderInfo, buffers, indexBuffer, texture) {
     );
 }
 
-function bindTexture(gl, unit, location, texture) {
+function bindTexture(gl, unit, texture) {
     gl.activeTexture(gl.TEXTURE0 + unit);
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.uniform1i(location, unit);
 }
 
 function drawScene(gl, shaderInfo, squareRotation, translation) {
