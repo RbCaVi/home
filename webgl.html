@@ -445,7 +445,7 @@ function main(cube, cube2, image) {
             translation[0] += 0.1;
         }
 
-        drawScene(gl, shaderInfo, squareRotation, translation, shape.shapes.cube2);
+        drawScene(gl, shaderInfo, squareRotation, translation, shape.shapes[keyPressed("Space") ? "cube" : "cube2"]);
         squareRotation += deltaTime;
 
         requestAnimationFrame(render);
