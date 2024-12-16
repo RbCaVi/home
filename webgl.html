@@ -467,7 +467,7 @@ function loadShader(gl, type, source) {
 }
 
 function parseobj(obj) {
-    const lines = obj.split('\n')
+    const lines = obj.split(/\r?\n/); // ""\r\n" is a newline" ahh code
 
     function fantris(f) {
         const tris = [];
