@@ -186,8 +186,19 @@ function drawScene(gl, shaderInfo, squareRotation, translation) {
         const vertexCount = 36;
         const type = gl.UNSIGNED_SHORT;
         const offset = 0;
-        gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+        gl.drawElements(gl.TRIANGLES, vertexCount, type, offset); printGlError(gl);
     }
+}
+
+function printGlError(gl) {
+    const e = gl.getError();
+    //if (e == gl.NO_ERROR) console.log("gl.NO_ERROR	No error has been recorded. The value of this constant is 0.");
+    if (e == gl.INVALID_ENUM) console.log("gl.INVALID_ENUM	An unacceptable value has been specified for an enumerated argument. The command is ignored and the error flag is set.");
+    if (e == gl.INVALID_VALUE) console.log("gl.INVALID_VALUE	A numeric argument is out of range. The command is ignored and the error flag is set.");
+    if (e == gl.INVALID_OPERATION) console.log("gl.INVALID_OPERATION	The specified command is not allowed for the current state. The command is ignored and the error flag is set.");
+    if (e == gl.INVALID_FRAMEBUFFER_OPERATION) console.log("gl.INVALID_FRAMEBUFFER_OPERATION	The currently bound framebuffer is not framebuffer complete when trying to render to or to read from it.");
+    if (e == gl.OUT_OF_MEMORY) console.log("gl.OUT_OF_MEMORY	Not enough memory is left to execute the command.");
+    if (e == gl.CONTEXT_LOST_WEBGL) console.log("gl.CONTEXT_LOST_WEBGL	If the WebGL context is lost, this error is returned on the first call to getError. Afterwards and until the context has been restored, it returns gl.NO_ERROR.");
 }
 
 function setAttributeLocations(gl, buffers, shaderInfo) {
