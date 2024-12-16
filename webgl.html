@@ -330,7 +330,7 @@ function wait(ms) {
     return new Promise(res => setTimeout(res, ms));
 }
 
-function main(cube, image) {
+function main(cube, cube2, image) {
     const canvas = document.querySelector("#canvas");
     const gl = canvas.getContext("webgl");
 
@@ -498,8 +498,10 @@ const glmatload = new Promise(res => document.querySelector("#gl-matrix").addEve
 
 const modelload = fetch("cube.obj").then(res => res.text()).then(parseobj);
 
+const modelload2 = fetch("cube2.obj").then(res => res.text()).then(parseobj);
+
 const imload = loadImage("grabbyhand.png");
 
-Promise.all([glmatload, modelload, imload]).then(([, cube, image]) => main(cube, image));
+Promise.all([glmatload, modelload, modelload2, imload]).then(([, cube, cube2, image]) => main(cube, cube2, image));
 </script>
 </html>
