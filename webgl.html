@@ -340,7 +340,7 @@ function mergeShapes(shapesin) {
     const shapes = {};
     
     for (const [name, {indices: sindices, attributes: sattributes}] of Object.entries(shapesin)) {
-        shapes[name] = [Object.values(attributes)[0].length, Object.values(sattributes)[0].length];
+        shapes[name] = [indices.length, sindices.length];
         indices.push(...sindices.map(i => i + Object.values(attributes)[0].length));
         Object.entries(sattributes).map(([attr, data]) => attributes[attr].push(...data));
     }
