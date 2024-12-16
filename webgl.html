@@ -128,7 +128,7 @@ function bindTexture(gl, unit, texture) {
     gl.bindTexture(gl.TEXTURE_2D, texture);
 }
 
-function drawScene(gl, shaderInfo, squareRotation, translation) {
+function drawScene(gl, shaderInfo, squareRotation, translation, shapeidxs) {
     // Clear the canvas before we start drawing on it.
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -183,9 +183,9 @@ function drawScene(gl, shaderInfo, squareRotation, translation) {
     );
 
     {
-        const vertexCount = 36;
+        const vertexCount = shapeidxs[1];
         const type = gl.UNSIGNED_SHORT;
-        const offset = 0;
+        const offset = shapeidxs[0] * 2;
         gl.drawElements(gl.TRIANGLES, vertexCount, type, offset); printGlError(gl);
     }
 }
@@ -330,6 +330,24 @@ function wait(ms) {
     return new Promise(res => setTimeout(res, ms));
 }
 
+function mergeShapes(shapesin) {
+    const indices = [];
+    
+    // all of the shapes should have the same attributes (names and sizes) // i'm assuming this for now
+    // create empty lists for each attribute
+    const attributes = Object.fromEntries(Object.keys(Object.values(shapesin)[0].attributes).map(k => [k, []]));
+    
+    const shapes = {};
+    
+    for (const [name, {indices: sindices, attributes: sattributes}] of Object.entries(shapesin)) {
+        shapes[name] = [Object.values(attributes)[0].length, Object.values(sattributes)[0].length];
+        indices.push(...sindices.map(i => i + Object.values(attributes)[0].length));
+        Object.entries(sattributes).map(([attr, data]) => attributes[attr].push(...data));
+    }
+    
+    return {indices, attributes, shapes};
+}
+
 function main(cube, cube2, image) {
     const canvas = document.querySelector("#canvas");
     const gl = canvas.getContext("webgl");
@@ -395,9 +413,10 @@ function main(cube, cube2, image) {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     // Load texture
     const texture = loadTexture(gl, image);
-
     
-    initScene(gl, shaderInfo, initBuffers(gl, cube[1]), initIndexBuffer(gl, cube[0]), texture);
+    const shape = mergeShapes({cube, cube2});
+    
+    initScene(gl, shaderInfo, initBuffers(gl, shape.attributes), initIndexBuffer(gl, shape.indices), texture);
 
     let squareRotation = 0.0;
     let translation = [0.0, 0.0];
@@ -426,7 +445,7 @@ function main(cube, cube2, image) {
             translation[0] += 0.1;
         }
 
-        drawScene(gl, shaderInfo, squareRotation, translation);
+        drawScene(gl, shaderInfo, squareRotation, translation, shape.shapes.cube2);
         squareRotation += deltaTime;
 
         requestAnimationFrame(render);
@@ -491,7 +510,7 @@ function parseobj(obj) {
     const normaldata = vertset.map(([, , vni]) => normals[vni - 1]);
     const texcoorddata = vertset.map(([, vti, ]) => texcoords[vti - 1]);
 
-    return [faceidxs, {aVertexPosition: vertdata, aVertexNormal: normaldata, aTextureCoord: texcoorddata}];
+    return {indices: faceidxs, attributes: {aVertexPosition: vertdata, aVertexNormal: normaldata, aTextureCoord: texcoorddata}};
 }
 
 const glmatload = new Promise(res => document.querySelector("#gl-matrix").addEventListener("load", res));
