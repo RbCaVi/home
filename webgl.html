@@ -131,7 +131,7 @@ function bindTexture(gl, unit, texture) {
     gl.bindTexture(gl.TEXTURE_2D, texture);
 }
 
-function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2) {
+function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2, pos) {
     // Clear the canvas before we start drawing on it.
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -145,6 +145,12 @@ function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2) {
         modelViewMatrix, // destination matrix
         modelViewMatrix, // matrix to translate
         [0.0, 0.0, -6.0],
+    ); // amount to translate
+    
+    mat4.translate( // the model should have the origin at the bottom, but it's currently in the center ("temporary" fix)
+        modelViewMatrix, // destination matrix
+        modelViewMatrix, // matrix to translate
+        [0.0, 1.0, 0.0],
     ); // amount to translate
 
     const normalMatrix = mat4.create();
@@ -367,13 +373,15 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
     let deltaTime = 0;
 
     let then = 0;
+    
+    let pos = [0.0, 0.0, 0.0];
 
     function render(now) {
         now *= 0.001; // convert to seconds
         deltaTime = now - then;
         then = now;
 
-        drawScene(gl, shaderInfo, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.floor);
+        drawScene(gl, shaderInfo, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.floor, pos);
 
         requestAnimationFrame(render);
     }
