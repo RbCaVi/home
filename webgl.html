@@ -409,7 +409,7 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
 
     let then = 0;
     
-    let pos = [0.0, 0.0, 0.0];
+    let pos = vec3.create();
     
     const geometry = totris(floor);
 
@@ -418,7 +418,7 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
         deltaTime = now - then;
         then = now;
 
-        let vel = [0.0, 0.0, 0.0];
+        let vel = vec3.create();
         if (keyPressed("ArrowUp") && !keyPressed("ArrowDown")) {
             vel[1] = +0.1;
         }
@@ -443,7 +443,7 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
             vel[2] = -0.1;
         }
         
-        vel.map((v, i) => pos[i] += v);
+        vec3.add(pos, pos, vel);
         
 
         if (keyPressed("KeyJ")) {
