@@ -131,7 +131,7 @@ function bindTexture(gl, unit, texture) {
     gl.bindTexture(gl.TEXTURE_2D, texture);
 }
 
-function drawScene(gl, shaderInfo, squareRotation, translation, shapeidxs, shapeidxs2) {
+function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2) {
     // Clear the canvas before we start drawing on it.
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -144,29 +144,8 @@ function drawScene(gl, shaderInfo, squareRotation, translation, shapeidxs, shape
     mat4.translate(
         modelViewMatrix, // destination matrix
         modelViewMatrix, // matrix to translate
-        [...translation, -6.0],
+        [0.0, 0.0, -6.0],
     ); // amount to translate
-
-    mat4.rotate(
-        modelViewMatrix, // destination matrix
-        modelViewMatrix, // matrix to rotate
-        squareRotation, // amount to rotate in radians
-        [0, 0, 1],
-    ); // axis to rotate around
-
-    mat4.rotate(
-        modelViewMatrix, // destination matrix
-        modelViewMatrix, // matrix to rotate
-        squareRotation, // amount to rotate in radians
-        [0, 1, 0],
-    ); // axis to rotate around
-
-    mat4.rotate(
-        modelViewMatrix, // destination matrix
-        modelViewMatrix, // matrix to rotate
-        squareRotation, // amount to rotate in radians
-        [1, 0, 0],
-    ); // axis to rotate around
 
     const normalMatrix = mat4.create();
     mat4.invert(normalMatrix, modelViewMatrix);
@@ -385,8 +364,6 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
     
     initScene(gl, shaderInfo, shape, texture);
 
-    let squareRotation = 0.0;
-    let translation = [0.0, 0.0];
     let deltaTime = 0;
 
     let then = 0;
@@ -396,24 +373,7 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
         deltaTime = now - then;
         then = now;
 
-        if (keyPressed("ArrowUp") && !keyPressed("ArrowDown")) {
-            translation[1] += 0.1;
-        }
-
-        if (keyPressed("ArrowDown") && !keyPressed("ArrowUp")) {
-            translation[1] -= 0.1;
-        }
-
-        if (keyPressed("ArrowLeft") && !keyPressed("ArrowRight")) {
-            translation[0] -= 0.1;
-        }
-
-        if (keyPressed("ArrowRight") && !keyPressed("ArrowLeft")) {
-            translation[0] += 0.1;
-        }
-
-        drawScene(gl, shaderInfo, squareRotation, translation, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.floor);
-        squareRotation += deltaTime;
+        drawScene(gl, shaderInfo, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.floor);
 
         requestAnimationFrame(render);
     }
