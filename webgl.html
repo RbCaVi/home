@@ -131,6 +131,36 @@ function bindTexture(gl, unit, texture) {
     gl.bindTexture(gl.TEXTURE_2D, texture);
 }
 
+function setMatrix(gl, shaderInfo, modelMatrix, viewMatrix) {
+    const modelViewMatrix = mat4.create();
+    mat4.multiply(modelViewMatrix, viewMatrix, modelMatrix);
+    
+    const normalMatrix = mat4.create();
+    mat4.invert(normalMatrix, modelViewMatrix);
+    mat4.transpose(normalMatrix, normalMatrix);
+
+    // Set the shader uniforms
+    gl.uniformMatrix4fv(
+        shaderInfo.uniforms.uModelViewMatrix,
+        false,
+        modelViewMatrix,
+    );
+
+    gl.uniformMatrix4fv(
+        shaderInfo.uniforms.uNormalMatrix,
+        false,
+        normalMatrix,
+    );
+}
+
+function drawShape(gl, shapeidxs) {
+    const vertexCount = shapeidxs[1];
+    const type = gl.UNSIGNED_SHORT;
+    const offset = shapeidxs[0] * 2;
+    gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+    //printGlError(gl);
+}
+
 function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2, pos) {
     // clear the canvas
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -158,65 +188,13 @@ function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2, pos) {
         pos,
     );
 
-    {
-        const modelViewMatrix = mat4.create();
-        mat4.multiply(modelViewMatrix, viewMatrix, modelMatrix);
-        
-        const normalMatrix = mat4.create();
-        mat4.invert(normalMatrix, modelViewMatrix);
-        mat4.transpose(normalMatrix, normalMatrix);
+    setMatrix(gl, shaderInfo, modelMatrix, viewMatrix);
 
-        // Set the shader uniforms
-        gl.uniformMatrix4fv(
-            shaderInfo.uniforms.uModelViewMatrix,
-            false,
-            modelViewMatrix,
-        );
+    drawShape(gl, shapeidxs);
 
-        gl.uniformMatrix4fv(
-            shaderInfo.uniforms.uNormalMatrix,
-            false,
-            normalMatrix,
-        );
-    }
+    setMatrix(gl, shaderInfo, mat4.create(), viewMatrix);
 
-    {
-        const vertexCount = shapeidxs[1];
-        const type = gl.UNSIGNED_SHORT;
-        const offset = shapeidxs[0] * 2;
-        gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
-        //printGlError(gl);
-    }
-    
-    {
-        modelViewMatrix = mat4.create();
-        mat4.multiply(modelViewMatrix, viewMatrix, mat4.create());
-
-        normalMatrix = mat4.create();
-        mat4.invert(normalMatrix, modelViewMatrix);
-        mat4.transpose(normalMatrix, normalMatrix);
-
-        // Set the shader uniforms
-        gl.uniformMatrix4fv(
-            shaderInfo.uniforms.uModelViewMatrix,
-            false,
-            modelViewMatrix,
-        );
-
-        gl.uniformMatrix4fv(
-            shaderInfo.uniforms.uNormalMatrix,
-            false,
-            normalMatrix,
-        );
-    }
-
-    {
-        const vertexCount = shapeidxs2[1];
-        const type = gl.UNSIGNED_SHORT;
-        const offset = shapeidxs2[0] * 2;
-        gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
-        //printGlError(gl);
-    }
+    drawShape(gl, shapeidxs2);
 }
 
 /*function printGlError(gl) {
