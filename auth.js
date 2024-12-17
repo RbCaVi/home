@@ -1,5 +1,5 @@
 function hashcreds(user, pass) {
-  const chash = hash(user + hash(pass)); // "use the username as a salt"
+  const chash = oldhash(user + oldhash(pass)); // "use the username as a salt"
   return {username: user, passhash: chash}
 }
 
