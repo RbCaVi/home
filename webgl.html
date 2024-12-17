@@ -82,7 +82,7 @@ function initIndexBuffer(gl, idxs) {
   return indexBuffer;
 }
 
-function initScene(gl, shaderInfo, buffers, indexBuffer, texture) {
+function initScene(gl, shaderInfo, shape, texture) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
     gl.clearDepth(1.0); // Clear everything
     gl.enable(gl.DEPTH_TEST); // Enable depth testing
@@ -104,6 +104,9 @@ function initScene(gl, shaderInfo, buffers, indexBuffer, texture) {
     // note: glMatrix always has the first argument
     // as the destination to receive the result.
     mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
+    
+    const buffers = initBuffers(gl, shape.attributes);
+    const indexBuffer = initIndexBuffer(gl, shape.indices);
 
     setAttributeLocations(gl, buffers, shaderInfo);
 
@@ -416,7 +419,7 @@ function main(cube, cube2, image) {
     
     const shape = mergeShapes({cube, cube2});
     
-    initScene(gl, shaderInfo, initBuffers(gl, shape.attributes), initIndexBuffer(gl, shape.indices), texture);
+    initScene(gl, shaderInfo, shape, texture);
 
     let squareRotation = 0.0;
     let translation = [0.0, 0.0];
