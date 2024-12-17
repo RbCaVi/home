@@ -250,7 +250,7 @@ function loadTexture(gl, image) {
         0, 0, 0, 255,      255, 0, 255, 255,  0, 0, 0, 255,      255, 0, 255, 255,
         255, 0, 255, 255,  0, 0, 0, 255,      255, 0, 255, 255,  0, 0, 0, 255,
         0, 0, 0, 255,      255, 0, 255, 255,  0, 0, 0, 255,      255, 0, 255, 255,
-    ]);
+    ]); // 4x4 checkered magenta / black
     gl.texImage2D(
         gl.TEXTURE_2D,
         level,
@@ -352,7 +352,7 @@ function mergeShapes(shapesin) {
     return {indices, attributes, shapes};
 }
 
-function main(cube, cube2, image) {
+function main(cube, cylinder, image) {
     const canvas = document.querySelector("#canvas");
     const gl = canvas.getContext("webgl");
 
@@ -418,7 +418,7 @@ function main(cube, cube2, image) {
     // Load texture
     const texture = loadTexture(gl, image);
     
-    const shape = mergeShapes({cube, cube2});
+    const shape = mergeShapes({cube, cylinder});
     
     initScene(gl, shaderInfo, shape, texture);
 
@@ -449,7 +449,7 @@ function main(cube, cube2, image) {
             translation[0] += 0.1;
         }
 
-        drawScene(gl, shaderInfo, squareRotation, translation, shape.shapes[keyPressed("Space") ? "cube" : "cube2"]);
+        drawScene(gl, shaderInfo, squareRotation, translation, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"]);
         squareRotation += deltaTime;
 
         requestAnimationFrame(render);
@@ -521,10 +521,10 @@ const glmatload = new Promise(res => document.querySelector("#gl-matrix").addEve
 
 const modelload = fetch("cube.obj").then(res => res.text()).then(parseobj);
 
-const modelload2 = fetch("cube2.obj").then(res => res.text()).then(parseobj);
+const modelload2 = fetch("cylinder.obj").then(res => res.text()).then(parseobj);
 
 const imload = loadImage("grabbyhand.png");
 
-Promise.all([glmatload, modelload, modelload2, imload]).then(([, cube, cube2, image]) => main(cube, cube2, image));
+Promise.all([glmatload, modelload, modelload2, imload]).then(([, cube, cylinder, image]) => main(cube, cylinder, image));
 </script>
 </html>
