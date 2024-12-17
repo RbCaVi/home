@@ -368,18 +368,6 @@ function totris(shape) {
     return tris;
 }
 
-// returns a normal of the triangle (not normalized)
-function getanormal(tri) {
-    const [p1, p2, p3] = tri;
-    const u = vec3.create();
-    const v = vec3.create();
-    const n = vec3.create();
-    vec3.sub(u, p2, p1);
-    vec3.sub(v, p3, p1);
-    vec3.cross(n, u, v);
-    return n;
-}
-
 function main(cube, cylinder, image, vertSource, fragSource, floor) {
     const canvas = document.querySelector("#canvas");
     const gl = canvas.getContext("webgl");
@@ -449,7 +437,15 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
         if (keyPressed("KeyJ")) {
             console.log("tris:");
             for (const tri of geometry) {
-                console.log(tri, getanormal(tri));
+                const [p1, p2, p3] = tri;
+                const u = vec3.create();
+                const v = vec3.create();
+                const n = vec3.create();
+                vec3.sub(u, p2, p1);
+                vec3.sub(v, p3, p1);
+                vec3.cross(n, u, v);
+                console.log(tri, n);
+                const d = vec3.create();
             }
         }
 
