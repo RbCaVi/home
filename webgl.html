@@ -355,6 +355,31 @@ function mergeShapes(shapesin) {
     return {indices, attributes, shapes};
 }
 
+function totris(shape) {
+    const {indices, attributes: {aVertexPosition: positions}} = shape;
+    const tris = [];
+    for (let i = 0; i < indices.length; i += 3) {
+        tris.push([
+            vec3.fromValues(...positions[indices[i]]),
+            vec3.fromValues(...positions[indices[i + 1]]),
+            vec3.fromValues(...positions[indices[i + 2]])
+        ]);
+    }
+    return tris;
+}
+
+// returns a normal of the triangle (not normalized)
+function getanormal(tri) {
+    const [p1, p2, p3] = tri;
+    const u = vec3.create();
+    const v = vec3.create();
+    const n = vec3.create();
+    vec3.sub(u, p2, p1);
+    vec3.sub(v, p3, p1);
+    vec3.cross(n, u, v);
+    return n;
+}
+
 function main(cube, cylinder, image, vertSource, fragSource, floor) {
     const canvas = document.querySelector("#canvas");
     const gl = canvas.getContext("webgl");
@@ -385,6 +410,8 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
     let then = 0;
     
     let pos = [0.0, 0.0, 0.0];
+    
+    const geometry = totris(floor);
 
     function render(now) {
         now *= 0.001; // convert to seconds
@@ -414,6 +441,16 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
 
         if (keyPressed("Space") && !keyPressed("Backspace")) {
             vel[2] = -0.1;
+        }
+        
+        vel.map((v, i) => pos[i] += v);
+        
+
+        if (keyPressed("KeyJ")) {
+            console.log("tris:");
+            for (const tri of geometry) {
+                console.log(tri, getanormal(tri));
+            }
         }
 
         drawScene(gl, shaderInfo, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.floor, pos);
