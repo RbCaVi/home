@@ -400,6 +400,8 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
     let pos = vec3.create();
     
     const geometry = totris(floor);
+    
+    let yv = 0;
 
     function render(now) {
         now *= 0.001; // convert to seconds
@@ -408,11 +410,11 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
 
         let vel = vec3.create();
         if (keyPressed("ArrowUp") && !keyPressed("ArrowDown")) {
-            vel[1] = +0.1;
+            vel[2] = +0.1;
         }
 
         if (keyPressed("ArrowDown") && !keyPressed("ArrowUp")) {
-            vel[1] = -0.1;
+            vel[2] = -0.1;
         }
 
         if (keyPressed("ArrowLeft") && !keyPressed("ArrowRight")) {
@@ -423,43 +425,46 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
             vel[0] = +0.1;
         }
 
-        if (keyPressed("Backspace") && !keyPressed("Space")) {
-            vel[2] = +0.1;
+        if (keyPressed("Space")) {
+            yv = +0.1;
         }
-
-        if (keyPressed("Space") && !keyPressed("Backspace")) {
-            vel[2] = -0.1;
-        }
+        
+        vel[1] = yv;
+        yv -= 0.02;
         
         vec3.add(pos, pos, vel);
         
-
-        if (keyPressed("KeyJ")) {
-            console.log("tris:");
-            for (const tri of geometry) {
-                const [p1, p2, p3] = tri;
-                const u = vec3.create();
-                const v = vec3.create();
-                const w = vec3.fromValues(0, 1, 0);
-                const n = vec3.create();
-                vec3.sub(u, p2, p1);
-                vec3.sub(v, p3, p1);
-                vec3.cross(n, u, v);
-                console.log(tri, n);
-                const d = vec3.create();
-                vec3.sub(d, pos, p1);
-                const vw = vec3.create();
-                const wu = vec3.create();
-                const uv = vec3.create();
-                vec3.cross(vw, v, w);
-                vec3.cross(wu, w, u);
-                vec3.cross(uv, u, v);
-                const factor = vec3.dot(u, vw);
-                const a = vec3.dot(d, vw) / factor;
-                const b = vec3.dot(d, wu) / factor;
-                const c = vec3.dot(d, uv) / factor;
-                console.log(a, b, c);
-                console.log(a > -0.01 && b > -0.01 && a + b < 1.01)
+        for (const tri of geometry) {
+            const [p1, p2, p3] = tri;
+            const u = vec3.create();
+            const v = vec3.create();
+            const w = vec3.fromValues(0, 1, 0);
+            const n = vec3.create();
+            vec3.sub(u, p2, p1);
+            vec3.sub(v, p3, p1);
+            vec3.cross(n, u, v);
+            //console.log(tri, n);
+            const d = vec3.create();
+            vec3.sub(d, pos, p1);
+            const vw = vec3.create();
+            const wu = vec3.create();
+            const uv = vec3.create();
+            vec3.cross(vw, v, w);
+            vec3.cross(wu, w, u);
+            vec3.cross(uv, u, v);
+            const factor = vec3.dot(u, vw);
+            const a = vec3.dot(d, vw) / factor;
+            const b = vec3.dot(d, wu) / factor;
+            const c = vec3.dot(d, uv) / factor;
+            //console.log(a, b, c);
+            //console.log(a > -0.01 && b > -0.01 && a + b < 1.01);
+            if (
+                a > -0.01 && b > -0.01 && a + b < 1.01 &&
+                c < 0.2 && c > -1 && yv <= 0
+            ) {
+                vec3.scale(w, w, c);
+                vec3.sub(pos, pos, w);
+                yv = 0;
             }
         }
 
