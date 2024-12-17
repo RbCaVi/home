@@ -391,28 +391,29 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
         deltaTime = now - then;
         then = now;
 
+        let vel = [0.0, 0.0, 0.0];
         if (keyPressed("ArrowUp") && !keyPressed("ArrowDown")) {
-            pos[1] += 0.1;
+            vel[1] = +0.1;
         }
 
         if (keyPressed("ArrowDown") && !keyPressed("ArrowUp")) {
-            pos[1] -= 0.1;
+            vel[1] = -0.1;
         }
 
         if (keyPressed("ArrowLeft") && !keyPressed("ArrowRight")) {
-            pos[0] -= 0.1;
+            vel[0] = -0.1;
         }
 
         if (keyPressed("ArrowRight") && !keyPressed("ArrowLeft")) {
-            pos[0] += 0.1;
+            vel[0] = +0.1;
         }
 
         if (keyPressed("Backspace") && !keyPressed("Space")) {
-            pos[2] += 0.1;
+            vel[2] = +0.1;
         }
 
         if (keyPressed("Space") && !keyPressed("Backspace")) {
-            pos[2] -= 0.1;
+            vel[2] = -0.1;
         }
 
         drawScene(gl, shaderInfo, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.floor, pos);
