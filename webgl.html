@@ -137,6 +137,7 @@ function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2, pos) {
 
     const viewMatrix = mat4.create();
 
+    // 6 units back from the origin
     mat4.translate(
         viewMatrix,
         viewMatrix,
@@ -157,25 +158,27 @@ function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2, pos) {
         pos,
     );
 
-    const modelViewMatrix = mat4.create();
-    mat4.multiply(modelViewMatrix, viewMatrix, modelMatrix);
-    
-    const normalMatrix = mat4.create();
-    mat4.invert(normalMatrix, modelViewMatrix);
-    mat4.transpose(normalMatrix, normalMatrix);
+    {
+        const modelViewMatrix = mat4.create();
+        mat4.multiply(modelViewMatrix, viewMatrix, modelMatrix);
+        
+        const normalMatrix = mat4.create();
+        mat4.invert(normalMatrix, modelViewMatrix);
+        mat4.transpose(normalMatrix, normalMatrix);
 
-    // Set the shader uniforms
-    gl.uniformMatrix4fv(
-        shaderInfo.uniforms.uModelViewMatrix,
-        false,
-        modelViewMatrix,
-    );
+        // Set the shader uniforms
+        gl.uniformMatrix4fv(
+            shaderInfo.uniforms.uModelViewMatrix,
+            false,
+            modelViewMatrix,
+        );
 
-    gl.uniformMatrix4fv(
-        shaderInfo.uniforms.uNormalMatrix,
-        false,
-        normalMatrix,
-    );
+        gl.uniformMatrix4fv(
+            shaderInfo.uniforms.uNormalMatrix,
+            false,
+            normalMatrix,
+        );
+    }
 
     {
         const vertexCount = shapeidxs[1];
@@ -185,25 +188,27 @@ function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2, pos) {
         //printGlError(gl);
     }
     
-    const modelViewMatrix2 = mat4.create();
-    mat4.multiply(modelViewMatrix2, viewMatrix, mat4.create());
+    {
+        modelViewMatrix = mat4.create();
+        mat4.multiply(modelViewMatrix, viewMatrix, mat4.create());
 
-    const normalMatrix2 = mat4.create();
-    mat4.invert(normalMatrix2, modelViewMatrix2);
-    mat4.transpose(normalMatrix2, normalMatrix2);
+        normalMatrix = mat4.create();
+        mat4.invert(normalMatrix, modelViewMatrix);
+        mat4.transpose(normalMatrix, normalMatrix);
 
-    // Set the shader uniforms
-    gl.uniformMatrix4fv(
-        shaderInfo.uniforms.uModelViewMatrix,
-        false,
-        modelViewMatrix2,
-    );
+        // Set the shader uniforms
+        gl.uniformMatrix4fv(
+            shaderInfo.uniforms.uModelViewMatrix,
+            false,
+            modelViewMatrix,
+        );
 
-    gl.uniformMatrix4fv(
-        shaderInfo.uniforms.uNormalMatrix,
-        false,
-        normalMatrix2,
-    );
+        gl.uniformMatrix4fv(
+            shaderInfo.uniforms.uNormalMatrix,
+            false,
+            normalMatrix,
+        );
+    }
 
     {
         const vertexCount = shapeidxs2[1];
