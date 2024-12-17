@@ -410,11 +410,11 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
 
         let vel = vec3.create();
         if (keyPressed("ArrowUp") && !keyPressed("ArrowDown")) {
-            vel[2] = +0.1;
+            vel[2] = -0.1;
         }
 
         if (keyPressed("ArrowDown") && !keyPressed("ArrowUp")) {
-            vel[2] = -0.1;
+            vel[2] = +0.1;
         }
 
         if (keyPressed("ArrowLeft") && !keyPressed("ArrowRight")) {
