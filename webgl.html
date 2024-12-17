@@ -131,7 +131,7 @@ function bindTexture(gl, unit, texture) {
     gl.bindTexture(gl.TEXTURE_2D, texture);
 }
 
-function drawScene(gl, shaderInfo, squareRotation, translation, shapeidxs) {
+function drawScene(gl, shaderInfo, squareRotation, translation, shapeidxs, shapeidxs2) {
     // Clear the canvas before we start drawing on it.
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -189,6 +189,14 @@ function drawScene(gl, shaderInfo, squareRotation, translation, shapeidxs) {
         const vertexCount = shapeidxs[1];
         const type = gl.UNSIGNED_SHORT;
         const offset = shapeidxs[0] * 2;
+        gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+        //printGlError(gl);
+    }
+
+    {
+        const vertexCount = shapeidxs2[1];
+        const type = gl.UNSIGNED_SHORT;
+        const offset = shapeidxs2[0] * 2;
         gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
         //printGlError(gl);
     }
@@ -352,7 +360,7 @@ function mergeShapes(shapesin) {
     return {indices, attributes, shapes};
 }
 
-function main(cube, cylinder, image, vertSource, fragSource) {
+function main(cube, cylinder, image, vertSource, fragSource, floor) {
     const canvas = document.querySelector("#canvas");
     const gl = canvas.getContext("webgl");
 
@@ -373,7 +381,7 @@ function main(cube, cylinder, image, vertSource, fragSource) {
     // Load texture
     const texture = loadTexture(gl, image);
     
-    const shape = mergeShapes({cube, cylinder});
+    const shape = mergeShapes({cube, cylinder, floor});
     
     initScene(gl, shaderInfo, shape, texture);
 
@@ -404,7 +412,7 @@ function main(cube, cylinder, image, vertSource, fragSource) {
             translation[0] += 0.1;
         }
 
-        drawScene(gl, shaderInfo, squareRotation, translation, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"]);
+        drawScene(gl, shaderInfo, squareRotation, translation, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.floor);
         squareRotation += deltaTime;
 
         requestAnimationFrame(render);
@@ -478,12 +486,14 @@ const modelload = fetch("cube.obj").then(res => res.text()).then(parseobj);
 
 const modelload2 = fetch("cylinder.obj").then(res => res.text()).then(parseobj);
 
+const modelload3 = fetch("floor.obj").then(res => res.text()).then(parseobj);
+
 const vertload = fetch("shader.vert").then(res => res.text());
 
 const fragload = fetch("shader.frag").then(res => res.text());
 
 const imload = loadImage("grabbyhand.png");
 
-Promise.all([glmatload, modelload, modelload2, imload, vertload, fragload]).then(([, cube, cylinder, image, vertSource, fragSource]) => main(cube, cylinder, image, vertSource, fragSource));
+Promise.all([glmatload, modelload, modelload2, imload, vertload, fragload, modelload3]).then(([, cube, cylinder, image, vertSource, fragSource, floor]) => main(cube, cylinder, image, vertSource, fragSource, floor));
 </script>
 </html>
