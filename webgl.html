@@ -132,33 +132,34 @@ function bindTexture(gl, unit, texture) {
 }
 
 function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2, pos) {
-    // Clear the canvas before we start drawing on it.
+    // clear the canvas
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // Set the drawing position to the "identity" point, which is
-    // the center of the scene.
-    const modelViewMatrix = mat4.create();
+    const viewMatrix = mat4.create();
 
-    // Now move the drawing position a bit to where we want to
-    // start drawing the square.
     mat4.translate(
-        modelViewMatrix, // destination matrix
-        modelViewMatrix, // matrix to translate
+        viewMatrix,
+        viewMatrix,
         [0.0, 0.0, -6.0],
-    ); // amount to translate
+    );
+    
+    const modelMatrix = mat4.create();
     
     mat4.translate( // the model should have the origin at the bottom, but it's currently in the center ("temporary" fix)
-        modelViewMatrix, // destination matrix
-        modelViewMatrix, // matrix to translate
+        modelMatrix,
+        modelMatrix,
         [0.0, 1.0, 0.0],
-    ); // amount to translate
+    );
     
     mat4.translate(
-        modelViewMatrix, // destination matrix
-        modelViewMatrix, // matrix to translate
+        modelMatrix,
+        modelMatrix,
         pos,
-    ); // amount to translate
+    );
 
+    const modelViewMatrix = mat4.create();
+    mat4.multiply(modelViewMatrix, viewMatrix, modelMatrix);
+    
     const normalMatrix = mat4.create();
     mat4.invert(normalMatrix, modelViewMatrix);
     mat4.transpose(normalMatrix, normalMatrix);
@@ -183,18 +184,9 @@ function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2, pos) {
         gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
         //printGlError(gl);
     }
-
-    // Set the drawing position to the "identity" point, which is
-    // the center of the scene.
+    
     const modelViewMatrix2 = mat4.create();
-
-    // Now move the drawing position a bit to where we want to
-    // start drawing the square.
-    mat4.translate(
-        modelViewMatrix2, // destination matrix
-        modelViewMatrix2, // matrix to translate
-        [0.0, 0.0, -6.0],
-    ); // amount to translate
+    mat4.multiply(modelViewMatrix2, viewMatrix, mat4.create());
 
     const normalMatrix2 = mat4.create();
     mat4.invert(normalMatrix2, modelViewMatrix2);
