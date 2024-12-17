@@ -171,7 +171,20 @@ function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2, pos) {
     mat4.translate(
         viewMatrix,
         viewMatrix,
-        [0.0, 0.0, -6.0],
+        [0.0, 0.0, -10.0],
+    );
+
+    mat4.rotate(
+        viewMatrix,
+        viewMatrix,
+        0.5,
+        [1.0, 0.0, 0.0]
+    );
+    
+    mat4.translate(
+        viewMatrix,
+        viewMatrix,
+        [-pos[0], -pos[1], -pos[2]],
     );
     
     const modelMatrix = mat4.create();
