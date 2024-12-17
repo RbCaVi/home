@@ -152,6 +152,12 @@ function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2, pos) {
         modelViewMatrix, // matrix to translate
         [0.0, 1.0, 0.0],
     ); // amount to translate
+    
+    mat4.translate(
+        modelViewMatrix, // destination matrix
+        modelViewMatrix, // matrix to translate
+        pos,
+    ); // amount to translate
 
     const normalMatrix = mat4.create();
     mat4.invert(normalMatrix, modelViewMatrix);
@@ -177,6 +183,35 @@ function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2, pos) {
         gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
         //printGlError(gl);
     }
+
+    // Set the drawing position to the "identity" point, which is
+    // the center of the scene.
+    const modelViewMatrix2 = mat4.create();
+
+    // Now move the drawing position a bit to where we want to
+    // start drawing the square.
+    mat4.translate(
+        modelViewMatrix2, // destination matrix
+        modelViewMatrix2, // matrix to translate
+        [0.0, 0.0, -6.0],
+    ); // amount to translate
+
+    const normalMatrix2 = mat4.create();
+    mat4.invert(normalMatrix2, modelViewMatrix2);
+    mat4.transpose(normalMatrix2, normalMatrix2);
+
+    // Set the shader uniforms
+    gl.uniformMatrix4fv(
+        shaderInfo.uniforms.uModelViewMatrix,
+        false,
+        modelViewMatrix2,
+    );
+
+    gl.uniformMatrix4fv(
+        shaderInfo.uniforms.uNormalMatrix,
+        false,
+        normalMatrix2,
+    );
 
     {
         const vertexCount = shapeidxs2[1];
@@ -380,6 +415,30 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
         now *= 0.001; // convert to seconds
         deltaTime = now - then;
         then = now;
+
+        if (keyPressed("ArrowUp") && !keyPressed("ArrowDown")) {
+            pos[1] += 0.1;
+        }
+
+        if (keyPressed("ArrowDown") && !keyPressed("ArrowUp")) {
+            pos[1] -= 0.1;
+        }
+
+        if (keyPressed("ArrowLeft") && !keyPressed("ArrowRight")) {
+            pos[0] -= 0.1;
+        }
+
+        if (keyPressed("ArrowRight") && !keyPressed("ArrowLeft")) {
+            pos[0] += 0.1;
+        }
+
+        if (keyPressed("Backspace") && !keyPressed("Space")) {
+            pos[2] += 0.1;
+        }
+
+        if (keyPressed("Space") && !keyPressed("Backspace")) {
+            pos[2] -= 0.1;
+        }
 
         drawScene(gl, shaderInfo, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.floor, pos);
 
