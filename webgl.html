@@ -571,9 +571,9 @@ function main(models, image, vertSource, fragSource) {
             //console.log(a > -0.01 && b > -0.01 && a + b < 1.01);
             if (
                 a > -0.01 && b > -0.01 && a + b < 1.01 &&
-                c < 1 && c > 0 && yv >= 0
+                c < 1 && c > 0.01 && yv >= 0
             ) {
-                vec3.scale(w, w, c);
+                vec3.scale(w, w, c - 0.01); // - 0.01 to stop z fighting on flat ceilings
                 vec3.sub(pos, pos, w);
                 yv = 0;
             }
