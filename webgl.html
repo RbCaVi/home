@@ -424,6 +424,8 @@ function main(models, image, vertSource, fragSource) {
     const walltris = worldtris.filter(tri => classifyTri(tri) == 1);
     
     const ceiltris = worldtris.filter(tri => classifyTri(tri) == 2);
+
+    let angle = 0;
     
     let yv = 0;
 
@@ -431,8 +433,6 @@ function main(models, image, vertSource, fragSource) {
         now *= 0.001; // convert to seconds
         deltaTime = now - then;
         then = now;
-
-        const angle = now;
 
         let vel = vec3.create();
         if (keyPressed("ArrowUp") && !keyPressed("ArrowDown")) {
@@ -453,6 +453,14 @@ function main(models, image, vertSource, fragSource) {
         if (keyPressed("ArrowRight") && !keyPressed("ArrowLeft")) {
             vel[0] = +0.1 * Math.cos(angle);
             vel[2] = +0.1 * Math.sin(angle);
+        }
+
+        if (keyPressed("KeyQ") && !keyPressed("KeyE")) {
+            angle += 0.05;
+        }
+
+        if (keyPressed("KeyE") && !keyPressed("KeyQ")) {
+            angle -= 0.05;
         }
 
         if (keyPressed("Space")) {
