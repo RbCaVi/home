@@ -429,6 +429,9 @@ function main(models, image, vertSource, fragSource) {
     
     let yv = 0;
 
+    let gravity = 0.02; //ooooo gravity
+	let drag = 0.9999; //no idea if this is fitting?
+
     function render(now) {
         now *= 0.001; // convert to seconds
         deltaTime = now - then;
@@ -468,7 +471,7 @@ function main(models, image, vertSource, fragSource) {
         }
         
         vel[1] = yv;
-        yv -= 0.02;
+        yv -= gravity;
         
         vec3.add(pos, pos, vel);
         
