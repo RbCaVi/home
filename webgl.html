@@ -161,7 +161,7 @@ function drawShape(gl, shapeidxs) {
     //printGlError(gl);
 }
 
-function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos) {
+function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation) {
     // clear the canvas
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -179,6 +179,13 @@ function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos) {
         viewMatrix,
         0.5,
         [1.0, 0.0, 0.0]
+    );
+
+    mat4.rotate(
+        viewMatrix,
+        viewMatrix,
+        rotation,
+        [0.0, 1.0, 0.0]
     );
     
     mat4.translate(
@@ -425,21 +432,27 @@ function main(models, image, vertSource, fragSource) {
         deltaTime = now - then;
         then = now;
 
+        const angle = now;
+
         let vel = vec3.create();
         if (keyPressed("ArrowUp") && !keyPressed("ArrowDown")) {
-            vel[2] = -0.1;
+            vel[0] = +0.1 * Math.sin(angle);
+            vel[2] = -0.1 * Math.cos(angle);
         }
 
         if (keyPressed("ArrowDown") && !keyPressed("ArrowUp")) {
-            vel[2] = +0.1;
+            vel[0] = -0.1 * Math.sin(angle);
+            vel[2] = +0.1 * Math.cos(angle);
         }
 
         if (keyPressed("ArrowLeft") && !keyPressed("ArrowRight")) {
-            vel[0] = -0.1;
+            vel[0] = -0.1 * Math.cos(angle);
+            vel[2] = -0.1 * Math.sin(angle);
         }
 
         if (keyPressed("ArrowRight") && !keyPressed("ArrowLeft")) {
-            vel[0] = +0.1;
+            vel[0] = +0.1 * Math.cos(angle);
+            vel[2] = +0.1 * Math.sin(angle);
         }
 
         if (keyPressed("Space")) {
@@ -558,7 +571,7 @@ function main(models, image, vertSource, fragSource) {
             }
         }
 
-        drawScene(gl, shaderInfo, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.world, pos);
+        drawScene(gl, shaderInfo, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.world, pos, angle);
 
         requestAnimationFrame(render);
     }
