@@ -481,6 +481,40 @@ function main(models, image, vertSource, fragSource) {
                 yv = 0;
             }
         }
+        
+        for (const tri of walltris) {
+            const [p1, p2, p3] = tri;
+            const u = vec3.create();
+            const v = vec3.create();
+            const n = vec3.create();
+            vec3.sub(u, p2, p1);
+            vec3.sub(v, p3, p1);
+            vec3.cross(n, u, v);
+            const w = vec3.fromValues(n[0], n[1], 0);
+            vec3.normalize(w, w);
+            //console.log(tri, n);
+            const d = vec3.create();
+            vec3.sub(d, pos, p1);
+            const vw = vec3.create();
+            const wu = vec3.create();
+            const uv = vec3.create();
+            vec3.cross(vw, v, w);
+            vec3.cross(wu, w, u);
+            vec3.cross(uv, u, v);
+            const factor = vec3.dot(u, vw);
+            const a = vec3.dot(d, vw) / factor;
+            const b = vec3.dot(d, wu) / factor;
+            const c = vec3.dot(d, uv) / factor;
+            //console.log(a, b, c);
+            //console.log(a > -0.01 && b > -0.01 && a + b < 1.01);
+            if (
+                a > -0.01 && b > -0.01 && a + b < 1.01 &&
+                c < 1 && c > -1 && vec3.dot(vel, w) <= 0
+            ) {
+                vec3.scale(w, w, c - 1);
+                vec3.sub(pos, pos, w);
+            }
+        }
 
         drawScene(gl, shaderInfo, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.floor, shape.shapes.wall, pos);
 
