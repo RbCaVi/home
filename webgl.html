@@ -381,7 +381,7 @@ function totris(shape) {
     return tris;
 }
 
-function main(cube, cylinder, image, vertSource, fragSource, floor) {
+function main(models, image, vertSource, fragSource) {
     const canvas = document.querySelector("#canvas");
     const gl = canvas.getContext("webgl");
 
@@ -402,7 +402,7 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
     // Load texture
     const texture = loadTexture(gl, image);
     
-    const shape = mergeShapes({cube, cylinder, floor});
+    const shape = mergeShapes(models);
     
     initScene(gl, shaderInfo, shape, texture);
 
@@ -412,7 +412,7 @@ function main(cube, cylinder, image, vertSource, fragSource, floor) {
     
     let pos = vec3.create();
     
-    const geometry = totris(floor);
+    const geometry = totris(models.floor);
     
     let yv = 0;
 
@@ -550,11 +550,18 @@ function parseobj(obj) {
 
 const glmatload = new Promise(res => document.querySelector("#gl-matrix").addEventListener("load", res));
 
-const modelload = fetch("cube.obj").then(res => res.text()).then(parseobj);
+function loadmodels(models) {
+    // models is a list of names
+    return Promise.all(
+        models.map(
+            name => fetch("cube.obj")
+                .then(res => res.text())
+                .then(data => [name, parseobj(data)])
+        )
+    ).then(Object.fromEntries);
+}
 
-const modelload2 = fetch("cylinder.obj").then(res => res.text()).then(parseobj);
-
-const modelload3 = fetch("floor.obj").then(res => res.text()).then(parseobj);
+const modelsload = loadmodels(["cube", "cylinder", "floor"]);
 
 const vertload = fetch("shader.vert").then(res => res.text());
 
@@ -562,6 +569,6 @@ const fragload = fetch("shader.frag").then(res => res.text());
 
 const imload = loadImage("grabbyhand.png");
 
-Promise.all([glmatload, modelload, modelload2, imload, vertload, fragload, modelload3]).then(([, cube, cylinder, image, vertSource, fragSource, floor]) => main(cube, cylinder, image, vertSource, fragSource, floor));
+Promise.all([glmatload, modelsload, imload, vertload, fragload]).then(([, models, image, vertSource, fragSource]) => main(models, image, vertSource, fragSource));
 </script>
 </html>
