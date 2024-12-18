@@ -161,7 +161,7 @@ function drawShape(gl, shapeidxs) {
     //printGlError(gl);
 }
 
-function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2, pos) {
+function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2, shapeidxs3, pos) {
     // clear the canvas
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -202,12 +202,11 @@ function drawScene(gl, shaderInfo, shapeidxs, shapeidxs2, pos) {
     );
 
     setMatrix(gl, shaderInfo, modelMatrix, viewMatrix);
-
     drawShape(gl, shapeidxs);
 
     setMatrix(gl, shaderInfo, mat4.create(), viewMatrix);
-
     drawShape(gl, shapeidxs2);
+    drawShape(gl, shapeidxs3);
 }
 
 /*function printGlError(gl) {
@@ -412,7 +411,9 @@ function main(models, image, vertSource, fragSource) {
     
     let pos = vec3.create();
     
-    const geometry = totris(models.floor);
+    const floortris = totris(models.floor);
+    
+    const walltris = totris(models.wall);
     
     let yv = 0;
 
@@ -447,7 +448,7 @@ function main(models, image, vertSource, fragSource) {
         
         vec3.add(pos, pos, vel);
         
-        for (const tri of geometry) {
+        for (const tri of floortris) {
             const [p1, p2, p3] = tri;
             const u = vec3.create();
             const v = vec3.create();
@@ -481,7 +482,7 @@ function main(models, image, vertSource, fragSource) {
             }
         }
 
-        drawScene(gl, shaderInfo, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.floor, pos);
+        drawScene(gl, shaderInfo, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.floor, shape.shapes.wall, pos);
 
         requestAnimationFrame(render);
     }
@@ -561,7 +562,7 @@ function loadmodels(models) {
     ).then(Object.fromEntries);
 }
 
-const modelsload = loadmodels(["cube", "cylinder", "floor"]);
+const modelsload = loadmodels(["cube", "cylinder", "floor", "wall"]);
 
 const vertload = fetch("shader.vert").then(res => res.text());
 
