@@ -554,7 +554,7 @@ function loadmodels(models) {
     // models is a list of names
     return Promise.all(
         models.map(
-            name => fetch("cube.obj")
+            name => fetch(`${name}.obj`)
                 .then(res => res.text())
                 .then(data => [name, parseobj(data)])
         )
