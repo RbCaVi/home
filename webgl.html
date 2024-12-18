@@ -430,7 +430,7 @@ function main(models, image, vertSource, fragSource) {
     let yv = 0;
 
     let gravity = 0.02; //ooooo gravity
-	let drag = 0.9999; //no idea if this is fitting?
+	let drag = 1; //no idea if this is fitting?
 
     function render(now) {
         now *= 0.001; // convert to seconds
@@ -472,8 +472,12 @@ function main(models, image, vertSource, fragSource) {
         
         vel[1] = yv;
         yv -= gravity;
+
+        vec3.scale(vel,vel,drag); //d r a g
         
         vec3.add(pos, pos, vel);
+
+        
         
         for (const tri of walltris) {
             const [p1, p2, p3] = tri;
