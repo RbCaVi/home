@@ -82,50 +82,6 @@ function initIndexBuffer(gl, idxs) {
   return indexBuffer;
 }
 
-function initScene(gl, shaderInfo, shape, texture) {
-    gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
-    gl.clearDepth(1.0); // Clear everything
-    gl.enable(gl.DEPTH_TEST); // Enable depth testing
-    gl.depthFunc(gl.LEQUAL); // Near things obscure far things
-
-    // Create a perspective matrix, a special matrix that is
-    // used to simulate the distortion of perspective in a camera.
-    // Our field of view is 45 degrees, or pi/4, with a width/height
-    // ratio that matches the display size of the canvas
-    // and we only want to see objects between 0.1 units
-    // and 100 units away from the camera.
-
-    const fieldOfView = Math.PI / 4; // in radians
-    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    const zNear = 0.1;
-    const zFar = 100.0;
-    const projectionMatrix = mat4.create();
-
-    // note: glMatrix always has the first argument
-    // as the destination to receive the result.
-    mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
-
-    const buffers = initBuffers(gl, shape.attributes);
-    const indexBuffer = initIndexBuffer(gl, shape.indices);
-
-    setAttributeLocations(gl, buffers, shaderInfo);
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-
-    bindTexture(gl, 1, texture);
-
-    gl.useProgram(shaderInfo.shader);
-
-    gl.uniform1i(shaderInfo.uniforms.uSampler, 1);
-
-    // Set the projection matrix
-    gl.uniformMatrix4fv(
-        shaderInfo.uniforms.uProjectionMatrix,
-        false,
-        projectionMatrix,
-    );
-}
-
 function bindTexture(gl, unit, texture) {
     gl.activeTexture(gl.TEXTURE0 + unit);
     gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -159,60 +115,6 @@ function drawShape(gl, shapeidxs) {
     const offset = shapeidxs[0] * 2;
     gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
     //printGlError(gl);
-}
-
-function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation) {
-    // clear the canvas
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    const viewMatrix = mat4.create();
-
-    // 6 units back from the origin
-    mat4.translate(
-        viewMatrix,
-        viewMatrix,
-        [0.0, 0.0, -10.0],
-    );
-
-    mat4.rotate(
-        viewMatrix,
-        viewMatrix,
-        0.5,
-        [1.0, 0.0, 0.0]
-    );
-
-    mat4.rotate(
-        viewMatrix,
-        viewMatrix,
-        rotation,
-        [0.0, 1.0, 0.0]
-    );
-    
-    mat4.translate(
-        viewMatrix,
-        viewMatrix,
-        [-pos[0], -pos[1], -pos[2]],
-    );
-    
-    const modelMatrix = mat4.create();
-    
-    mat4.translate( // the model should have the origin at the bottom, but it's currently in the center ("temporary" fix)
-        modelMatrix,
-        modelMatrix,
-        [0.0, 1.0, 0.0],
-    );
-    
-    mat4.translate(
-        modelMatrix,
-        modelMatrix,
-        pos,
-    );
-
-    setMatrix(gl, shaderInfo, modelMatrix, viewMatrix);
-    drawShape(gl, shapeidxs);
-
-    setMatrix(gl, shaderInfo, mat4.create(), viewMatrix);
-    drawShape(gl, worldidxs);
 }
 
 /*function printGlError(gl) {
@@ -384,6 +286,195 @@ function totris(shape) {
         ]);
     }
     return tris;
+}
+
+function compileShader(gl, vertSource, fragSource) {
+    const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vertSource);
+    const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fragSource);
+    const shaderProgram = gl.createProgram();
+
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+        console.log(`Unable to initialize the shader program ): ${gl.getshaderInfoLog(shaderProgram)}`,);
+        return null;
+    }
+
+    return shaderProgram;
+}
+
+function loadShader(gl, type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.log(`An error occurred compiling the shaders ): ${gl.getShaderInfoLog(shader)}`,);
+        gl.deleteShader(shader);
+        return null;
+    }
+
+    return shader;
+}
+
+function parseobj(obj) {
+    const lines = obj.split(/\r?\n/); // ""\r\n" is a newline" ahh code
+
+    function fantris(f) {
+        const tris = [];
+        for (let i = 1; i < f.length - 1; i++) {
+            tris.push([f[0], f[i], f[i + 1]]);
+        }
+        return tris;
+    }
+
+    const verts = lines.map(s => s.match(/^v (-?\d+(?:\.\d+)) (-?\d+(?:\.\d+)) (-?\d+(?:\.\d+))$/)).filter(_ => _).map(([, x, y, z]) => [+x, +y, +z])
+    const normals = lines.map(s => s.match(/^vn (-?\d+(?:\.\d+)) (-?\d+(?:\.\d+)) (-?\d+(?:\.\d+))$/)).filter(_ => _).map(([, x, y, z]) => [+x, +y, +z])
+    const texcoords = lines.map(s => s.match(/^vt (-?\d+(?:\.\d+)) (-?\d+(?:\.\d+))$/)).filter(_ => _).map(([, u, v]) => [+u, +v])
+    const faces = lines.map(s => s.match(/^f((?: \d+\/\d+\/\d+)+)$/)).filter(_ => _).map(([, s]) => s.slice(1).split(/\s+/).map(p => p.match(/^(\d+)\/(\d+)\/(\d+)$/)).map(([, v, vt, vn]) => [+v, +vt, +vn]))
+    const facetris = [].concat(...faces.map(fantris));
+    const faceverts = [].concat(...facetris);
+
+    const vertset = [...new Set(faceverts)];
+    const faceidxs = faceverts.map(v1 => vertset.findIndex(v2 => v1.every((idx, i) => idx == v2[i])));
+
+    const vertdata = vertset.map(([vi, , ]) => verts[vi - 1]);
+    const normaldata = vertset.map(([, , vni]) => normals[vni - 1]);
+    const texcoorddata = vertset.map(([, vti, ]) => texcoords[vti - 1]);
+
+    return {indices: faceidxs, attributes: {aVertexPosition: vertdata, aVertexNormal: normaldata, aTextureCoord: texcoorddata}};
+}
+
+function classifyTri(tri) {
+    // 0 = floor, 1 = wall, 2 = ceiling
+    const [p1, p2, p3] = tri;
+    const u = vec3.create();
+    const v = vec3.create();
+    const n = vec3.create();
+    vec3.sub(u, p2, p1);
+    vec3.sub(v, p3, p1);
+    vec3.cross(n, u, v);
+    vec3.normalize(n, n);
+    if (n[1] > 0.707) { // 45 degrees up
+        return 0;
+    }
+    if (n[1] < -0.707) { // 45 degrees down
+        return 2;
+    }
+    return 1; // somewhere in between
+}
+
+const glmatload = new Promise(res => document.querySelector("#gl-matrix").addEventListener("load", res));
+
+function loadmodels(models) {
+    // models is a list of names
+    return Promise.all(
+        models.map(
+            name => fetch(`${name}.obj`)
+                .then(res => res.text())
+                .then(data => [name, parseobj(data)])
+        )
+    ).then(Object.fromEntries);
+}
+
+function initScene(gl, shaderInfo, shape, texture) {
+    gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
+    gl.clearDepth(1.0); // Clear everything
+    gl.enable(gl.DEPTH_TEST); // Enable depth testing
+    gl.depthFunc(gl.LEQUAL); // Near things obscure far things
+
+    // Create a perspective matrix, a special matrix that is
+    // used to simulate the distortion of perspective in a camera.
+    // Our field of view is 45 degrees, or pi/4, with a width/height
+    // ratio that matches the display size of the canvas
+    // and we only want to see objects between 0.1 units
+    // and 100 units away from the camera.
+
+    const fieldOfView = Math.PI / 4; // in radians
+    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    const zNear = 0.1;
+    const zFar = 100.0;
+    const projectionMatrix = mat4.create();
+
+    // note: glMatrix always has the first argument
+    // as the destination to receive the result.
+    mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
+
+    const buffers = initBuffers(gl, shape.attributes);
+    const indexBuffer = initIndexBuffer(gl, shape.indices);
+
+    setAttributeLocations(gl, buffers, shaderInfo);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+    bindTexture(gl, 1, texture);
+
+    gl.useProgram(shaderInfo.shader);
+
+    gl.uniform1i(shaderInfo.uniforms.uSampler, 1);
+
+    // Set the projection matrix
+    gl.uniformMatrix4fv(
+        shaderInfo.uniforms.uProjectionMatrix,
+        false,
+        projectionMatrix,
+    );
+}
+
+function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation) {
+    // clear the canvas
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    const viewMatrix = mat4.create();
+
+    // 6 units back from the origin
+    mat4.translate(
+        viewMatrix,
+        viewMatrix,
+        [0.0, 0.0, -10.0],
+    );
+
+    mat4.rotate(
+        viewMatrix,
+        viewMatrix,
+        0.5,
+        [1.0, 0.0, 0.0]
+    );
+
+    mat4.rotate(
+        viewMatrix,
+        viewMatrix,
+        rotation,
+        [0.0, 1.0, 0.0]
+    );
+    
+    mat4.translate(
+        viewMatrix,
+        viewMatrix,
+        [-pos[0], -pos[1], -pos[2]],
+    );
+    
+    const modelMatrix = mat4.create();
+    
+    mat4.translate( // the model should have the origin at the bottom, but it's currently in the center ("temporary" fix)
+        modelMatrix,
+        modelMatrix,
+        [0.0, 1.0, 0.0],
+    );
+    
+    mat4.translate(
+        modelMatrix,
+        modelMatrix,
+        pos,
+    );
+
+    setMatrix(gl, shaderInfo, modelMatrix, viewMatrix);
+    drawShape(gl, shapeidxs);
+
+    setMatrix(gl, shaderInfo, mat4.create(), viewMatrix);
+    drawShape(gl, worldidxs);
 }
 
 function main(models, image, vertSource, fragSource) {
@@ -592,97 +683,6 @@ function main(models, image, vertSource, fragSource) {
     }
 
     requestAnimationFrame((now) => {then = now * 0.001; render(now);});
-}
-
-function compileShader(gl, vertSource, fragSource) {
-    const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vertSource);
-    const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fragSource);
-    const shaderProgram = gl.createProgram();
-
-    gl.attachShader(shaderProgram, vertexShader);
-    gl.attachShader(shaderProgram, fragmentShader);
-    gl.linkProgram(shaderProgram);
-
-    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-        console.log(`Unable to initialize the shader program ): ${gl.getshaderInfoLog(shaderProgram)}`,);
-        return null;
-    }
-
-    return shaderProgram;
-}
-
-function loadShader(gl, type, source) {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.log(`An error occurred compiling the shaders ): ${gl.getShaderInfoLog(shader)}`,);
-        gl.deleteShader(shader);
-        return null;
-    }
-
-    return shader;
-}
-
-function parseobj(obj) {
-    const lines = obj.split(/\r?\n/); // ""\r\n" is a newline" ahh code
-
-    function fantris(f) {
-        const tris = [];
-        for (let i = 1; i < f.length - 1; i++) {
-            tris.push([f[0], f[i], f[i + 1]]);
-        }
-        return tris;
-    }
-
-    const verts = lines.map(s => s.match(/^v (-?\d+(?:\.\d+)) (-?\d+(?:\.\d+)) (-?\d+(?:\.\d+))$/)).filter(_ => _).map(([, x, y, z]) => [+x, +y, +z])
-    const normals = lines.map(s => s.match(/^vn (-?\d+(?:\.\d+)) (-?\d+(?:\.\d+)) (-?\d+(?:\.\d+))$/)).filter(_ => _).map(([, x, y, z]) => [+x, +y, +z])
-    const texcoords = lines.map(s => s.match(/^vt (-?\d+(?:\.\d+)) (-?\d+(?:\.\d+))$/)).filter(_ => _).map(([, u, v]) => [+u, +v])
-    const faces = lines.map(s => s.match(/^f((?: \d+\/\d+\/\d+)+)$/)).filter(_ => _).map(([, s]) => s.slice(1).split(/\s+/).map(p => p.match(/^(\d+)\/(\d+)\/(\d+)$/)).map(([, v, vt, vn]) => [+v, +vt, +vn]))
-    const facetris = [].concat(...faces.map(fantris));
-    const faceverts = [].concat(...facetris);
-
-    const vertset = [...new Set(faceverts)];
-    const faceidxs = faceverts.map(v1 => vertset.findIndex(v2 => v1.every((idx, i) => idx == v2[i])));
-
-    const vertdata = vertset.map(([vi, , ]) => verts[vi - 1]);
-    const normaldata = vertset.map(([, , vni]) => normals[vni - 1]);
-    const texcoorddata = vertset.map(([, vti, ]) => texcoords[vti - 1]);
-
-    return {indices: faceidxs, attributes: {aVertexPosition: vertdata, aVertexNormal: normaldata, aTextureCoord: texcoorddata}};
-}
-
-function classifyTri(tri) {
-    // 0 = floor, 1 = wall, 2 = ceiling
-    const [p1, p2, p3] = tri;
-    const u = vec3.create();
-    const v = vec3.create();
-    const n = vec3.create();
-    vec3.sub(u, p2, p1);
-    vec3.sub(v, p3, p1);
-    vec3.cross(n, u, v);
-    vec3.normalize(n, n);
-    if (n[1] > 0.707) { // 45 degrees up
-        return 0;
-    }
-    if (n[1] < -0.707) { // 45 degrees down
-        return 2;
-    }
-    return 1; // somewhere in between
-}
-
-const glmatload = new Promise(res => document.querySelector("#gl-matrix").addEventListener("load", res));
-
-function loadmodels(models) {
-    // models is a list of names
-    return Promise.all(
-        models.map(
-            name => fetch(`${name}.obj`)
-                .then(res => res.text())
-                .then(data => [name, parseobj(data)])
-        )
-    ).then(Object.fromEntries);
 }
 
 const modelsload = loadmodels(["cube", "cylinder", "world"]);
