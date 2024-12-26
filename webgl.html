@@ -379,7 +379,7 @@ function loadmodels(models) {
     ).then(Object.fromEntries);
 }
 
-function initScene(gl, shaderInfo, shape, texture) {
+function initScene(gl, shaderInfo, shape, texture, data) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
     gl.clearDepth(1.0); // Clear everything
     gl.enable(gl.DEPTH_TEST); // Enable depth testing
@@ -402,6 +402,25 @@ function initScene(gl, shaderInfo, shape, texture) {
     // as the destination to receive the result.
     mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
 
+    const viewMatrix = mat4.create();
+
+    // 6 units back from the origin
+    mat4.translate(
+        viewMatrix,
+        viewMatrix,
+        [0.0, 0.0, -10.0],
+    );
+
+    mat4.rotate(
+        viewMatrix,
+        viewMatrix,
+        0.5,
+        [1.0, 0.0, 0.0]
+    );
+    
+    data.projectionMatrix = projectionMatrix;
+    data.viewMatrix = viewMatrix;
+
     const buffers = initBuffers(gl, shape.attributes);
     const indexBuffer = initIndexBuffer(gl, shape.indices);
 
@@ -423,7 +442,7 @@ function initScene(gl, shaderInfo, shape, texture) {
     );
 }
 
-function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation) {
+function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data) {
     // clear the canvas
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -431,26 +450,12 @@ function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation) {
         shaderInfo.uniforms.uHighlighted,
         Math.random() > 0.5,
     );
-
+    
     const viewMatrix = mat4.create();
 
-    // 6 units back from the origin
-    mat4.translate(
-        viewMatrix,
-        viewMatrix,
-        [0.0, 0.0, -10.0],
-    );
-
     mat4.rotate(
         viewMatrix,
-        viewMatrix,
-        0.5,
-        [1.0, 0.0, 0.0]
-    );
-
-    mat4.rotate(
-        viewMatrix,
-        viewMatrix,
+        data.viewMatrix,
         rotation,
         [0.0, 1.0, 0.0]
     );
@@ -514,7 +519,9 @@ function main(models, image, vertSource, fragSource) {
     
     const shape = mergeShapes(models);
     
-    initScene(gl, shaderInfo, shape, texture);
+    const data = {};
+    
+    initScene(gl, shaderInfo, shape, texture, data);
 
     let deltaTime = 0;
 
@@ -534,8 +541,8 @@ function main(models, image, vertSource, fragSource) {
     
     let yv = 0;
 
-    let gravity = 0.02; //ooooo gravity
-	let drag = 1; //no idea if this is fitting?
+    let gravity = 0.02; // ooooo gravity
+	let drag = 1; // no idea if this is fitting?
 
     function render(now) {
         now *= 0.001; // convert to seconds
@@ -696,7 +703,7 @@ function main(models, image, vertSource, fragSource) {
             }
         }
 
-        drawScene(gl, shaderInfo, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.world, pos, angle);
+        drawScene(gl, shaderInfo, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.world, pos, angle, data);
 
         requestAnimationFrame(render);
     }
