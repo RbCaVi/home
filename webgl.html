@@ -367,8 +367,6 @@ function classifyTri(tri) {
     return 1; // somewhere in between
 }
 
-const glmatload = new Promise(res => document.querySelector("#gl-matrix").addEventListener("load", res));
-
 function loadmodels(models) {
     // models is a list of names
     return Promise.all(
@@ -787,6 +785,8 @@ function main(models, image, vertSource, fragSource) {
 
     requestAnimationFrame((now) => {then = now * 0.001; render(now);});
 }
+
+const glmatload = new Promise(res => document.querySelector("#gl-matrix").addEventListener("load", res));
 
 const modelsload = loadmodels(["cube", "cylinder", "world"]);
 
