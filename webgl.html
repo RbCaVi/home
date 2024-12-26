@@ -588,11 +588,11 @@ function main(models, image, vertSource, fragSource) {
     // Load texture
     const texture = loadTexture(gl, image);
     
-    const shape = mergeShapes(models);
+    const shapes = mergeShapes(models);
     
     const data = {};
     
-    initScene(gl, shaderInfo, shape, texture, data);
+    initScene(gl, shaderInfo, shapes, texture, data);
 
     let deltaTime = 0;
 
@@ -778,7 +778,7 @@ function main(models, image, vertSource, fragSource) {
             }
         }
 
-        drawScene(gl, shaderInfo, shape.shapes[keyPressed("KeyL") ? "cube" : "cylinder"], shape.shapes.world, pos, angle, data, vec2.fromValues(mouseX, mouseY), keyPressed("KeyL") ? cubetris : cylindertris);
+        drawScene(gl, shaderInfo, shapes.shapes[keyPressed("KeyL") ? "cube" : "cylinder"], shapes.shapes.world, pos, angle, data, vec2.fromValues(mouseX, mouseY), keyPressed("KeyL") ? cubetris : cylindertris);
 
         requestAnimationFrame(render);
     }
