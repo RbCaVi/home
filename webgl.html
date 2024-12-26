@@ -485,6 +485,15 @@ function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation) {
 function main(models, image, vertSource, fragSource) {
     const canvas = document.querySelector("#canvas");
     const gl = canvas.getContext("webgl");
+    
+    let mouseX, mouseY, hasMouse;
+    canvas.addEventListener("mousemove", (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.offsetX * 2 / rect.width - 1;
+        mouseY = e.offsetY * 2 / rect.height - 1;
+    });
+    canvas.addEventListener("mouseenter", () => hasMouse = true);
+    canvas.addEventListener("mouseleave", () => hasMouse = false);
 
     if (gl === null) {
         console.log("no webgl :(");
@@ -565,11 +574,16 @@ function main(models, image, vertSource, fragSource) {
         if (keyPressed("Space")) {
             yv = +0.1;
         }
+
+        if (keyPressed("KeyJ")) {
+            console.log(mouseX, mouseY, hasMouse);
+            keysPressed["KeyJ"] = false;
+        }
         
         vel[1] = yv;
         yv -= gravity;
 
-        vec3.scale(vel,vel,drag); //d r a g
+        vec3.scale(vel,vel,drag); // d r a g
         
         vec3.add(pos, pos, vel);
 
