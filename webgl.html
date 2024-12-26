@@ -485,7 +485,7 @@ function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data, m,
 
     let collide = false;
     if (true || keyPressed("KeyK")) {
-        console.log("burber");
+        //console.log("burber");
             
         const canvas = document.querySelector("#canvas2");
         const ctx = canvas.getContext("2d");
@@ -502,7 +502,7 @@ function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data, m,
                 continue;
             }
 
-            console.log(p1, p2, p3);
+            //console.log(p1, p2, p3);
             
             const pp1 = vec2.fromValues(p1[0] / p1[3], p1[1] / p1[3]);
             const pp2 = vec2.fromValues(p2[0] / p2[3], p2[1] / p2[3]);
