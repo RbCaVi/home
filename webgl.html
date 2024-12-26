@@ -16,6 +16,7 @@
   <a href="./">BACK HOME</a>
   <h1>webgl thing</h1>
   <canvas id = "canvas" width = 800 height = 600></canvas>
+  <canvas id = "canvas2" width = 800 height = 600></canvas>
 </body>
 <script>
 function toPromise(x) {
@@ -483,8 +484,12 @@ function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data, m,
     );
 
     let collide = false;
-    if (keyPressed("KeyK")) {
+    if (true || keyPressed("KeyK")) {
         console.log("burber");
+            
+        const canvas = document.querySelector("#canvas2");
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         const mvp = getMVP(modelMatrix, viewMatrix, data);
         for (const tri of shapetris) {
             const p1 = vec4.create();
@@ -502,6 +507,13 @@ function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data, m,
             const pp1 = vec2.fromValues(p1[0] / p1[3], p1[1] / p1[3]);
             const pp2 = vec2.fromValues(p2[0] / p2[3], p2[1] / p2[3]);
             const pp3 = vec2.fromValues(p3[0] / p3[3], p3[1] / p3[3]);
+            
+            ctx.beginPath();
+            ctx.moveTo((pp1[0] + 1) * 400, (-pp1[1] + 1) * 300);
+            ctx.lineTo((pp2[0] + 1) * 400, (-pp2[1] + 1) * 300);
+            ctx.lineTo((pp3[0] + 1) * 400, (-pp3[1] + 1) * 300);
+            ctx.closePath();
+            ctx.stroke();
             
             const v1 = vec2.create();
             const v2 = vec2.create();
@@ -530,7 +542,6 @@ function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data, m,
                 break;
             }
         }
-        keysPressed["KeyK"] = false;
     }
 
     gl.uniform1i(
