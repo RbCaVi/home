@@ -110,10 +110,10 @@ function setMatrix(gl, shaderInfo, modelMatrix, viewMatrix) {
     );
 }
 
-function drawShape(gl, shapeidxs) {
-    const vertexCount = shapeidxs.size;
+function drawShape(gl, shape) {
+    const vertexCount = shape.size;
     const type = gl.UNSIGNED_SHORT;
-    const offset = shapeidxs.start * 2;
+    const offset = shape.start * 2;
     gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
     //printGlError(gl);
 }
@@ -268,7 +268,7 @@ function mergeShapes(shapesin) {
     const shapes = {};
     
     for (const [name, {indices: sindices, attributes: sattributes}] of Object.entries(shapesin)) {
-        shapes[name] = {start: indices.length, size: sindices.length};
+        shapes[name] = {start: indices.length, size: sindices.length, tris: totris({indices: sindices, attributes: sattributes})};
         indices.push(...sindices.map(i => i + Object.values(attributes)[0].length));
         Object.entries(sattributes).map(([attr, data]) => attributes[attr].push(...data));
     }
@@ -448,7 +448,7 @@ function initScene(gl, shaderInfo, shape, texture, data) {
     );
 }
 
-function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data, m, shapetris) {
+function drawScene(gl, shaderInfo, shape, world, pos, rotation, data, m) {
     // clear the canvas
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     
@@ -489,7 +489,7 @@ function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data, m,
     //ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const mvp = getMVP(modelMatrix, viewMatrix, data);
-    for (const tri of shapetris) {
+    for (const tri of shape.tris) {
         const p1 = vec4.create();
         const p2 = vec4.create();
         const p3 = vec4.create();
@@ -547,7 +547,7 @@ function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data, m,
     );
     
     setMatrix(gl, shaderInfo, modelMatrix, viewMatrix);
-    drawShape(gl, shapeidxs);
+    drawShape(gl, shape);
 
     gl.uniform1i(
         shaderInfo.uniforms.uHighlighted,
@@ -555,7 +555,7 @@ function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data, m,
     );
 
     setMatrix(gl, shaderInfo, mat4.create(), viewMatrix);
-    drawShape(gl, worldidxs);
+    drawShape(gl, world);
 }
 
 function main(models, image, vertSource, fragSource) {
@@ -600,11 +600,11 @@ function main(models, image, vertSource, fragSource) {
     
     let pos = vec3.create();
 
-    const cubetris = totris(models.cube);
+    const cubetris = shapes.shapes.cube.tris;
 
-    const cylindertris = totris(models.cylinder);
+    const cylindertris = shapes.shapes.cylinder.tris;
 
-    const worldtris = totris(models.world);
+    const worldtris = shapes.shapes.world.tris;
     
     const floortris = worldtris.filter(tri => classifyTri(tri) == 0);
     
@@ -778,7 +778,7 @@ function main(models, image, vertSource, fragSource) {
             }
         }
 
-        drawScene(gl, shaderInfo, shapes.shapes[keyPressed("KeyL") ? "cube" : "cylinder"], shapes.shapes.world, pos, angle, data, vec2.fromValues(mouseX, mouseY), keyPressed("KeyL") ? cubetris : cylindertris);
+        drawScene(gl, shaderInfo, shapes.shapes[keyPressed("KeyL") ? "cube" : "cylinder"], shapes.shapes.world, pos, angle, data, vec2.fromValues(mouseX, mouseY));
 
         requestAnimationFrame(render);
     }
