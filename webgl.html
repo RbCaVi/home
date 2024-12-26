@@ -111,9 +111,9 @@ function setMatrix(gl, shaderInfo, modelMatrix, viewMatrix) {
 }
 
 function drawShape(gl, shapeidxs) {
-    const vertexCount = shapeidxs[1];
+    const vertexCount = shapeidxs.size;
     const type = gl.UNSIGNED_SHORT;
-    const offset = shapeidxs[0] * 2;
+    const offset = shapeidxs.start * 2;
     gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
     //printGlError(gl);
 }
@@ -268,7 +268,7 @@ function mergeShapes(shapesin) {
     const shapes = {};
     
     for (const [name, {indices: sindices, attributes: sattributes}] of Object.entries(shapesin)) {
-        shapes[name] = [indices.length, sindices.length];
+        shapes[name] = {start: indices.length, size: sindices.length};
         indices.push(...sindices.map(i => i + Object.values(attributes)[0].length));
         Object.entries(sattributes).map(([attr, data]) => attributes[attr].push(...data));
     }
