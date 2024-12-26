@@ -668,8 +668,6 @@ function main(models, image, vertSource, fragSource) {
         vec3.scale(vel,vel,drag); // d r a g
         
         vec3.add(pos, pos, vel);
-
-        
         
         for (const tri of walltris) {
             const [p1, p2, p3] = tri;
