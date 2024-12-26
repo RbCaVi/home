@@ -495,9 +495,9 @@ function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data, m,
             const p1 = vec4.create();
             const p2 = vec4.create();
             const p3 = vec4.create();
-            vec4.transformMat4(p1, vec4.fromValues(tri[0][0], tri[0][1], tri[0][2], 0.0), mvp);
-            vec4.transformMat4(p2, vec4.fromValues(tri[1][0], tri[1][1], tri[1][2], 0.0), mvp);
-            vec4.transformMat4(p3, vec4.fromValues(tri[2][0], tri[2][1], tri[2][2], 0.0), mvp);
+            vec4.transformMat4(p1, vec4.fromValues(tri[0][0], tri[0][1], tri[0][2], 1.0), mvp);
+            vec4.transformMat4(p2, vec4.fromValues(tri[1][0], tri[1][1], tri[1][2], 1.0), mvp);
+            vec4.transformMat4(p3, vec4.fromValues(tri[2][0], tri[2][1], tri[2][2], 1.0), mvp);
             if (p1[3] <= 0 || p2[3] <= 0 || p3[3] <= 0) {
                 continue;
             }
@@ -569,7 +569,7 @@ function main(models, image, vertSource, fragSource) {
     canvas.addEventListener("mousemove", (e) => {
         const rect = canvas.getBoundingClientRect();
         mouseX = e.offsetX * 2 / rect.width - 1;
-        mouseY = e.offsetY * 2 / rect.height - 1;
+        mouseY = 1 - e.offsetY * 2 / rect.height;
     });
     canvas.addEventListener("mouseenter", () => hasMouse = true);
     canvas.addEventListener("mouseleave", () => hasMouse = false);
