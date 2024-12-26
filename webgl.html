@@ -554,7 +554,7 @@ function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data, m,
 
     gl.uniform1i(
         shaderInfo.uniforms.uHighlighted,
-        Math.random() > 0.5,
+        false,
     );
 
     setMatrix(gl, shaderInfo, mat4.create(), viewMatrix);
