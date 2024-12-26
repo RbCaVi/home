@@ -379,6 +379,13 @@ function loadmodels(models) {
     ).then(Object.fromEntries);
 }
 
+function getMVP(modelMatrix, viewMatrix, data) {
+    const mvpMatrix = mat4.create();
+    mat4.multiply(mvpMatrix, viewMatrix, modelMatrix);
+    mat4.multiply(mvpMatrix, data.projectionMatrix, mvpMatrix);
+    return mvpMatrix;
+}
+
 function initScene(gl, shaderInfo, shape, texture, data) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
     gl.clearDepth(1.0); // Clear everything
@@ -442,14 +449,9 @@ function initScene(gl, shaderInfo, shape, texture, data) {
     );
 }
 
-function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data) {
+function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data, m, shapetris) {
     // clear the canvas
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    gl.uniform1i(
-        shaderInfo.uniforms.uHighlighted,
-        Math.random() > 0.5,
-    );
     
     const viewMatrix = mat4.create();
 
@@ -480,8 +482,69 @@ function drawScene(gl, shaderInfo, shapeidxs, worldidxs, pos, rotation, data) {
         pos,
     );
 
+    let collide = false;
+    if (keyPressed("KeyK")) {
+        console.log("burber");
+        const mvp = getMVP(modelMatrix, viewMatrix, data);
+        for (const tri of shapetris) {
+            const p1 = vec4.create();
+            const p2 = vec4.create();
+            const p3 = vec4.create();
+            vec4.transformMat4(p1, vec4.fromValues(tri[0][0], tri[0][1], tri[0][2], 0.0), mvp);
+            vec4.transformMat4(p2, vec4.fromValues(tri[1][0], tri[1][1], tri[1][2], 0.0), mvp);
+            vec4.transformMat4(p3, vec4.fromValues(tri[2][0], tri[2][1], tri[2][2], 0.0), mvp);
+            if (p1[3] <= 0 || p2[3] <= 0 || p3[3] <= 0) {
+                continue;
+            }
+
+            console.log(p1, p2, p3);
+            
+            const pp1 = vec2.fromValues(p1[0] / p1[3], p1[1] / p1[3]);
+            const pp2 = vec2.fromValues(p2[0] / p2[3], p2[1] / p2[3]);
+            const pp3 = vec2.fromValues(p3[0] / p3[3], p3[1] / p3[3]);
+            
+            const v1 = vec2.create();
+            const v2 = vec2.create();
+            const v3 = vec2.create();
+            
+            // Compute vectors        
+            vec2.sub(v1, pp3, pp1);
+            vec2.sub(v2, pp2, pp1);
+            vec2.sub(v3, m, pp1);
+
+            // Compute dot products
+            const dot00 = vec2.dot(v1, v1)
+            const dot01 = vec2.dot(v1, v2)
+            const dot02 = vec2.dot(v1, v3)
+            const dot11 = vec2.dot(v2, v2)
+            const dot12 = vec2.dot(v2, v3)
+
+            // Compute barycentric coordinates
+            const invDenom = 1 / (dot00 * dot11 - dot01 * dot01)
+            const u = (dot11 * dot02 - dot01 * dot12) * invDenom
+            const v = (dot00 * dot12 - dot01 * dot02) * invDenom
+
+            // Check if point is in triangle
+            if (u >= 0 && v >= 0 && u + v < 1) {
+                collide = true;
+                break;
+            }
+        }
+        keysPressed["KeyK"] = false;
+    }
+
+    gl.uniform1i(
+        shaderInfo.uniforms.uHighlighted,
+        collide,
+    );
+    
     setMatrix(gl, shaderInfo, modelMatrix, viewMatrix);
     drawShape(gl, shapeidxs);
+
+    gl.uniform1i(
+        shaderInfo.uniforms.uHighlighted,
+        Math.random() > 0.5,
+    );
 
     setMatrix(gl, shaderInfo, mat4.create(), viewMatrix);
     drawShape(gl, worldidxs);
@@ -528,6 +591,10 @@ function main(models, image, vertSource, fragSource) {
     let then = 0;
     
     let pos = vec3.create();
+
+    const cubetris = totris(models.cube);
+
+    const cylindertris = totris(models.cylinder);
 
     const worldtris = totris(models.world);
     
@@ -703,7 +770,7 @@ function main(models, image, vertSource, fragSource) {
             }
         }
 
-        drawScene(gl, shaderInfo, shape.shapes[keyPressed("Space") ? "cube" : "cylinder"], shape.shapes.world, pos, angle, data);
+        drawScene(gl, shaderInfo, shape.shapes[keyPressed("KeyL") ? "cube" : "cylinder"], shape.shapes.world, pos, angle, data, vec2.fromValues(mouseX, mouseY), keyPressed("KeyL") ? cubetris : cylindertris);
 
         requestAnimationFrame(render);
     }
