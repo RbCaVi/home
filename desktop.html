@@ -62,13 +62,13 @@
   <h1>trout</h1>
 </body>
 <script>
-  function makeDraggable(draggable, toMove) {
-    let mouseX, mouseY, dmouseX, dmouseY;
+  function makeDraggable(draggable, update) {
+    let pmouseX, pmouseY;
     
     function startDrag(event) {
       event.preventDefault();
-      mouseX = event.pageX;
-      mouseY = event.pageY;
+      pmouseX = event.pageX;
+      pmouseY = event.pageY;
       document.addEventListener('mouseup', endDrag);
       document.addEventListener('mousemove', dragUpdate);
     }
@@ -80,12 +80,11 @@
     
     function dragUpdate(event) {
       event.preventDefault();
-      dmouseX = mouseX - event.pageX;
-      dmouseY = mouseY - event.pageY;
-      mouseX = event.pageX;
-      mouseY = event.pageY;
-      toMove.style.top = (toMove.offsetTop - dmouseY) + 'px';
-      toMove.style.left = (toMove.offsetLeft - dmouseX) + 'px';
+      const dmouseX = pmouseX - event.pageX;
+      const dmouseY = pmouseY - event.pageY;
+      pmouseX = event.pageX;
+      pmouseY = event.pageY;
+      update(dmouseX, dmouseY);
     }
     
     draggable.addEventListener('mousedown', startDrag);
@@ -101,22 +100,39 @@
     const bar = document.createElement('div');
     bar.classList.add('windowbar');
     container.append(bar);
+    makeDraggable(bar, (dx, dy) => {
+      container.style.top = (container.offsetTop - dy) + 'px';
+      container.style.left = (container.offsetLeft - dx) + 'px';
+    });
     const content = document.createElement('div');
     content.classList.add('windowcontent');
     container.append(content);
     const resizeleft = document.createElement('div');
     resizeleft.classList.add('windowresizeleft');
     container.append(resizeleft);
+    makeDraggable(resizeleft, (dx, dy) => {
+      container.style.left = (container.offsetLeft - dx) + 'px';
+      container.style.width = Math.max(container.offsetWidth + dx, 60) + 'px';
+    });
     const resizeright = document.createElement('div');
     resizeright.classList.add('windowresizeright');
     container.append(resizeright);
+    makeDraggable(resizeright, (dx, dy) => {
+      container.style.width = Math.max(container.offsetWidth - dx, 60) + 'px';
+    });
     const resizetop = document.createElement('div');
     resizetop.classList.add('windowresizetop');
     container.append(resizetop);
+    makeDraggable(resizetop, (dx, dy) => {
+      container.style.top = (container.offsetTop - dy) + 'px';
+      container.style.height = Math.max(container.offsetHeight + dy, 20) + 'px';
+    });
     const resizebottom = document.createElement('div');
     resizebottom.classList.add('windowresizebottom');
     container.append(resizebottom);
-    makeDraggable(bar, container);
+    makeDraggable(resizebottom, (dx, dy) => {
+      container.style.height = Math.max(container.offsetHeight - dy, 20) + 'px';
+    });
     document.body.append(container);
   }
   
