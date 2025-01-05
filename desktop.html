@@ -8,6 +8,19 @@
   .window {
    position: absolute;
    background-color: #ffffff;
+   display: flex;
+   flex-direction: column;
+  }
+  
+  .windowbar {
+   background-color: #777777;
+   height: 20px;
+   flex-shrink: 0;
+  }
+  
+  .windowcontent {
+   background-color: #dddddd;
+   height: 100%;
   }
  </style>
 	<title>winux</title>
@@ -53,8 +66,14 @@
     container.style.left = x + 'px';
     container.style.width = w + 'px';
     container.style.height = h + 'px';
+    const bar = document.createElement('div');
+    bar.classList.add('windowbar');
+    container.append(bar);
+    const content = document.createElement('div');
+    content.classList.add('windowcontent');
+    container.append(content);
+    makeDraggable(bar, container);
     document.body.append(container);
-    makeDraggable(container, container);
   }
   
   spawnWindow();
