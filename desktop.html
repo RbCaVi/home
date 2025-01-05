@@ -46,15 +46,18 @@
     draggable.addEventListener('mousedown', startDrag);
   }
   
-  function spawnWindow({x = 200, y = 200, w = 200, h = 200}) {
+  function spawnWindow({x = 200, y = 200, w = 200, h = 200} = {}) {
     const container = document.createElement('div');
     container.classList.add('window');
-    container.style.top = '200px';
-    container.style.left = '200px';
-    container.style.width = '200px';
-    container.style.height = '200px';
+    container.style.top = y + 'px';
+    container.style.left = x + 'px';
+    container.style.width = w + 'px';
+    container.style.height = h + 'px';
     document.body.append(container);
     makeDraggable(container, container);
   }
+  
+  spawnWindow();
+  spawnWindow({x: 450});
 </script>
 </html>
