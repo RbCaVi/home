@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="cheese.css">
+ <style>
+  .window {
+   position: absolute;
+   background-color: #ffffff;
+  }
+ </style>
+	<title>winux</title>
+</head>
+<body>
+  <a href="./">BACK HOME</a>
+  <h1>trout</h1>
+</body>
+<script>
+  function makeDraggable(draggable, toMove) {
+    let mouseX, mouseY, dmouseX, dmouseY;
+    
+    function startDrag(event) {
+      event.preventDefault();
+      mouseX = event.pageX;
+      mouseY = event.pageY;
+      document.addEventListener('mouseup', endDrag);
+      document.addEventListener('mousemove', dragUpdate);
+    }
+    
+    function endDrag() {
+      document.removeEventListener('mouseup', endDrag);
+      document.removeEventListener('mousemove', dragUpdate);
+    }
+    
+    function dragUpdate(event) {
+      event.preventDefault();
+      dmouseX = mouseX - event.pageX;
+      dmouseY = mouseY - event.pageY;
+      mouseX = event.pageX;
+      mouseY = event.pageY;
+      toMove.style.top = (toMove.offsetTop - dmouseY) + 'px';
+      toMove.style.left = (toMove.offsetLeft - dmouseX) + 'px';
+    }
+    
+    draggable.addEventListener('mousedown', startDrag);
+  }
+  
+  function spawnWindow({x = 200, y = 200, w = 200, h = 200}) {
+    const container = document.createElement('div');
+    container.classList.add('window');
+    container.style.top = '200px';
+    container.style.left = '200px';
+    container.style.width = '200px';
+    container.style.height = '200px';
+    document.body.append(container);
+    makeDraggable(container, container);
+  }
+</script>
+</html>
