@@ -24,6 +24,10 @@ fetch('dialogue-1.txt').then(
  () => converse('greeting', 1)
 );
 
+let skip = false;
+
+document.querySelector('#dialogue').addEventListener('click', () => {skip = true;})
+
 async function converse(key, speed = 1) {
  const segment = window.dialogue[key];
  document.querySelector('#nextbutton').removeEventListener('click', document.querySelector('#nextbutton').f);
@@ -52,13 +56,12 @@ async function showNextButton() {
 }
 
 async function render(screen, speed) {
+ skip = false;
  const {characters, content} = screen;
  document.querySelector('#dialogue').textContent = '';
  await setCharacters(characters);
  await say(content, document.querySelector('#dialogue'), speed);
 }
-
-let skip = false;
 
 function wait(n) {
  if (n <= 0 || isNaN(n)) {
@@ -115,7 +118,7 @@ async function say(content, container, speed) {
       const [target] = content.content[i].content[0].trim().split(' ', 1);
       const text = [content.content[i].content[0].trim().slice(content.content[i].content[0].trim().indexOf(' ') + 1), ...content.content[i].content.slice(1)];
       const c = document.createElement('div');
-      c.addEventListener('click', () => converse(target, speed));
+      c.addEventListener('click', (e) => {e.stopPropagation(); converse(target, speed)});
       options.append(c);
       await say(text, c, 0);
       continue;
@@ -132,7 +135,7 @@ async function say(content, container, speed) {
     const text = [content.content[0].trim().slice(content.content[0].trim().indexOf(' ') + 1), ...content.content.slice(1)];
     const c = document.createElement('span');
     c.classList.add('choice-1');
-    c.addEventListener('click', () => converse(target, speed));
+    c.addEventListener('click', (e) => {e.stopPropagation(); converse(target, speed)});
     container.append(c);
     await say(text, c, speed);
    }
