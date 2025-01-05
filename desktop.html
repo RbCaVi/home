@@ -22,6 +22,38 @@
    background-color: #dddddd;
    height: 100%;
   }
+  
+  .windowresizeleft {
+   position: absolute;
+   left: -10px;
+   background-color: #555555;
+   width: 10px;
+   height: 100%;
+  }
+  
+  .windowresizeright {
+   position: absolute;
+   left: 100%;
+   background-color: #555555;
+   width: 10px;
+   height: 100%;
+  }
+  
+  .windowresizetop {
+   position: absolute;
+   top: -10px;
+   background-color: #555555;
+   width: 100%;
+   height: 10px;
+  }
+  
+  .windowresizebottom {
+   position: absolute;
+   top: 100%;
+   background-color: #555555;
+   width: 100%;
+   height: 10px;
+  }
  </style>
 	<title>winux</title>
 </head>
@@ -72,6 +104,18 @@
     const content = document.createElement('div');
     content.classList.add('windowcontent');
     container.append(content);
+    const resizeleft = document.createElement('div');
+    resizeleft.classList.add('windowresizeleft');
+    container.append(resizeleft);
+    const resizeright = document.createElement('div');
+    resizeright.classList.add('windowresizeright');
+    container.append(resizeright);
+    const resizetop = document.createElement('div');
+    resizetop.classList.add('windowresizetop');
+    container.append(resizetop);
+    const resizebottom = document.createElement('div');
+    resizebottom.classList.add('windowresizebottom');
+    container.append(resizebottom);
     makeDraggable(bar, container);
     document.body.append(container);
   }
