@@ -163,6 +163,10 @@
 
     const close = document.createElement('div');
     close.classList.add('windowclose');
+    close.addEventListener('click', () => {
+      win.closed = true;
+      container.remove();
+    });
     bar.append(close);
 
     //const full = document.createElement('div');
@@ -236,6 +240,7 @@
   }});
   spawnWindow({x: 450, y: 450, init: (win) => {
     const frame = () => {
+      if (win.closed) return;
       const w = win.getsize()[0];
       if (w < 400) {
         win.setw(w + 1);
