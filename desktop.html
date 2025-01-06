@@ -142,21 +142,21 @@
     bar.append(minimize);
     container.append(bar);
     makeDraggable(bar, (dx, dy) => {
-      container.style.top = (container.offsetTop + dy) + 'px';
-      container.style.left = (container.offsetLeft + dx) + 'px';
+      container.style.top = Math.max(container.offsetTop + dy, 0) + 'px';
+      container.style.left = Math.max(container.offsetLeft + dx, 0) + 'px';
     });
     const content = document.createElement('div');
     content.classList.add('windowcontent');
     container.append(content);
     const moveleft = (dx) => {
-      container.style.left = (container.offsetLeft + dx) + 'px';
+      container.style.left = Math.max(container.offsetLeft + dx, 0) + 'px';
       container.style.width = Math.max(container.offsetWidth - dx, 60) + 'px';
     };
     const moveright = (dx) => {
       container.style.width = Math.max(container.offsetWidth + dx, 60) + 'px';
     };
     const movetop = (dy) => {
-      container.style.top = (container.offsetTop + dy) + 'px';
+      container.style.top = Math.max(container.offsetTop + dy, 0) + 'px';
       container.style.height = Math.max(container.offsetHeight - dy, 20) + 'px';
     };
     const movebottom = (dy) => {
