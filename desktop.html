@@ -88,16 +88,22 @@
     let pmouseX, pmouseY;
     
     function startDrag(event) {
+      console.log("touch started");
       event.preventDefault();
       pmouseX = event.pageX;
       pmouseY = event.pageY;
       document.addEventListener('mouseup', endDrag);
+      document.addEventListener('touchup', endDrag);
       document.addEventListener('mousemove', dragUpdate);
+      document.addEventListener('touchmove', dragUpdate);
     }
     
     function endDrag() {
+      console.log("touch ended");
       document.removeEventListener('mouseup', endDrag);
+      document.removeEventListener('touchup', endDrag);
       document.removeEventListener('mousemove', dragUpdate);
+      document.removeEventListener('touchmove', dragUpdate);
     }
     
     function dragUpdate(event) {
@@ -110,6 +116,7 @@
     }
     
     draggable.addEventListener('mousedown', startDrag);
+    draggable.addEventListener('touchdown', startDrag);
   }
   
   function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
