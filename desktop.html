@@ -129,25 +129,32 @@
     container.style.left = x + 'px';
     container.style.width = w + 'px';
     container.style.height = h + 'px';
+
     const bar = document.createElement('div');
     bar.classList.add('windowbar');
+
     const close = document.createElement('div');
     close.classList.add('windowclose');
     bar.append(close);
+
     const full = document.createElement('div');
     full.classList.add('windowfull');
     bar.append(full);
+
     const minimize = document.createElement('div');
     minimize.classList.add('windowminimize');
     bar.append(minimize);
-    container.append(bar);
+
     makeDraggable(bar, (dx, dy) => {
       container.style.top = Math.max(container.offsetTop + dy, 0) + 'px';
       container.style.left = Math.max(container.offsetLeft + dx, 0) + 'px';
     });
+    container.append(bar);
+
     const content = document.createElement('div');
     content.classList.add('windowcontent');
     container.append(content);
+
     const moveleft = (dx) => {
       container.style.left = Math.max(container.offsetLeft + dx, 0) + 'px';
       container.style.width = Math.max(container.offsetWidth - dx, 60) + 'px';
@@ -162,38 +169,47 @@
     const movebottom = (dy) => {
       container.style.height = Math.max(container.offsetHeight + dy, 20) + 'px';
     };
+
     const resizeleft = document.createElement('div');
     resizeleft.classList.add('windowresizeleft');
     makeDraggable(resizeleft, (dx, dy) => {moveleft(dx);});
     container.append(resizeleft);
+
     const resizeright = document.createElement('div');
     resizeright.classList.add('windowresizeright');
     makeDraggable(resizeright, (dx, dy) => {moveright(dx);});
     container.append(resizeright);
+
     const resizetop = document.createElement('div');
     resizetop.classList.add('windowresizetop');
     makeDraggable(resizetop, (dx, dy) => {movetop(dy);});
     container.append(resizetop);
+
     const resizebottom = document.createElement('div');
     resizebottom.classList.add('windowresizebottom');
     makeDraggable(resizebottom, (dx, dy) => {movebottom(dy);});
     container.append(resizebottom);
+
     const resizebottomleft = document.createElement('div');
     resizebottomleft.classList.add('windowresizebottom', 'windowresizeleft');
     makeDraggable(resizebottomleft, (dx, dy) => {movebottom(dy); moveleft(dx);});
     container.append(resizebottomleft);
+
     const resizetopright = document.createElement('div');
     resizetopright.classList.add('windowresizetop', 'windowresizeright');
     makeDraggable(resizetopright, (dx, dy) => {movetop(dy); moveright(dx);});
     container.append(resizetopright);
+
     const resizetopleft = document.createElement('div');
     resizetopleft.classList.add('windowresizetop', 'windowresizeleft');
     makeDraggable(resizetopleft, (dx, dy) => {movetop(dy); moveleft(dx);});
     container.append(resizetopleft);
+
     const resizebottomright = document.createElement('div');
     resizebottomright.classList.add('windowresizebottom', 'windowresizeright');
     makeDraggable(resizebottomright, (dx, dy) => {movebottom(dy); moveright(dx);});
     container.append(resizebottomright);
+
     document.body.append(container);
     if (init != undefined) {
       init({root: content});
