@@ -20,6 +20,7 @@
   
   .windowcontent {
    background-color: #dddddd;
+   color: #000000;
    height: 100%;
   }
   
@@ -111,7 +112,7 @@
     draggable.addEventListener('mousedown', startDrag);
   }
   
-  function spawnWindow({x = 200, y = 200, w = 200, h = 200} = {}) {
+  function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
     const container = document.createElement('div');
     container.classList.add('window');
     container.style.top = y + 'px';
@@ -200,9 +201,15 @@
       container.style.width = Math.max(container.offsetWidth - dx, 60) + 'px';
     });
     document.body.append(container);
+    if (init != undefined) {
+      init({root: content});
+    }
   }
   
   spawnWindow();
   spawnWindow({x: 450});
+  spawnWindow({y: 450, init: ({root}) => {
+    root.append("textytext! (long text text) texttexttext");
+  }});
 </script>
 </html>
