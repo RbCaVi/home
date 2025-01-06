@@ -165,13 +165,13 @@
     close.classList.add('windowclose');
     bar.append(close);
 
-    const full = document.createElement('div');
-    full.classList.add('windowfull');
-    bar.append(full);
+    //const full = document.createElement('div');
+    //full.classList.add('windowfull');
+    //bar.append(full);
 
-    const minimize = document.createElement('div');
-    minimize.classList.add('windowminimize');
-    bar.append(minimize);
+    //const minimize = document.createElement('div');
+    //minimize.classList.add('windowminimize');
+    //bar.append(minimize);
 
     makeDraggable(bar, (dx, dy) => {win.setx(container.offsetLeft + dx); win.sety(container.offsetTop + dy);});
     container.append(bar);
