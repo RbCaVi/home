@@ -130,6 +130,31 @@
     container.style.width = w + 'px';
     container.style.height = h + 'px';
 
+    const getw = () => container.offsetWidth;
+    const geth = () => container.offsetHeight;
+    const getsize = () => [getw(), geth()];
+    const setw = (w) => {container.style.width = Math.max(w, 60) + 'px';};
+    const seth = (h) => {container.style.height = Math.max(h, 20) + 'px';};
+    const resize = ({w, h}) => {
+      if (w != undefined) resizew(w);
+      if (h != undefined) resizeh(h);
+    };
+
+    const getx = () => container.offsetLeft;
+    const gety = () => container.offsetTop;
+    const getpos = () => [getx(), gety()];
+    const setx = (x) => {container.style.left = Math.max(x, 0) + 'px';};
+    const sety = (y) => {container.style.top = Math.max(y, 0) + 'px';};
+    const move = ({x, y}) => {
+      if (x != undefined) movex(x);
+      if (y != undefined) movey(y);
+    };
+
+    const moveleft = (dx) => {setx(container.offsetLeft + dx); setw(container.offsetWidth - dx);};
+    const moveright = (dx) => {setw(container.offsetWidth + dx);};
+    const movetop = (dy) => {sety(container.offsetTop + dy); seth(container.offsetHeight - dy);};
+    const movebottom = (dy) => {seth(container.offsetHeight + dy);};
+
     const bar = document.createElement('div');
     bar.classList.add('windowbar');
 
@@ -145,30 +170,12 @@
     minimize.classList.add('windowminimize');
     bar.append(minimize);
 
-    makeDraggable(bar, (dx, dy) => {
-      container.style.top = Math.max(container.offsetTop + dy, 0) + 'px';
-      container.style.left = Math.max(container.offsetLeft + dx, 0) + 'px';
-    });
+    makeDraggable(bar, (dx, dy) => {setx(container.offsetLeft + dx); sety(container.offsetTop + dy);});
     container.append(bar);
 
     const content = document.createElement('div');
     content.classList.add('windowcontent');
     container.append(content);
-
-    const moveleft = (dx) => {
-      container.style.left = Math.max(container.offsetLeft + dx, 0) + 'px';
-      container.style.width = Math.max(container.offsetWidth - dx, 60) + 'px';
-    };
-    const moveright = (dx) => {
-      container.style.width = Math.max(container.offsetWidth + dx, 60) + 'px';
-    };
-    const movetop = (dy) => {
-      container.style.top = Math.max(container.offsetTop + dy, 0) + 'px';
-      container.style.height = Math.max(container.offsetHeight - dy, 20) + 'px';
-    };
-    const movebottom = (dy) => {
-      container.style.height = Math.max(container.offsetHeight + dy, 20) + 'px';
-    };
 
     const resizeleft = document.createElement('div');
     resizeleft.classList.add('windowresizeleft');
@@ -211,15 +218,35 @@
     container.append(resizebottomright);
 
     document.body.append(container);
+
+    const win = {
+      root: content,
+      getw, geth, getsize,
+      setw, seth, resize,
+      getx, gety, getpos,
+      setx, sety, move,
+      moveleft, moveright, movetop, movebottom
+    };
+
     if (init != undefined) {
-      init({root: content});
+      init(win);
     }
+
+    return win;
   }
   
   spawnWindow();
   spawnWindow({x: 450});
-  spawnWindow({y: 450, init: ({root}) => {
-    root.append("textytext! (long text text) texttexttext");
+  spawnWindow({y: 450, init: (win) => {
+    win.root.append("textytext! (long text text) texttexttext");
+  }});
+  spawnWindow({x: 450, y: 450, init: (win) => {
+    const frame = () => {
+      const w = win.getsize()[0];
+      win.setw(w + 1);
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
   }});
 </script>
 </html>
