@@ -111,8 +111,8 @@
     
     function dragUpdate(event) {
       event.preventDefault();
-      const dmouseX = pmouseX - event.pageX;
-      const dmouseY = pmouseY - event.pageY;
+      const dmouseX = event.pageX - pmouseX;
+      const dmouseY = event.pageY - pmouseY;
       pmouseX = event.pageX;
       pmouseY = event.pageY;
       update(dmouseX, dmouseY);
@@ -142,25 +142,25 @@
     bar.append(minimize);
     container.append(bar);
     makeDraggable(bar, (dx, dy) => {
-      container.style.top = (container.offsetTop - dy) + 'px';
-      container.style.left = (container.offsetLeft - dx) + 'px';
+      container.style.top = (container.offsetTop + dy) + 'px';
+      container.style.left = (container.offsetLeft + dx) + 'px';
     });
     const content = document.createElement('div');
     content.classList.add('windowcontent');
     container.append(content);
     const moveleft = (dx) => {
-      container.style.left = (container.offsetLeft - dx) + 'px';
-      container.style.width = Math.max(container.offsetWidth + dx, 60) + 'px';
-    };
-    const moveright = (dx) => {
+      container.style.left = (container.offsetLeft + dx) + 'px';
       container.style.width = Math.max(container.offsetWidth - dx, 60) + 'px';
     };
+    const moveright = (dx) => {
+      container.style.width = Math.max(container.offsetWidth + dx, 60) + 'px';
+    };
     const movetop = (dy) => {
-      container.style.top = (container.offsetTop - dy) + 'px';
-      container.style.height = Math.max(container.offsetHeight + dy, 20) + 'px';
+      container.style.top = (container.offsetTop + dy) + 'px';
+      container.style.height = Math.max(container.offsetHeight - dy, 20) + 'px';
     };
     const movebottom = (dy) => {
-      container.style.height = Math.max(container.offsetHeight - dy, 20) + 'px';
+      container.style.height = Math.max(container.offsetHeight + dy, 20) + 'px';
     };
     const resizeleft = document.createElement('div');
     resizeleft.classList.add('windowresizeleft');
