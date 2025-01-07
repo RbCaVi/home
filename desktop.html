@@ -85,6 +85,7 @@
   <a href="./">BACK HOME</a>
   <h1>trout</h1>
   <p>warning: it doesn't work on mobile :(</p>
+  <div id = "windowcontainer"></div>
 </body>
 <script>
   function makeDraggable(draggable, update) {
@@ -158,6 +159,15 @@
     win.movetop = (dy) => {win.sety(container.offsetTop + dy); win.seth(container.offsetHeight - dy);};
     win.movebottom = (dy) => {win.seth(container.offsetHeight + dy);};
 
+    win.bringtofront = () => {
+      container.remove();
+      document.querySelector("#windowcontainer").append(container);
+    };
+
+    container.addEventListener('mousedown', () => {
+      win.bringtofront();
+    });
+
     const bar = document.createElement('div');
     bar.classList.add('windowbar');
 
@@ -224,7 +234,7 @@
     makeDraggable(resizebottomright, (dx, dy) => {win.movebottom(dy); win.moveright(dx);});
     container.append(resizebottomright);
 
-    document.body.append(container);
+    document.querySelector("#windowcontainer").append(container);
 
     if (init != undefined) {
       init(win);
