@@ -1,4 +1,5 @@
 function makeDraggable(draggable, update) {
+  // call update with x and y movement while draggable is being dragged
   let pmouseX, pmouseY;
   
   function startDrag(event) {
@@ -34,6 +35,15 @@ function makeDraggable(draggable, update) {
 }
 
 function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
+  // spawn a window with a close button and resize handles at the given position
+  // call init with an object representing the window
+  // it has a bunch of "methods"
+  // getw geth getsize setw seth resize
+  // getx gety getpos setx sety move - x and y are relative to the top left corner of the page (not the screen)
+  // moveleft moveright movetop movebottom
+  // bringtofront
+  // and also closed (whether the window has been closed)
+  // and root (the root element of the window, which you should put stuff in)
   const container = document.createElement('div');
   container.classList.add('window');
 
