@@ -34,6 +34,9 @@ function makeDraggable(draggable, update) {
   draggable.addEventListener('touchdown', startDrag);
 }
 
+const windowlayers = new Map();
+let windowtop = 0;
+
 function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
   // spawn a window with a close button and resize handles at the given position
   // call init with an object representing the window
@@ -78,9 +81,17 @@ function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
   win.movetop = (dy) => {win.sety(container.offsetTop + dy); win.seth(container.offsetHeight - dy);};
   win.movebottom = (dy) => {win.seth(container.offsetHeight + dy);};
 
+  windowtop++;
   win.bringtofront = () => {
-    container.remove();
-    document.querySelector("#windowcontainer").append(container);
+    const currlayer = windowlayers.get(win.root);
+    windowlayers.forEach((v, k) => {
+      if (v > currlayer) {
+        k.parentElement.style.zIndex = v - 1;
+        windowlayers.set(k, v - 1);
+      }
+    });
+    win.root.parentElement.style.zIndex = windowtop;
+    windowlayers.set(win.root, windowtop);
   };
   
   win.close = () => {
@@ -115,6 +126,7 @@ function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
   win.root = document.createElement('div');
   win.root.classList.add('windowcontent');
   container.append(win.root);
+  win.bringtofront();
 
   // eight resize handles for each corner and edge
   const resizeleft = document.createElement('div');
