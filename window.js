@@ -73,8 +73,9 @@ function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
     if (h != undefined) win.seth(h);
   };
 
-  win.move(x, y);
-  win.resize(w, h);
+  console.log("creating window", x, y, w, h);
+  win.move({x, y});
+  win.resize({w, h});
 
   win.moveleft = (dx) => {win.setx(container.offsetLeft + dx); win.setw(container.offsetWidth - dx);};
   win.moveright = (dx) => {win.setw(container.offsetWidth + dx);};
