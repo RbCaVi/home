@@ -42,6 +42,7 @@ function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
   // getx gety getpos setx sety move - x and y are relative to the top left corner of the page (not the screen)
   // moveleft moveright movetop movebottom
   // bringtofront
+  // close
   // and also closed (whether the window has been closed)
   // and root (the root element of the window, which you should put stuff in)
   const container = document.createElement('div');
@@ -83,6 +84,11 @@ function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
     container.remove();
     document.querySelector("#windowcontainer").append(container);
   };
+  
+  win.close = () => {
+    win.closed = true;
+    container.remove();
+  };
 
   container.addEventListener('mousedown', () => {
     win.bringtofront();
@@ -93,10 +99,7 @@ function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
 
   const close = document.createElement('div');
   close.classList.add('windowclose');
-  close.addEventListener('click', () => {
-    win.closed = true;
-    container.remove();
-  });
+  close.addEventListener('click', win.close);
   bar.append(close);
 
   //const full = document.createElement('div');
