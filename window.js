@@ -50,16 +50,6 @@ function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
 
   const win = {closed: false};
 
-  win.getw = () => container.offsetWidth;
-  win.geth = () => container.offsetHeight;
-  win.getsize = () => [win.getw(), win.geth()];
-  win.setw = (w) => {container.style.width = Math.max(w, 20) + 'px';};
-  win.seth = (h) => {container.style.height = Math.max(h, 20) + 'px';};
-  win.resize = ({w, h}) => {
-    if (w != undefined) win.setw(w);
-    if (h != undefined) win.seth(h);
-  };
-
   win.getx = () => container.offsetLeft;
   win.gety = () => container.offsetTop;
   win.getpos = () => [win.getx(), win.gety()];
@@ -70,10 +60,18 @@ function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
     if (y != undefined) win.sety(y);
   };
 
-  win.setx(x);
-  win.sety(y);
-  win.setw(w);
-  win.seth(h);
+  win.getw = () => container.offsetWidth;
+  win.geth = () => container.offsetHeight;
+  win.getsize = () => [win.getw(), win.geth()];
+  win.setw = (w) => {container.style.width = Math.max(w, 20) + 'px';};
+  win.seth = (h) => {container.style.height = Math.max(h, 20) + 'px';};
+  win.resize = ({w, h}) => {
+    if (w != undefined) win.setw(w);
+    if (h != undefined) win.seth(h);
+  };
+
+  win.move(x, y);
+  win.resize(w, h);
 
   win.moveleft = (dx) => {win.setx(container.offsetLeft + dx); win.setw(container.offsetWidth - dx);};
   win.moveright = (dx) => {win.setw(container.offsetWidth + dx);};
@@ -90,13 +88,14 @@ function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
     container.remove();
   };
 
-  container.addEventListener('mousedown', () => {
-    win.bringtofront();
-  });
+  // when a window is touched, bring it to the front
+  container.addEventListener('mousedown', win.bringtofront);
 
+  // the window bar
   const bar = document.createElement('div');
   bar.classList.add('windowbar');
 
+  // close button
   const close = document.createElement('div');
   close.classList.add('windowclose');
   close.addEventListener('click', win.close);
@@ -117,6 +116,7 @@ function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
   win.root.classList.add('windowcontent');
   container.append(win.root);
 
+  // eight resize handles for each corner and edge
   const resizeleft = document.createElement('div');
   resizeleft.classList.add('windowresizeleft');
   makeDraggable(resizeleft, (dx, dy) => {win.moveleft(dx);});
@@ -157,8 +157,10 @@ function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
   makeDraggable(resizebottomright, (dx, dy) => {win.movebottom(dy); win.moveright(dx);});
   container.append(resizebottomright);
 
+  // add the window
   document.querySelector("#windowcontainer").append(container);
 
+  // call init if it happens
   if (init != undefined) {
     init(win);
   }
