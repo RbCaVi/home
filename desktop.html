@@ -31,5 +31,66 @@
     };
     requestAnimationFrame(frame);
   }});
+  spawnWindow({x: 700, y: 200, init: (win) => {
+    const collectjs = document.createElement("script");
+    collectjs.setAttribute("src", "collect.js");
+    win.root.append(collectjs);
+    
+    const p = document.createElement("p");
+    p.textContent = "check it out (it's this again...)";
+    win.root.append(p);
+    
+    const cheesebutton = document.createElement("button");
+    cheesebutton.textContent = "it's the cheese button.";
+    cheesebutton.id = "cheese-button";
+    win.root.append(cheesebutton);
+    cheesebutton.addEventListener("click", () => collect("cheese"));
+    cheesebutton.onclick = () => collect("cheese");
+    
+    const bread1 = document.createElement("p");
+    bread1.classList.add("bread");
+    bread1.setAttribute("oncollect", "");
+    win.root.append(bread1);
+    
+    const cheese = document.createElement("p");
+    cheese.id = "bread";
+    cheese.setAttribute("oncollect", "");
+    win.root.append(cheese);
+    cheese.addEventListener('collect', function (e) {
+      if (e.data == 'cheese') {
+        this.textContent = 'cheese';
+      }
+    });
+    cheese.addEventListener('collect-reset', function (e) {
+      this.textContent = 'no cheese';
+    });
+    
+    const bread2 = document.createElement("p");
+    bread2.classList.add("bread");
+    bread2.setAttribute("oncollect", "");
+    win.root.append(bread2);
+    
+    for (const p of [bread1, bread2]) {
+      p.addEventListener('collect', function (e) {
+        if (e.data == 'bread') {
+          this.textContent = 'bread';
+        }
+      });
+      p.addEventListener('collect-reset', function (e) {
+        this.textContent = '';
+      });
+    }
+    
+    const breadbutton = document.createElement("button");
+    breadbutton.textContent = "add bread";
+    breadbutton.id = "bread-button";
+    win.root.append(breadbutton);
+    breadbutton.addEventListener("click", () => collect("bread"));
+    
+    const otherbutton = document.createElement("button");
+    otherbutton.textContent = "click this button (it appears nowhere else)";
+    otherbutton.addEventListener("click", () => collect("desktop-person"));
+    win.root.append(otherbutton);
+  }});
 </script>
 </html>
