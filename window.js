@@ -42,7 +42,7 @@ function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
   win.getw = () => container.offsetWidth;
   win.geth = () => container.offsetHeight;
   win.getsize = () => [win.getw(), win.geth()];
-  win.setw = (w) => {container.style.width = Math.max(w, 60) + 'px';};
+  win.setw = (w) => {container.style.width = Math.max(w, 20) + 'px';};
   win.seth = (h) => {container.style.height = Math.max(h, 20) + 'px';};
   win.resize = ({w, h}) => {
     if (w != undefined) win.setw(w);
