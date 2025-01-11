@@ -37,7 +37,7 @@ function makeDraggable(draggable, update) {
 const windowlayers = new Map();
 let windowtop = 0;
 
-function spawnWindow({init, x = 200, y = 200, w = 200, h = 200} = {}) {
+function spawnWindow({init, x = Math.random() * (window.innerWidth - 200), y = Math.random() * (window.innerHeight - 200), w = 200, h = 200} = {}) {
   // spawn a window with a close button and resize handles at the given position
   // call init with an object representing the window
   // it has a bunch of "methods"
