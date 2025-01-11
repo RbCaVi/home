@@ -45,18 +45,12 @@
 			this.textContent = 'cheese';
 		}
 	});
-	p1.addEventListener('collect-reset', function (e) {
-		this.textContent = 'no cheese';
-	});
 	const ps = document.querySelectorAll('.bread');
 	for (const p of ps) {
 		p.addEventListener('collect', function (e) {
 			if (e.data == 'bread') {
 				this.textContent = 'bread';
 			}
-		});
-		p.addEventListener('collect-reset', function (e) {
-			this.textContent = '';
 		});
 	}
 </script>

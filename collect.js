@@ -16,11 +16,6 @@ function collect_setup() {
 
 function collect_reset() {
 	collect_init();
-	const things = document.querySelectorAll('[oncollect]');
-	for (const thing of things) {
-		const collect_event = new Event('collect-reset');
-		thing.dispatchEvent(collect_event);
-	}
 	collect_setup();
 }
 

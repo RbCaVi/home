@@ -64,9 +64,6 @@
         this.textContent = 'cheese';
       }
     });
-    cheese.addEventListener('collect-reset', function (e) {
-      this.textContent = 'no cheese';
-    });
     
     const bread2 = document.createElement("p");
     bread2.classList.add("bread");
@@ -78,9 +75,6 @@
         if (e.data == 'bread') {
           this.textContent = 'bread';
         }
-      });
-      p.addEventListener('collect-reset', function (e) {
-        this.textContent = '';
       });
     }
     

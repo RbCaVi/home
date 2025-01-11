@@ -113,7 +113,6 @@
 			check it out! persistent thing (collectible).
 		</p>
 		<button id = "cheese-button" onclick = "collect('cheese')">CLICK THIS BUTTON!</button>
-		<button id = "reset-button" onclick = "collect_reset()">reset</button>
 		<p oncollect class = "bread"></p>
 		<p oncollect id = "cheesed">no cheese</p>
 		<p oncollect class = "bread"></p>
@@ -126,6 +125,7 @@
 			<span id = "me-text"></span> 
 			<!-- the password is my true name -->
 		</div>
+		<button id = "reset-button" onclick = "collect_reset()">RESET (DO NOT PRESS OR YOUR COLLECTIBLES WILL BE RESET) (need to reload to see changes)</button>
 	</div>
 	<!--
 When I started computers, I thought uhhhh……. I forgor (I was like 8).
@@ -162,18 +162,12 @@ subcapitalized
 			this.textContent = 'cheese';
 		}
 	});
-	p1.addEventListener('collect-reset', function (e) {
-		this.textContent = 'no cheese';
-	});
 	const ps = document.querySelectorAll('.bread');
 	for (const p of ps) {
 		p.addEventListener('collect', function (e) {
 			if (e.data == 'bread') {
 				this.textContent = 'bread';
 			}
-		});
-		p.addEventListener('collect-reset', function (e) {
-			this.textContent = '';
 		});
 	}
 	const image = document.querySelector('#me-img');
@@ -185,10 +179,6 @@ subcapitalized
 				document.querySelector('#me').style.display = 'block';
 			} catch (e) {}
 		}
-	});
-	image.addEventListener('collect-reset', function (e) {
-		document.querySelector('#me-text').textContent = '';
-		document.querySelector('#me').style.display = 'none';
 	});
 </script>
 </html>
