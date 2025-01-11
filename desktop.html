@@ -35,11 +35,18 @@
     requestAnimationFrame(frame);
   }
 
-  function buttonWindow(win) {
+  async function buttonWindow(win) {
     if (window.collect == undefined) {
       const collectjs = document.createElement("script");
       collectjs.setAttribute("src", "collect.js");
       win.root.append(collectjs);
+      await new Promise(resolve => {
+        const f = () => {
+          collectjs.removeEventListener("load", f);
+          resolve();
+        };
+        collectjs.addEventListener("load", f);
+      });
     }
     
     const p = document.createElement("p");
