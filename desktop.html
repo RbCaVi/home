@@ -15,12 +15,11 @@
   <div id = "windowcontainer"></div>
 </body>
 <script>
-  spawnWindow();
-  spawnWindow({x: 450});
-  spawnWindow({y: 450, init: (win) => {
+  function textytextWindow(win) {
     win.root.append("textytext! (long text text) texttexttext");
-  }});
-  spawnWindow({x: 450, y: 450, init: (win) => {
+  }
+
+  function expandingWindow(win) {
     const frame = () => {
       if (win.closed) return;
       const w = win.getsize()[0];
@@ -30,8 +29,9 @@
       requestAnimationFrame(frame);
     };
     requestAnimationFrame(frame);
-  }});
-  spawnWindow({x: 700, y: 200, init: (win) => {
+  }
+
+  function buttonWindow(win) {
     const collectjs = document.createElement("script");
     collectjs.setAttribute("src", "collect.js");
     win.root.append(collectjs);
@@ -90,6 +90,14 @@
     otherbutton.textContent = "click this button (it appears nowhere else)";
     otherbutton.addEventListener("click", () => collect("desktop-person"));
     win.root.append(otherbutton);
-  }});
+  }
+
+  spawnWindow();
+  spawnWindow();
+  spawnWindow();
+  spawnWindow();
+  spawnWindow({init: textytextWindow});
+  spawnWindow({init: expandingWindow});
+  spawnWindow({init: buttonWindow});
 </script>
 </html>
