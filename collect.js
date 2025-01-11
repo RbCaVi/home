@@ -97,3 +97,14 @@ window.addEventListener('load', function() {
 		fire_collect(item, secret);
 	}
 });
+
+function collect_listen(target, listener) {
+  target.setAttribute("oncollect", "");
+  target.addEventListener('collect', listener);
+	for (const [item, secret] of collect_items) {
+		const collect_event = new Event('collect');
+		collect_event.data = item;
+		collect_event.secret = secret;
+		target.dispatchEvent(collect_event);
+	}
+}

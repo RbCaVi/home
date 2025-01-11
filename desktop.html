@@ -61,31 +61,30 @@
     
     const bread1 = document.createElement("p");
     bread1.classList.add("bread");
-    bread1.setAttribute("oncollect", "");
+    collect_listen(bread1, function (e) {
+      if (e.data == 'bread') {
+        this.textContent = 'bread';
+      }
+    });
     win.root.append(bread1);
     
     const cheese = document.createElement("p");
-    cheese.id = "bread";
-    cheese.setAttribute("oncollect", "");
-    win.root.append(cheese);
-    cheese.addEventListener('collect', function (e) {
+    cheese.id = "cheesed";
+    collect_listen(cheese, function (e) {
       if (e.data == 'cheese') {
         this.textContent = 'cheese';
       }
     });
+    win.root.append(cheese);
     
     const bread2 = document.createElement("p");
     bread2.classList.add("bread");
-    bread2.setAttribute("oncollect", "");
+    collect_listen(bread2, function (e) {
+      if (e.data == 'bread') {
+        this.textContent = 'bread';
+      }
+    });
     win.root.append(bread2);
-    
-    for (const p of [bread1, bread2]) {
-      p.addEventListener('collect', function (e) {
-        if (e.data == 'bread') {
-          this.textContent = 'bread';
-        }
-      });
-    }
     
     const breadbutton = document.createElement("button");
     breadbutton.textContent = "add bread";
