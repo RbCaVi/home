@@ -36,9 +36,11 @@
   }
 
   function buttonWindow(win) {
-    const collectjs = document.createElement("script");
-    collectjs.setAttribute("src", "collect.js");
-    win.root.append(collectjs);
+    if (window.collect == undefined) {
+      const collectjs = document.createElement("script");
+      collectjs.setAttribute("src", "collect.js");
+      win.root.append(collectjs);
+    }
     
     const p = document.createElement("p");
     p.textContent = "check it out (it's this again...)";
