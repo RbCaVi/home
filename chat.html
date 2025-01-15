@@ -61,24 +61,65 @@
 		return seemessages(chatid).then(messages => {
 			const div = document.querySelector('#chat');
 			div.textContent = '';
+      
+      const squashedmessages = [];
 			for (const {timestamp, message, user} of messages) {
+        const {timestamp: stimestamp, to: sto, count: scount, message: smessage, user: suser} = squashedmessages.at(-1) || {};
+        if (smessage == message && suser == user) {
+          squashedmessages.at(-1).count++;
+          squashedmessages.at(-1).to = timestamp;
+        } else {
+          squashedmessages.push({timestamp, count: 1, message, user});
+        }
+			}
+      
+			for (const {timestamp, to, count, message, user} of squashedmessages) {
 				const messagecontainer = document.createElement('div');
 				messagecontainer.classList.add('chat-message');
-				const timestampbox = document.createElement('span');
-				timestampbox.classList.add('chat-timestamp');
-				timestampbox.textContent = timestamp;
-				const messagebox = document.createElement('span');
-				messagebox.classList.add('chat-message');
-				messagebox.textContent = message;
+        
 				const userbox = document.createElement('span');
 				userbox.classList.add('chat-user');
 				userbox.textContent = user;
 				messagecontainer.appendChild(userbox);
-				messagecontainer.append(' at ');
-				messagecontainer.appendChild(timestampbox);
+        
+        if (count == 1) {
+          messagecontainer.append(' at ');
+          
+          const timestampbox = document.createElement('span');
+          timestampbox.classList.add('chat-timestamp');
+          timestampbox.textContent = timestamp;
+          messagecontainer.appendChild(timestampbox);
+        } else {
+          messagecontainer.append(' ');
+          
+          const countbox = document.createElement('span');
+          countbox.classList.add('chat-count');
+          countbox.textContent = count;
+          messagecontainer.appendChild(countbox);
+          
+          messagecontainer.append(' times from ');
+          
+          const frombox = document.createElement('span');
+          frombox.classList.add('chat-from');
+          frombox.textContent = timestamp;
+          messagecontainer.appendChild(frombox);
+          
+          messagecontainer.append(' to ');
+          
+          const tobox = document.createElement('span');
+          tobox.classList.add('chat-to');
+          tobox.textContent = to;
+          messagecontainer.appendChild(tobox);
+        }
+        
 				messagecontainer.append(': ');
+				
+        const messagebox = document.createElement('span');
+				messagebox.classList.add('chat-message');
+				messagebox.textContent = message;
 				messagecontainer.appendChild(messagebox);
-				div.appendChild(messagecontainer);
+				
+        div.appendChild(messagecontainer);
 			}
 		});
 	}
