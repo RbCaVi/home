@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="cheese.css">
 	<title>internet picture communication</title>
-    <script type="text/javascript" src="gl-matrix.js"></script> <!-- i didn't want to do this... -->
+    <script src = "gl-matrix.js"></script> <!-- i didn't want to do this... -->
 </head>
 <body>
   <a href="./">BACK HOME</a>
@@ -779,8 +779,6 @@ function main(models, image, vertSource, fragSource) {
     requestAnimationFrame((now) => {then = now * 0.001; render(now);});
 }
 
-const glmatload = new Promise(res => document.querySelector("#gl-matrix").addEventListener("load", res));
-
 const modelsload = loadmodels(["cube", "cylinder", "world"]);
 
 const vertload = fetch("shader.vert").then(res => res.text());
@@ -789,6 +787,6 @@ const fragload = fetch("shader.frag").then(res => res.text());
 
 const imload = loadImage("texturemap.png");
 
-Promise.all([glmatload, modelsload, imload, vertload, fragload]).then(([, models, image, vertSource, fragSource]) => main(models, image, vertSource, fragSource));
+Promise.all([modelsload, imload, vertload, fragload]).then(([models, image, vertSource, fragSource]) => main(models, image, vertSource, fragSource));
 </script>
 </html>
