@@ -112,20 +112,20 @@
 		<p>
 			check it out! persistent thing (collectible).
 		</p>
-		<button id = "cheese-button" onclick = "collect('cheese')">CLICK THIS BUTTON!</button>
-		<p oncollect class = "bread"></p>
-		<p oncollect id = "cheesed">no cheese</p>
-		<p oncollect class = "bread"></p>
-		<button id = "bread-button" onclick = "collect('bread')">(click this too)</button>
+		<button id = "cheese-button" onclick = "collect.collect('cheese')">CLICK THIS BUTTON!</button>
+		<p class = "bread"></p>
+		<p id = "cheesed">no cheese</p>
+		<p class = "bread"></p>
+		<button id = "bread-button" onclick = "collect.collect('bread')">(click this too)</button>
 		<br>
 		<span>key:</span><input type="text" id = "me-key">
-		<button onclick = "collect('me', document.querySelector('#me-key').value)">submit</button>
+		<button onclick = "collect.collect('me', document.querySelector('#me-key').value)">submit</button>
 		<div id = "me" style = "display: none;">
-			<img oncollect id = "me-img"><br>
+			<img id = "me-img"><br>
 			<span id = "me-text"></span> 
 			<!-- the password is my true name -->
 		</div>
-		<button id = "reset-button" onclick = "collect_reset()">RESET (DO NOT PRESS OR YOUR COLLECTIBLES WILL BE RESET) (need to reload to see changes)</button>
+		<button id = "reset-button" onclick = "collect.reset()">RESET (DO NOT PRESS OR YOUR COLLECTIBLES WILL BE RESET) (need to reload to see changes)</button>
 	</div>
 	<!--
 When I started computers, I thought uhhhh……. I forgor (I was like 8).
@@ -157,21 +157,21 @@ subcapitalized
 </body>
 <script type = "text/javascript">
 	const p1 = document.querySelector('#cheesed');
-	p1.addEventListener('collect', function (e) {
+	collect.listen(p1, function (e) {
 		if (e.data == 'cheese') {
 			this.textContent = 'cheese';
 		}
 	});
 	const ps = document.querySelectorAll('.bread');
 	for (const p of ps) {
-		p.addEventListener('collect', function (e) {
+		(p, function (e) {
 			if (e.data == 'bread') {
 				this.textContent = 'bread';
 			}
 		});
 	}
 	const image = document.querySelector('#me-img');
-	image.addEventListener('collect', async function (e) {
+	collect.listen(image, async function (e) {
 		if (e.data == 'me') {
 			try {
 				this.src = datatourl(await secrets_get('me', e.secret));

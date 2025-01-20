@@ -34,24 +34,23 @@
 		<p>
 			it works across pages!!!!!.
 		</p>
-		<button id = "cheese-button" onclick = "collect('cheese')">CLICK THIS BUTTON!</button>
-		<button id = "reset-button" onclick = "collect_reset()">reset</button>
-		<p oncollect class = "bread"></p>
-		<p oncollect id = "cheesed">no cheese</p>
-		<p oncollect class = "bread"></p>
-		<button id = "bread-button" onclick = "collect('bread')">(click this too)</button>
+		<button id = "cheese-button" onclick = "collect.collect('cheese')">CLICK THIS BUTTON!</button>
+		<p class = "bread"></p>
+		<p id = "cheesed">no cheese</p>
+		<p class = "bread"></p>
+		<button id = "bread-button" onclick = "collect.collect('bread')">(click this too)</button>
 	</div>
 </body>
 <script type = "text/javascript">
 	const p1 = document.querySelector('#cheesed');
-	p1.addEventListener('collect', function (e) {
+	collect.listen(p1, function (e) {
 		if (e.data == 'cheese') {
 			this.textContent = 'cheese';
 		}
 	});
 	const ps = document.querySelectorAll('.bread');
 	for (const p of ps) {
-		p.addEventListener('collect', function (e) {
+		collect.listen(p, function (e) {
 			if (e.data == 'bread') {
 				this.textContent = 'bread';
 			}
