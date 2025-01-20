@@ -15,13 +15,17 @@
 	<a href="./">BACK HOME</a>
 	<h1>chat box thing</h1>
 	<p>contact me on discord if you need a password reset or something</p>
-	<span>username:</span><input type="text" id = "username">
-	<span>password:</span><input type="text" id = "password">
-	<button onclick = "doCreate()">create account</button>
-	<button onclick = "doLogin()">login</button>
+  <div style = "border: 5px solid white; display: inline-block;">
+    <div>log in or sign up</div>
+    <div>username:<input type="text" id = "username"></div>
+    <div>password:<input type="text" id = "password"></div>
+    <button onclick = "doLogin()">login</button>
+    <button onclick = "doCreate()">sign up</button>
+    <br>
+    <span>reset token:</span><input type="text" id = "resettoken">
+    <button onclick = "do_reset_pass()">reset password</button>
+  </div>
 	<br>
-	<span>reset token:</span><input type="text" id = "resettoken">
-	<button onclick = "do_reset_pass()">reset password</button>
 	<div id = "success"></div>
 	<input type="text" id = "message">
 	<button onclick = "sendMessage(document.querySelector('#message').value)">send</button>
@@ -125,53 +129,41 @@
 	}
 	setInterval(refreshMessages, 5000);
 	refreshMessages();
+  function resetSuccess() {
+			const success = document.querySelector('#success');
+			success.textContent = '';
+  }
+  function setSuccess(status) {
+			const success = document.querySelector('#success');
+			if (status) {
+				success.textContent = 'yes';
+			} else {
+				success.textContent = 'failed';
+			}
+  }
 	async function sendMessage(message) {
 		await sendmessage(token, chatid, message);
 		await refreshMessages();
 	}
 	async function doLogin() { // aaaa name collision
-			const success = document.querySelector('#success');
-			success.textContent = '';
-			const usernameinput = document.querySelector('#username');
-			const passwordinput = document.querySelector('#password');
-			const username = usernameinput.value;
-			const password = passwordinput.value;
-			token = await login(username, password);
-			if (token == null) {
-				success.textContent = 'failed';
-			} else {
-				success.textContent = 'yes';
-			}
+      resetSuccess()
+			const username = document.querySelector('#username').value;
+			const password = document.querySelector('#password').value;
+			login(username, password).then(newtoken => setSuccess((token = newtoken) != null));
+			
 	}
 	async function doCreate() { // aaaa name collision
-			const success = document.querySelector('#success');
-			success.textContent = '';
-			const usernameinput = document.querySelector('#username');
-			const passwordinput = document.querySelector('#password');
-			const username = usernameinput.value;
-			const password = passwordinput.value;
-			const status = await makeaccount(username, password);
-			if (!status) {
-				success.textContent = 'failed';
-			} else {
-				success.textContent = 'yes';
-			}
+      resetSuccess()
+			const username = document.querySelector('#username').value;
+			const password = document.querySelector('#password').value;
+			makeaccount(username, password).then(status => setSuccess(status));
 	}
 	async function do_reset_pass() { // inconsistency
-			const success = document.querySelector('#success');
-			success.textContent = '';
-			const usernameinput = document.querySelector('#username');
-			const passwordinput = document.querySelector('#password');
-			const resettokeninput = document.querySelector('#resettoken');
-			const username = usernameinput.value;
-			const password = passwordinput.value;
-			const resettoken = resettokeninput.value;
-			const status = await resetpass(resettoken, username, password);
-			if (!status) {
-				success.textContent = 'failed';
-			} else {
-				success.textContent = 'yes';
-			}
+      resetSuccess()
+			const username = document.querySelector('#username').value;
+			const password = document.querySelector('#password').value;
+			const resettoken = document.querySelector('#resettoken').value;
+			resetpass(resettoken, username, password).then(status => setSuccess(status));
 	}
 	function swapchat(id) {
 		chatid = id; // 2 for the original chat, 3 for a "testing" chat
