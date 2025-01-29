@@ -15,7 +15,7 @@
 	<a href="./">BACK HOME</a>
 	<h1>chat box thing</h1>
 	<p>contact me on discord if you need a password reset or something</p>
-  <div style = "border: 5px solid white; display: inline-block;">
+  <div id = "login" style = "border: 5px solid white; display: inline-block;">
     <div>log in or sign up</div>
     <div>username:<input type="text" id = "username"></div>
     <div>password:<input type="text" id = "password"></div>
@@ -24,12 +24,15 @@
     <br>
     <span>reset token:</span><input type="text" id = "resettoken">
     <button onclick = "do_reset_pass()">reset password</button>
+    <div id = "success"></div>
   </div>
 	<br>
-	<div id = "success"></div>
-	<input type="text" id = "message">
-	<button onclick = "sendMessage(document.querySelector('#message').value)">send</button>
-	<div id = "chat"></div>
+	<div id = "send" style = "display: none">
+    <input type="text" id = "message"><button onclick = "sendMessage(document.querySelector('#message').value)">send</button>
+    <br>
+    <button onclick = "logout()">log out</button>
+  </div>
+  <div id = "chat"></div>
 	<div id = "collectible-box">
 		<p>
 			it works across pages!!!!!.
@@ -146,20 +149,28 @@
 		await refreshMessages();
 	}
 	async function doLogin() { // aaaa name collision
-      resetSuccess()
+      resetSuccess();
 			const username = document.querySelector('#username').value;
 			const password = document.querySelector('#password').value;
 			login(username, password).then(newtoken => setSuccess((token = newtoken) != null));
-			
+			document.querySelector("#login").style.display = "none";
+			document.querySelector("#send").style.display = "";
+	}
+	async function logout() {
+      resetSuccess();
+      token = '';
+      resetSuccess();
+			document.querySelector("#login").style.display = "";
+			document.querySelector("#send").style.display = "none";
 	}
 	async function doCreate() { // aaaa name collision
-      resetSuccess()
+      resetSuccess();
 			const username = document.querySelector('#username').value;
 			const password = document.querySelector('#password').value;
 			makeaccount(username, password).then(status => setSuccess(status));
 	}
 	async function do_reset_pass() { // inconsistency
-      resetSuccess()
+      resetSuccess();
 			const username = document.querySelector('#username').value;
 			const password = document.querySelector('#password').value;
 			const resettoken = document.querySelector('#resettoken').value;
