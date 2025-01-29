@@ -128,6 +128,11 @@
 		</div>
 		<button id = "reset-button" onclick = "collect.reset()">RESET (DO NOT PRESS OR YOUR COLLECTIBLES WILL BE RESET) (need to reload to see changes)</button>
 	</div>
+	<div id = "collected">
+    <p>You have collected:</p>
+    <ul>
+    </ul>
+	</div>
 	<!--
 When I started computers, I thought uhhhh……. I forgor (I was like 8).
 I like computers. How do you like that?
@@ -180,6 +185,27 @@ subcapitalized
 				document.querySelector('#me').style.display = 'block';
 			} catch (e) {}
 		}
+	});
+</script>
+<script type = "text/javascript">
+	const list = document.querySelector('#collected ul');
+  
+  function showCollected() {
+    const items = collect.items();
+    if (items.keys().length == 0) {
+      list.textContent = "nothing :(";
+    } else {
+      list.textContent = "";
+      for (const item of items) {
+        const litem = document.createElement("li");
+        litem.textContent = item;
+        list.append(litem);
+      }
+    }
+  }
+  
+	collect.listen(list, function (e) {
+		showCollected();
 	});
 </script>
 </html>
