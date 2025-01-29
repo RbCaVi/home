@@ -77,6 +77,16 @@ window.collect = (() => {
 		return collect_items.map(([i, s]) => i).includes(item);
 	}
 
+  // please don't update this directly
+  // use the other methods instead (please)
+	collect.data = function(item) {
+		return collect_items;
+	}
+  
+	collect.items = function(item) {
+		return collect_items.map(([item, key]) => item);
+	}
+
 	collect.get_secret = function(item) {
 		const items = collect_items.filter(([i, s]) => i == item);
 		if (items.length != 1) {
