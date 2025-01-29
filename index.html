@@ -165,7 +165,7 @@ subcapitalized
 	});
 	const ps = document.querySelectorAll('.bread');
 	for (const p of ps) {
-		(p, function (e) {
+		collect.listen(p, function (e) {
 			if (e.data == 'bread') {
 				this.textContent = 'bread';
 			}
