@@ -27,8 +27,8 @@
     <div id = "success"></div>
   </div>
 	<br>
-    <input type="text" id = "message"><button onclick = "sendMessage(document.querySelector('#message').value)">send</button>
 	<div id = "loggedin" style = "display: none">
+    <input type = "text" id = "message"><button onclick = "sendMessage(document.querySelector('#message').value); document.querySelector('#message').value = '';" id = "send">send</button>
     <br>
     <button onclick = "logout()">log out</button>
   </div>
