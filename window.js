@@ -53,9 +53,12 @@ function spawnWindow({init, x = Math.random() * (window.innerWidth - 200), y = M
 
   const win = {closed: false};
 
+  // getx gety getpos
   win.getx = () => container.offsetLeft;
   win.gety = () => container.offsetTop;
   win.getpos = () => [win.getx(), win.gety()];
+
+  // getw geth getsize
   win.setx = (x) => {container.style.left = Math.max(x, 0) + 'px';};
   win.sety = (y) => {container.style.top = Math.max(y, 0) + 'px';};
   win.move = ({x, y}) => {
@@ -63,9 +66,12 @@ function spawnWindow({init, x = Math.random() * (window.innerWidth - 200), y = M
     if (y != undefined) win.sety(y);
   };
 
+  // setx sety move
   win.getw = () => container.offsetWidth;
   win.geth = () => container.offsetHeight;
   win.getsize = () => [win.getw(), win.geth()];
+
+  // setw seth resize
   win.setw = (w) => {container.style.width = Math.max(w, 20) + 'px';};
   win.seth = (h) => {container.style.height = Math.max(h, 20) + 'px';};
   win.resize = ({w, h}) => {
@@ -76,12 +82,14 @@ function spawnWindow({init, x = Math.random() * (window.innerWidth - 200), y = M
   console.log("creating window", x, y, w, h);
   win.move({x, y});
   win.resize({w, h});
-
+  
+  // moveleft moveright movetop movebottom
   win.moveleft = (dx) => {win.setx(container.offsetLeft + dx); win.setw(container.offsetWidth - dx);};
   win.moveright = (dx) => {win.setw(container.offsetWidth + dx);};
   win.movetop = (dy) => {win.sety(container.offsetTop + dy); win.seth(container.offsetHeight - dy);};
   win.movebottom = (dy) => {win.seth(container.offsetHeight + dy);};
 
+  // bringtofront
   windowtop++;
   win.bringtofront = () => {
     const currlayer = windowlayers.get(win.root);
@@ -94,7 +102,9 @@ function spawnWindow({init, x = Math.random() * (window.innerWidth - 200), y = M
     win.root.parentElement.style.zIndex = windowtop;
     windowlayers.set(win.root, windowtop);
   };
+
   
+  // close closed
   win.close = () => {
     win.closed = true;
     container.remove();
@@ -124,6 +134,7 @@ function spawnWindow({init, x = Math.random() * (window.innerWidth - 200), y = M
   makeDraggable(bar, (dx, dy) => {win.setx(container.offsetLeft + dx); win.sety(container.offsetTop + dy);});
   container.append(bar);
 
+  // root
   win.root = document.createElement('div');
   win.root.classList.add('windowcontent');
   container.append(win.root);
