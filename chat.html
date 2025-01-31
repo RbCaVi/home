@@ -27,8 +27,8 @@
     <div id = "success"></div>
   </div>
 	<br>
-	<div id = "send" style = "display: none">
     <input type="text" id = "message"><button onclick = "sendMessage(document.querySelector('#message').value)">send</button>
+	<div id = "loggedin" style = "display: none">
     <br>
     <button onclick = "logout()">log out</button>
   </div>
@@ -154,14 +154,14 @@
 			const password = document.querySelector('#password').value;
 			login(username, password).then(newtoken => setSuccess((token = newtoken) != null));
 			document.querySelector("#login").style.display = "none";
-			document.querySelector("#send").style.display = "";
+			document.querySelector("#loggedin").style.display = "";
 	}
 	async function logout() {
       resetSuccess();
       token = '';
       resetSuccess();
 			document.querySelector("#login").style.display = "";
-			document.querySelector("#send").style.display = "none";
+			document.querySelector("#loggedin").style.display = "none";
 	}
 	async function doCreate() { // aaaa name collision
       resetSuccess();
