@@ -179,5 +179,11 @@
 	function swapchat(id) {
 		chatid = id; // 2 for the original chat, 3 for a "testing" chat
 	}
+  document.querySelector("#message").addEventListener("keyup", event => {
+    if(event.key == "Enter") {
+      document.querySelector("#send").click();
+      event.preventDefault();
+    }
+  });
 </script>
 </html>
