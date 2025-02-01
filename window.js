@@ -45,6 +45,7 @@ function spawnWindow({init, x = Math.random() * (window.innerWidth - 200), y = M
   // getx gety getpos setx sety move - x and y are relative to the top left corner of the page (not the screen)
   // moveleft moveright movetop movebottom
   // bringtofront
+  // settitle
   // close
   // and also closed (whether the window has been closed)
   // and root (the root element of the window, which you should put stuff in)
@@ -116,10 +117,12 @@ function spawnWindow({init, x = Math.random() * (window.innerWidth - 200), y = M
   // title
   const wtitle = document.createElement('span');
   wtitle.classList.add('windowtitle');
+  bar.append(wtitle);
+
+  // settitle
   win.settitle = (newtitle) => {
     wtitle.textContent = newtitle;
   };
-  bar.append(wtitle);
 
   // close button
   const close = document.createElement('div');
