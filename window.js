@@ -78,10 +78,6 @@ function spawnWindow({init, x = Math.random() * (window.innerWidth - 200), y = M
     if (w != undefined) win.setw(w);
     if (h != undefined) win.seth(h);
   };
-
-  console.log("creating window", x, y, w, h);
-  win.move({x, y});
-  win.resize({w, h});
   
   // moveleft moveright movetop movebottom
   win.moveleft = (dx) => {win.setx(container.offsetLeft + dx); win.setw(container.offsetWidth - dx);};
@@ -124,8 +120,6 @@ function spawnWindow({init, x = Math.random() * (window.innerWidth - 200), y = M
     wtitle.textContent = newtitle;
   };
   bar.append(wtitle);
-  
-  win.settitle(title);
 
   // close button
   const close = document.createElement('div');
@@ -190,6 +184,11 @@ function spawnWindow({init, x = Math.random() * (window.innerWidth - 200), y = M
   resizebottomright.classList.add('windowresizebottom', 'windowresizeright');
   makeDraggable(resizebottomright, (dx, dy) => {win.movebottom(dy); win.moveright(dx);});
   container.append(resizebottomright);
+
+  console.log("creating window", x, y, w, h, title);
+  win.move({x, y});
+  win.resize({w, h});
+  win.settitle(title);
 
   // add the window
   document.querySelector("#windowcontainer").append(container);
