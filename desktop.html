@@ -167,7 +167,7 @@
     let chatid = 2;
     let token = '';
     const chatidinput = element("input", {type: "text"});
-    const swapchatbutton = element("button", {events: {click: () => chatid = +chatidinput.value}}, "go to another chat");
+    const swapchatbutton = element("button", {events: {click: () => {chatid = +chatidinput.value; refreshMessages();}}}, "go to another chat");
     
     function refreshMessages() {
       return seemessages(chatid).then(messages => {
@@ -263,9 +263,6 @@
     async function resetpassword(username, password, resettoken) {
 			await resetpass(resettoken, username, password);
 			await doLogin(username, password);
-    }
-    function swapchat(id) {
-      chatid = id; // 2 for the original chat, 3 for a "testing" chat
     }
     messageinput.addEventListener("keyup", event => {
       if(event.key == "Enter") {
