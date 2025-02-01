@@ -17,8 +17,58 @@
   <button onclick = "spawnWindow({init: textytextWindow});">texty text</button>
   <button onclick = "spawnWindow({init: expandingWindow});">E X P AN D</button>
   <button onclick = "spawnWindow({init: buttonWindow});">more buttons to click</button>
+  <button onclick = "spawnWindow({init: chatWindow});">speak into the void</button>
 </body>
 <script>
+  function element(type, attrs = {}, ...parts) {
+    const e = document.createElement(type);
+
+    if ("classes" in attrs) {
+      for (const c of attrs.classes) {
+        e.classList.add(c);
+      }
+    }
+
+    if ("id" in attrs) {
+      e.id = attrs.id;
+    }
+
+    if ("events" in attrs) {
+      for (const event in attrs.events) {
+        e.addEventListener(event, attrs.events[event]);
+      }
+    }
+
+    if ("style" in attrs) {
+      e.style = attrs.style;
+    }
+
+    if ("type" in attrs) {
+      e.type = attrs.type;
+    }
+
+    for (const part of parts) {
+      e.append(part);
+    }
+
+    return e;
+  }
+  
+  async function loadScript(source, tester) {
+    if (window[tester] == undefined) {
+      const script = document.createElement("script");
+      script.setAttribute("src", source);
+      document.head.append(script);
+      await new Promise(resolve => {
+        const f = () => {
+          script.removeEventListener("load", f);
+          resolve();
+        };
+        script.addEventListener("load", f);
+      });
+    }
+  }
+  
   function textytextWindow(win) {
     win.root.append("textytext! (long text text) texttexttext");
   }
@@ -36,18 +86,7 @@
   }
 
   async function buttonWindow(win) {
-    if (window.collect == undefined) {
-      const collectjs = document.createElement("script");
-      collectjs.setAttribute("src", "collect.js");
-      win.root.append(collectjs);
-      await new Promise(resolve => {
-        const f = () => {
-          collectjs.removeEventListener("load", f);
-          resolve();
-        };
-        collectjs.addEventListener("load", f);
-      });
-    }
+    await loadScript("collect.js", "collect");
     
     const p = document.createElement("p");
     p.textContent = "check it out (it's this again...)";
@@ -98,6 +137,152 @@
     win.root.append(otherbutton);
   }
 
+  async function chatWindow(win) {
+    await loadScript("hash.js", "hash");
+    await loadScript("db.js", "db_call");
+    await loadScript("auth.js", "login");
+    await loadScript("message.js", "sendmessage");
+    const messagebox = element("div", {id: "chat"});
+    const usernameinput = element("input", {type: "text"});
+    const passwordinput = element("input", {type: "text"});
+    const resettokeninput = element("input", {type: "text"});
+    const indicator = element("div");
+    const logincontainer = element("div", {style: "border: 5px solid white; display: inline-block;"},
+      "log in or sign up", element("br"),
+      "username:", usernameinput, element("br"),
+      "password:", passwordinput, element("br"),
+      element("button", {events: {click: () => doLogin(usernameinput.value, passwordinput.value)}}, "login"),
+      element("button", {events: {click: () => createaccount(usernameinput.value, passwordinput.value)}}, "sign up"),
+      element("br"),
+      "reset token:", resettokeninput, element("button", {events: {click: () => do_reset_pass(usernameinput.value, passwordinput.value, resettoken.value)}}, "reset password"),
+      indicator
+    );
+    const messageinput = element("input", {type: "text"});
+    const sendbutton = element("button", {events: {click: () => sendMessage()}}, "send")
+    const loggedincontainer = element("div", {id: "loggedin", style: "display: none;"},
+      "I STOLE YOU'R PASS WORD AND USE RNAME!!!!!!!!!!", element("br"),
+      messageinput, sendbutton,
+      element("button", {events: {click: () => logout()}}, "logout")
+    );
+    let chatid = 2;
+    let token = '';
+    
+    function refreshMessages() {
+      return seemessages(chatid).then(messages => {
+        const div = messagebox;
+        div.textContent = '';
+        
+        const squashedmessages = [];
+        for (const {timestamp, message, user} of messages) {
+          const {timestamp: stimestamp, to: sto, count: scount, message: smessage, user: suser} = squashedmessages.at(-1) || {};
+          if (smessage == message && suser == user) {
+            squashedmessages.at(-1).count++;
+            squashedmessages.at(-1).to = timestamp;
+          } else {
+            squashedmessages.push({timestamp, count: 1, message, user});
+          }
+        }
+        
+        for (const {timestamp, to, count, message, user} of squashedmessages) {
+          const messagecontainer = document.createElement('p');
+          messagecontainer.classList.add('chat-message');
+          
+          const userbox = document.createElement('span');
+          userbox.classList.add('chat-user');
+          userbox.textContent = user;
+          messagecontainer.appendChild(userbox);
+          
+          if (count == 1) {
+            messagecontainer.append(' at ');
+            
+            const timestampbox = document.createElement('span');
+            timestampbox.classList.add('chat-timestamp');
+            timestampbox.textContent = timestamp;
+            messagecontainer.appendChild(timestampbox);
+          } else {
+            messagecontainer.append(' ');
+            
+            const countbox = document.createElement('span');
+            countbox.classList.add('chat-count');
+            countbox.textContent = count;
+            messagecontainer.appendChild(countbox);
+            
+            messagecontainer.append(' times from ');
+            
+            const frombox = document.createElement('span');
+            frombox.classList.add('chat-from');
+            frombox.textContent = timestamp;
+            messagecontainer.appendChild(frombox);
+            
+            messagecontainer.append(' to ');
+            
+            const tobox = document.createElement('span');
+            tobox.classList.add('chat-to');
+            tobox.textContent = to;
+            messagecontainer.appendChild(tobox);
+          }
+          
+          messagecontainer.append(': ');
+          
+          const messagebox = document.createElement('span');
+          messagebox.classList.add('chat-message');
+          messagebox.textContent = message;
+          messagecontainer.appendChild(messagebox);
+          
+          div.appendChild(messagecontainer);
+        }
+      });
+    }
+    setInterval(refreshMessages, 5000);
+    refreshMessages();
+    async function sendMessage() {
+      const message = messageinput.value;
+      messageinput.value = '';
+      await sendmessage(token, chatid, message);
+      await refreshMessages();
+    }
+    async function doLogin(username, password) {
+			if (token = await login(username, password)) {
+        logincontainer.style.display = "none";
+        loggedincontainer.style.display = "";
+      } else {
+        indicator.textContent = "failed";
+      }
+    }
+    async function logout() {
+      token = '';
+			logincontainer.style.display = "";
+			loggedincontainer.style.display = "none";
+    }
+    async function createaccount(username, password) {
+			await makeaccount(username, password);
+			await doLogin(username, password);
+    }
+    async function resetpassword(username, password, resettoken) {
+			await resetpass(resettoken, username, password);
+			await doLogin(username, password);
+    }
+    function swapchat(id) {
+      chatid = id; // 2 for the original chat, 3 for a "testing" chat
+    }
+    messageinput.addEventListener("keyup", event => {
+      if(event.key == "Enter") {
+        sendbutton.click();
+        event.preventDefault();
+      }
+    });
+    passwordinput.addEventListener("keyup", event => {
+      if(event.key == "Enter") {
+        sendbutton.click();
+        event.preventDefault();
+      }
+    });
+    
+    win.root.append(logincontainer);
+    win.root.append(loggedincontainer);
+    win.root.append(messagebox);
+  }
+
   spawnWindow();
   spawnWindow();
   spawnWindow();
@@ -105,5 +290,6 @@
   spawnWindow({init: textytextWindow});
   spawnWindow({init: expandingWindow});
   spawnWindow({init: buttonWindow});
+  spawnWindow({init: chatWindow});
 </script>
 </html>
