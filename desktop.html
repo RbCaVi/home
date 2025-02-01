@@ -166,6 +166,8 @@
     );
     let chatid = 2;
     let token = '';
+    const chatidinput = element("input", {type: "text"});
+    const swapchatbutton = element("button", {events: {click: () => chatid = +chatidinput.value}}, "go to another chat");
     
     function refreshMessages() {
       return seemessages(chatid).then(messages => {
@@ -271,16 +273,8 @@
         event.preventDefault();
       }
     });
-    passwordinput.addEventListener("keyup", event => {
-      if(event.key == "Enter") {
-        sendbutton.click();
-        event.preventDefault();
-      }
-    });
     
-    win.root.append(logincontainer);
-    win.root.append(loggedincontainer);
-    win.root.append(messagebox);
+    win.root.append(logincontainer, loggedincontainer, chatidinput, swapchatbutton, messagebox);
   }
 
   spawnWindow();
