@@ -37,7 +37,7 @@ function makeDraggable(draggable, update) {
 const windowlayers = new Map();
 let windowtop = 0;
 
-function spawnWindow({init, x = Math.random() * (window.innerWidth - 200), y = Math.random() * (window.innerHeight - 200), w = 200, h = 200} = {}) {
+function spawnWindow({init, x = Math.random() * (window.innerWidth - 200), y = Math.random() * (window.innerHeight - 200), w = 200, h = 200, title = ""} = {}) {
   // spawn a window with a close button and resize handles at the given position
   // call init with an object representing the window
   // it has a bunch of "methods"
@@ -116,6 +116,16 @@ function spawnWindow({init, x = Math.random() * (window.innerWidth - 200), y = M
   // the window bar
   const bar = document.createElement('div');
   bar.classList.add('windowbar');
+
+  // title
+  const wtitle = document.createElement('span');
+  wtitle.classList.add('windowtitle');
+  win.settitle = (newtitle) => {
+    wtitle.textContent = newtitle;
+  };
+  bar.append(wtitle);
+  
+  win.settitle(title);
 
   // close button
   const close = document.createElement('div');
