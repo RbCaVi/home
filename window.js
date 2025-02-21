@@ -97,7 +97,7 @@ function spawnWindow(args = {}) {
         windowlayers.set(k, v - 1);
       }
     });
-    win.root.parentElement.style.zIndex = windowtop;
+    container.style.zIndex = windowtop;
     windowlayers.set(win.root, windowtop);
   };
 
