@@ -86,56 +86,47 @@
     requestAnimationFrame(frame);
   }
 
+  function onPressEnter(input, func) {
+    input.addEventListener("keyup", event => {
+      if(event.key == "Enter") {
+        func();
+        event.preventDefault();
+      }
+    });
+  }
+
   async function buttonWindow(win) {
     await loadScript("collect.js", "collect");
     
-    const p = document.createElement("p");
-    p.textContent = "check it out (it's this again...)";
-    win.root.append(p);
-    
-    const cheesebutton = document.createElement("button");
-    cheesebutton.textContent = "it's the cheese button.";
-    cheesebutton.id = "cheese-button";
-    win.root.append(cheesebutton);
-    cheesebutton.addEventListener("click", () => collect.collect("cheese"));
-    
-    const bread1 = document.createElement("p");
-    bread1.classList.add("bread");
+    let bread1, cheese, bread2;
+
+    win.root.append(
+      element('p', {}, "check it out (it's this again...)"),
+      element('button', {id: ['cheese-button'], events: {click: () => collect.collect("cheese")}}, "it's the cheese button."),
+      bread1 = element('p', {classes: ['bread']}),
+      cheese = element('p', {id: ['cheesed']}),
+      bread2 = element('p', {classes: ['bread']}),
+      element('button', {id: ['bread-button'], events: {click: () => collect.collect("bread")}}, "add bread"),
+      element('button', {events: {click: () => collect.collect("desktop-person")}}, "click this button (it appears nowhere else)")
+    );
+
     collect.listen(bread1, function (e) {
       if (e.data == 'bread') {
         this.textContent = 'bread';
       }
     });
-    win.root.append(bread1);
     
-    const cheese = document.createElement("p");
-    cheese.id = "cheesed";
     collect.listen(cheese, function (e) {
       if (e.data == 'cheese') {
         this.textContent = 'cheese';
       }
     });
-    win.root.append(cheese);
     
-    const bread2 = document.createElement("p");
-    bread2.classList.add("bread");
     collect.listen(bread2, function (e) {
       if (e.data == 'bread') {
         this.textContent = 'bread';
       }
     });
-    win.root.append(bread2);
-    
-    const breadbutton = document.createElement("button");
-    breadbutton.textContent = "add bread";
-    breadbutton.id = "bread-button";
-    win.root.append(breadbutton);
-    breadbutton.addEventListener("click", () => collect.collect("bread"));
-    
-    const otherbutton = document.createElement("button");
-    otherbutton.textContent = "click this button (it appears nowhere else)";
-    otherbutton.addEventListener("click", () => collect.collect("desktop-person"));
-    win.root.append(otherbutton);
   }
 
   async function chatWindow(win) {
@@ -143,37 +134,42 @@
     await loadScript("db.js", "db_call");
     await loadScript("auth.js", "login");
     await loadScript("message.js", "sendmessage");
-    const messagebox = element("div", {id: "chat"});
-    const usernameinput = element("input", {type: "text"});
-    const passwordinput = element("input", {type: "text"});
-    const resettokeninput = element("input", {type: "text"});
-    const indicator = element("div");
-    const logincontainer = element("div", {style: "border: 5px solid white; display: inline-block;"},
-      "log in or sign up", element("br"),
-      "username:", usernameinput, element("br"),
-      "password:", passwordinput, element("br"),
-      element("button", {events: {click: () => doLogin(usernameinput.value, passwordinput.value)}}, "login"),
-      element("button", {events: {click: () => createaccount(usernameinput.value, passwordinput.value)}}, "sign up"),
-      element("br"),
-      "reset token:", resettokeninput, element("button", {events: {click: () => do_reset_pass(usernameinput.value, passwordinput.value, resettoken.value)}}, "reset password"),
-      indicator
+
+    let logincontainer, usernameinput, passwordinput, resettokeninput, indicator;
+    let loggedincontainer, messageinput, sendbutton;
+    let chatidinput;
+    let messagebox;
+    
+    win.root.append(
+      logincontainer = element("div", {style: "border: 5px solid white; display: inline-block;"},
+        "log in or sign up", element("br"),
+        "username:", usernameinput = element("input", {type: "text"}),
+        element("br"),
+        "password:", passwordinput = element("input", {type: "text"}),
+        element("br"),
+        element("button", {events: {click: () => doLogin(usernameinput.value, passwordinput.value)}}, "login"),
+        element("button", {events: {click: () => createaccount(usernameinput.value, passwordinput.value)}}, "sign up"),
+        element("br"),
+        "reset token:", resettokeninput = element("input", {type: "text"}),
+        element("button", {events: {click: () => resetpassword(usernameinput.value, passwordinput.value, resettoken.value)}}, "reset password"),
+        indicator = element("div")
+      ),
+      loggedincontainer = element("div", {id: "loggedin", style: "display: none;"},
+        "I STOLE YOU'R PASS WORD AND USE RNAME!!!!!!!!!!", element("br"),
+        messageinput = element("input", {type: "text"}), sendbutton = element("button", {events: {click: () => sendMessage()}}, "send"),
+        element("button", {events: {click: () => logout()}}, "logout")
+      ),
+      chatidinput = element("input", {type: "text"}),
+      element("button", {events: {click: () => {chatid = +chatidinput.value; refreshMessages();}}}, "go to another chat"),
+      messagebox = element("div", {id: "chat"})
     );
-    const messageinput = element("input", {type: "text"});
-    const sendbutton = element("button", {events: {click: () => sendMessage()}}, "send")
-    const loggedincontainer = element("div", {id: "loggedin", style: "display: none;"},
-      "I STOLE YOU'R PASS WORD AND USE RNAME!!!!!!!!!!", element("br"),
-      messageinput, sendbutton,
-      element("button", {events: {click: () => logout()}}, "logout")
-    );
+
     let chatid = 2;
     let token = '';
-    const chatidinput = element("input", {type: "text"});
-    const swapchatbutton = element("button", {events: {click: () => {chatid = +chatidinput.value; refreshMessages();}}}, "go to another chat");
     
     function refreshMessages() {
       return seemessages(chatid).then(messages => {
-        const div = messagebox;
-        div.textContent = '';
+        messagebox.textContent = '';
         
         const squashedmessages = [];
         for (const {timestamp, message, user} of messages) {
@@ -187,52 +183,27 @@
         }
         
         for (const {timestamp, to, count, message, user} of squashedmessages) {
-          const messagecontainer = document.createElement('p');
-          messagecontainer.classList.add('chat-message');
-          
-          const userbox = document.createElement('span');
-          userbox.classList.add('chat-user');
-          userbox.textContent = user;
-          messagecontainer.appendChild(userbox);
+          let timestampparts;
           
           if (count == 1) {
-            messagecontainer.append(' at ');
-            
-            const timestampbox = document.createElement('span');
-            timestampbox.classList.add('chat-timestamp');
-            timestampbox.textContent = timestamp;
-            messagecontainer.appendChild(timestampbox);
+            timestampparts = [' at ', element("span", {classes: ['chat-timestamp']}, timestamp)];
           } else {
-            messagecontainer.append(' ');
-            
-            const countbox = document.createElement('span');
-            countbox.classList.add('chat-count');
-            countbox.textContent = count;
-            messagecontainer.appendChild(countbox);
-            
-            messagecontainer.append(' times from ');
-            
-            const frombox = document.createElement('span');
-            frombox.classList.add('chat-from');
-            frombox.textContent = timestamp;
-            messagecontainer.appendChild(frombox);
-            
-            messagecontainer.append(' to ');
-            
-            const tobox = document.createElement('span');
-            tobox.classList.add('chat-to');
-            tobox.textContent = to;
-            messagecontainer.appendChild(tobox);
+            timestampparts = [
+              ' ', 
+              element("span", {classes: ['chat-count']}, count), 
+              ' times from ', 
+              element("span", {classes: ['chat-from']}, timestamp), 
+              ' to ', 
+              element("span", {classes: ['chat-to']}, to)
+            ];
           }
           
-          messagecontainer.append(': ');
-          
-          const messagebox = document.createElement('span');
-          messagebox.classList.add('chat-message');
-          messagebox.textContent = message;
-          messagecontainer.appendChild(messagebox);
-          
-          div.appendChild(messagecontainer);
+          messagebox.appendChild(element("p", {classes: ['chat-message']},
+            element("span", {classes: ['chat-user']}, user),
+            ...timestampparts,
+            ': ',
+            element("span", {classes: ['chat-message']}, message)
+          ));
         }
       });
     }
@@ -265,37 +236,28 @@
 			await resetpass(resettoken, username, password);
 			await doLogin(username, password);
     }
-    messageinput.addEventListener("keyup", event => {
-      if(event.key == "Enter") {
-        sendbutton.click();
-        event.preventDefault();
-      }
-    });
-    
-    win.root.append(logincontainer, loggedincontainer, chatidinput, swapchatbutton, messagebox);
+    onPressEnter(messageinput, () => sendbutton.click());
   }
   
   function termWindow(win) {
     // do stuff
-    const input = element("input", {type: "text", style: "width: 100%;"});
-    const outputcontainer = element("div", {style: "overflow: auto;"});
+    let input, outputcontainer;
     const container = element("div", {style: "height: 100%; display: flex; flex-direction: column;"},
-      outputcontainer,
-      element("div", {style: "display: flex;"}, "> ", input)
+      outputcontainer = element("div", {style: "overflow: auto;"}),
+      element("div", {style: "display: flex;"},
+        "> ", input = element("input", {type: "text", style: "width: 100%;"})
+      )
     );
-    input.addEventListener("keyup", async event => {
-      if(event.key == "Enter") {
-        const command = input.value;
-        input.value = '';
-        input.style.display = 'none';
-        try {
-          await runCommand(command);
-        } catch (e) {
-          print(e);
-        }
-        input.style.display = '';
-        event.preventDefault();
+    onPressEnter(input, async () => {
+      const command = input.value;
+      input.value = '';
+      input.style.display = 'none';
+      try {
+        await runCommand(command);
+      } catch (e) {
+        print(e);
       }
+      input.style.display = '';
     });
     const commands = {};
     function print(str) {
