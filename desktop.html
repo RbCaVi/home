@@ -238,6 +238,16 @@
     }
     onPressEnter(messageinput, () => sendbutton.click());
   }
+
+  const commands = {};
+  
+  commands.echo = function(env, str) {
+    env.print(str);
+  }
+
+  commands.eval = function(env, code) {
+    eval(code);
+  }
   
   function termWindow(win) {
     // do stuff
@@ -259,8 +269,8 @@
       }
       input.style.display = '';
     });
-    const commands = {};
-    function print(str) {
+    const env = {};
+    env.print = function (str) {
       outputcontainer.append(element("div", {}, str));
     }
     async function runCommand(command) {
@@ -269,10 +279,7 @@
       const i = command.indexOf(' ');
       const cmdname = command.slice(0, i);
       const args = command.slice(i + 1);
-      return commands[cmdname](args);
-    }
-    commands.echo = async function(str) {
-      print(str);
+      return commands[cmdname](env, args);
     }
 
     win.root.append(container);
