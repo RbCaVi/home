@@ -276,14 +276,19 @@
     }
     async function runCommand(command) {
       outputcontainer.append(element("div", {}, "> ", command));
-      command = command + ' ';
-      const i = command.indexOf(' ');
-      const cmdname = command.slice(0, i);
-      const args = command.slice(i + 1);
-      return commands[cmdname](env, args);
+      const [cmdname, args] = splitone(command);
+      return commands[cmdname].bind(env)(env, args);
     }
 
     win.root.append(container);
+  }
+
+  function splitone(str) {
+    str = str + ' ';
+    const i = str.indexOf(' ');
+    const str1 = str.slice(0, i);
+    const str2 = str.slice(i + 1);
+    return [str1, str2.substring(0, str2.length - 1)];
   }
 
   spawnWindow();
