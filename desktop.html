@@ -246,6 +246,7 @@
   }
 
   commands.eval = function(env, code) {
+    const print = env.print;
     eval(code);
   }
   
