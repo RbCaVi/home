@@ -26,3 +26,14 @@ function db_select(table, params) {
 		},
 	}).then(res => res.json());
 }
+
+function db_insert(table, data) {
+  return fetch(`${url}/${table}`, {
+		headers: {
+			apikey: apikey,
+			'Content-Type': 'application/json',
+		},
+		method: 'POST',
+		body: JSON.stringify(data),
+	});
+}
