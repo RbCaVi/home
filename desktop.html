@@ -240,7 +240,7 @@
   }
 
   const commands = {};
-  
+
   commands.echo = function(env, str) {
     env.print(str);
   }
@@ -248,6 +248,14 @@
   commands.eval = function(env, code) {
     const print = env.print;
     eval(code);
+  }
+
+  commands.addCommand = function(env, args) {
+    const [name, code] = splitone(args);
+    commands[name] = (env, args) => {
+      const print = env.print;
+      eval(code);
+    }
   }
   
   function termWindow(win) {
