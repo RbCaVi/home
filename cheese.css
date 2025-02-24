@@ -89,3 +89,36 @@ a {
 .discord-colored {
     color: #5865f2;
 }
+
+#guestbook {
+    height: 300px;
+    width: 500px;
+    border: 5px solid;
+    border-color: #a4d6db;
+    border-radius: 15px;
+    background: #040077;
+}
+
+.guestbook-entry {
+    margin: 5px;
+    border: #c68f0d 4px solid;
+    border-radius: 5px;
+    background: #f8ff19;
+    padding: 5px;
+    padding-bottom: 6px;
+}
+
+.guestbook-name {
+    background: none;
+    color: #df340d;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.guestbook-message {
+    background: #fbc800;
+    color: #730cdb;
+    font-size: 1.1em;
+    padding: 10px;
+    margin: 5px;
+}

@@ -109,6 +109,16 @@
     <ul>
     </ul>
 	</div>
+	<div>
+  	<div id = "guestbook" style = ""></div>
+		<button onclick = "refreshGuestbook()">refresh</button>
+  	<div>
+  		Name: <input type = "text" id = "guestbook-name"><br>
+  		Message:<br>
+  		<textarea id = "guestbook-message"></textarea><br>
+  		<button onclick = "sendGuestbook()">send</button>
+  	</div>
+	</div>
 	<!--
 When I started computers, I thought uhhhh……. I forgor (I was like 8).
 I like computers. How do you like that?
@@ -187,5 +197,37 @@ i don't usually write like this
 	collect.listen(list, function (e) {
 		showCollected();
 	});
+</script>
+<script type = "text/javascript">
+	async function sendGuestbook() {
+		const name = document.querySelector("#guestbook-name").value;
+		const message = document.querySelector("#guestbook-message").value;
+
+		await db_insert('guestbook', {name, message});
+		await refreshGuestbook();
+	}
+
+	async function refreshGuestbook() {
+		document.querySelector("#guestbook").textContent = '';
+
+		for (const {name, message} of await db_select('guestbook', {select: "name,message", order: "created_at.desc"})) {
+			const container = document.createElement('div');
+			container.classList.add("guestbook-entry");
+
+			const namespan = document.createElement('span');
+			namespan.classList.add("guestbook-name");
+			namespan.textContent = name;
+
+			const messagep = document.createElement('p');
+			messagep.classList.add("guestbook-message");
+			messagep.textContent = message;
+
+			container.append(namespan, messagep);
+
+			document.querySelector("#guestbook").append(container);
+		}
+	}
+
+	refreshGuestbook();
 </script>
 </html>
