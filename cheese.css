@@ -122,3 +122,11 @@ a {
     padding: 10px;
     margin: 5px;
 }
+
+#guestbook-refresh {
+		float: right;
+		position: absolute;
+		bottom: 100%;
+		right: 0;
+		margin: 10px;
+}
