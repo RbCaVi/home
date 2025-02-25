@@ -130,3 +130,8 @@ a {
 		right: 0;
 		margin: 10px;
 }
+
+.disabled-link {
+    color: #999;
+    text-decoration: underline;
+}
