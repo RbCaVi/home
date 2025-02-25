@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="cheese.css">
+  <style type="text/css">
+    .raypath-image {
+      width: 200px;
+    }
+  </style>
+	<title>website changelog i guess</title>
+</head>
+<body>
+  <a href="./">BACK HOME</a>
+  <h1>it paths traces and rays marches!</h1>
+  <p>
+    i made this in a few days in december 2024 A D
+  </p>
+  <p>
+    it's based on <a href = "https://androsis.carrd.co/">androsis's</a> <a href = "https://github.com/Androtis/OpenGL-Expirements">opengl experiments</a>
+  </p>
+  <p>
+    it uses <a href = "https://wiki.libsdl.org/SDL2/FrontPage">sdl 2</a> and <a href = "https://gen.glad.sh/">glad</a> with opengl version 1.3
+  </p>
+  <p>
+    i took a couple of screenshots
+  </p>
+  <p>
+    they're not compressed so you're downloading ~500kb-1mb per image and there's 50 of them
+  </p>
+  <p>
+    good luck with your internet bill
+  </p>
+  <h2>first render!</h2>
+  <p>
+    two planes with a uv tiled "texture" (the green and blue are the u and v coordinates)
+  </p>
+  <img class = "raypath-image" src = "raypath-assets/raypath1.png">
+  <h2>sphere 1</h2>
+  <p>
+    its texture is the normal as rgb or something
+  </p>
+  <img class = "raypath-image" src = "raypath-assets/raypath2.png">
+  <h2>balls</h2>
+  <p>
+    mirror! - at this point, it only allowed one bounce (i was using recursion for reflections and opengl doesn't allow indefinite recursion)<br>
+    also i added a framerate meter and view matrix visualizer
+  </p>
+  <img class = "raypath-image" src = "raypath-assets/raypath3.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath4.png">
+  <h2>reflection but better</h2>
+  <p>
+    i fixed it so it could reflect "indefinitely" (capped at 5 bounces)
+  </p>
+  <img class = "raypath-image" src = "raypath-assets/raypath5.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath6.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath7.png">
+  <h2>what</h2>
+  <p>
+    jank in front/behind i guess
+  </p>
+  <img class = "raypath-image" src = "raypath-assets/raypath8.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath9.png">
+  <h2>orthographic</h2>
+  <p>
+    i added orthographic/isometric view (and a key to smoothly interpolate between perspective and orthographic)
+  </p>
+  <img class = "raypath-image" src = "raypath-assets/raypath10.png">
+  <h2>raymarching</h2>
+  <p>
+    probably the main reason i made this<br>
+    real raymarched objects in a mostly path traced world<br>
+    they actually have a path traced bounding shape and then raymarch inside that shape<br>
+    with this first one, i messed up the sdf a bit (centered the sphere on the origin and repeated a cube with one corner at the origin)
+  </p>
+  <img class = "raypath-image" src = "raypath-assets/raypath11.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath12.png">
+  <p>
+    i fixed the sdf
+  </p>
+  <img class = "raypath-image" src = "raypath-assets/raypath13.png">
+  <p>
+    after large amounts of time, floating point rounding errors mess up the random sampler
+  </p>
+  <img class = "raypath-image" src = "raypath-assets/raypath14.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath15.png">
+  <h2>distance view</h2>
+  <p>
+    distance debug view<br>
+    was useful to diagnose the issues with the raymarched object (i wasn't multiplying some factors)
+  </p>
+  <img class = "raypath-image" src = "raypath-assets/raypath16.png">
+  <p>
+    the sphere cube in all its glory
+  </p>
+  <img class = "raypath-image" src = "raypath-assets/raypath17.png">
+  <p>
+    i added a plain raymarched sphere at some point too
+  </p>
+  <img class = "raypath-image" src = "raypath-assets/raypath18.png">
+  <p>
+    and of course they show up in reflections
+  </p>
+  <img class = "raypath-image" src = "raypath-assets/raypath19.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath20.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath21.png">
+  <h2>random pictures</h2>
+  <img class = "raypath-image" src = "raypath-assets/raypath22.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath23.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath24.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath25.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath26.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath27.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath28.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath29.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath30.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath31.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath32.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath33.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath34.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath35.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath36.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath37.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath38.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath39.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath40.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath41.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath42.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath43.png">
+  <h2>random pictures in distance view</h2>
+  <img class = "raypath-image" src = "raypath-assets/raypath44.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath45.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath46.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath47.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath48.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath49.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath50.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath51.png">
+  <img class = "raypath-image" src = "raypath-assets/raypath52.png">
+</body>
+</html>
