@@ -56,7 +56,11 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
         path = torelpath(self.path.split('?', maxsplit = 1)[0])
         print(path)
         if isgenerated(path):
-            mimetype,data = generator(path)(path) # i'm <age> and this is aeh
+            generated = generator(path)(path) # i'm <age> and this is aeh
+            if generated is None:
+                self.send_path('404.html', 'text/html', code = 404)
+                return
+            mimetype,data = generated
             if type(data) == str:
                 data = bytes(data, 'utf-8')
             self.send_data(data, mimetype)
