@@ -18,6 +18,13 @@ mimetypes = {
     '.json': 'application/json',
 }
 
+generated = [
+    'generated.html',
+]
+
+def generate(path):
+    return "text/html", f"<html><head></head><body>{path}</body></html>"
+
 def getmimetype(path):
     ext = os.path.splitext(path)[1]
     if ext in mimetypes:
@@ -26,32 +33,36 @@ def getmimetype(path):
     return 'application/octet-stream'
 
 class MyHandler(http.server.BaseHTTPRequestHandler):
-    def send_path(self, path, mimetype, code = 200):
+    def send_data(self, data, mimetype, code = 200):
         self.send_response(code)
         self.send_header("Content-Type", mimetype)
         self.end_headers()
+        self.wfile.write(data)
+
+    def send_path(self, path, mimetype, code = 200):
         with open(path, 'rb') as f:
-            self.wfile.write(f.read())
+            self.send_data(f.read(), mimetype, code)
+    
+    def try_send(self, path):
+        if os.path.exists(path) and os.path.isfile(path):
+            self.send_path(path, getmimetype(path))
+            return True
+        else:
+            return False
 
     def do_GET(self):
         path = torelpath(self.path.split('?', maxsplit = 1)[0])
         print(path)
-        if os.path.exists(path) and os.path.isfile(path):
-            self.send_path(path, getmimetype(path))
+        if path in generated:
+            mimetype,data = generate(path)
+            if type(data) == str:
+                data = bytes(data, 'utf-8')
+            self.send_data(data, mimetype)
             return
-        elif os.path.exists(path + '.html'):
-            # i don't care if it's called something.png.html
-            # it's getting sent as html anyway
-            self.send_path(path + '.html', 'text/html')
-            return
-        elif os.path.exists(os.path.join(path, 'index.html')):
-            # i don't care if it's called something.png/index.html
-            # it's getting sent as html anyway
-            self.send_path(os.path.join(path, 'index.html'), 'text/html')
-            return
-        else:
-            self.send_path('404.html', 'text/html', code = 404)
-            return
+        if self.try_send(path): return
+        if self.try_send(path + '.html'): return
+        if self.try_send(os.path.join(path, 'index.html')): return
+        self.send_path('404.html', 'text/html', code = 404)
 
 if __name__ == "__main__":
     webServer = http.server.HTTPServer((hostName, serverPort), MyHandler)
