@@ -18,12 +18,12 @@ mimetypes = {
     '.json': 'application/json',
 }
 
-generated = [
-    'generated.html',
-]
-
 def generate(path):
     return "text/html", f"<html><head></head><body>{path}</body></html>"
+
+generated = {
+    'generated.html': generate,
+}
 
 def getmimetype(path):
     ext = os.path.splitext(path)[1]
@@ -54,7 +54,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
         path = torelpath(self.path.split('?', maxsplit = 1)[0])
         print(path)
         if path in generated:
-            mimetype,data = generate(path)
+            mimetype,data = generated[path](path)
             if type(data) == str:
                 data = bytes(data, 'utf-8')
             self.send_data(data, mimetype)
