@@ -21,9 +21,11 @@ mimetypes = {
 def generate(path):
     return "text/html", f"<html><head></head><body>{path}</body></html>"
 
-generated = {
-    'generated.html': generate,
-}
+def isgenerated(path):
+    return path == 'generated.html'
+
+def generator(path):
+    return generate
 
 def getmimetype(path):
     ext = os.path.splitext(path)[1]
@@ -53,8 +55,8 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         path = torelpath(self.path.split('?', maxsplit = 1)[0])
         print(path)
-        if path in generated:
-            mimetype,data = generated[path](path)
+        if isgenerated(path):
+            mimetype,data = generator(path)(path) # i'm <age> and this is aeh
             if type(data) == str:
                 data = bytes(data, 'utf-8')
             self.send_data(data, mimetype)
