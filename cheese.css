@@ -97,6 +97,7 @@ a {
     border-color: #a4d6db;
     border-radius: 15px;
     background: #040077;
+    overflow: auto;
 }
 
 .guestbook-entry {
