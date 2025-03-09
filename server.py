@@ -66,6 +66,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
 if __name__ == "__main__":
     webServer = http.server.HTTPServer((hostname, serverPort), MyHandler)
     print("Server started at http://%s:%s" % (hostname, serverPort))
+    generators.base = "%s:%s" % (hostname, serverPort)
 
     try:
         webServer.serve_forever()

@@ -1,5 +1,7 @@
 import os
 
+base = "rbcavi.github.io/home"
+
 def generate(path):
     return f"<html><head></head><body>{path}</body></html>"
 
