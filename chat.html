@@ -46,19 +46,10 @@
 	</div>
 </body>
 <script type = "text/javascript">
-	const p1 = document.querySelector('#cheesed');
-	collect.listen(p1, function (e) {
-		if (e.data == 'cheese') {
-			this.textContent = 'cheese';
-		}
-	});
-	const ps = document.querySelectorAll('.bread');
-	for (const p of ps) {
-		collect.listen(p, function (e) {
-			if (e.data == 'bread') {
-				this.textContent = 'bread';
-			}
-		});
+	collect.listen(document.querySelector('#cheesed'), function (e) {this.textContent = 'cheese';}, 'cheese');
+
+	for (const p of document.querySelectorAll('.bread')) {
+		collect.listen(p, function (e) {this.textContent = 'bread';});
 	}
 </script>
 <script type = "text/javascript">

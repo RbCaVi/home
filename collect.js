@@ -95,8 +95,18 @@ window.collect = (() => {
 		return items[0][1];
 	}
 
-	collect.listen = function(target, listener) {
+	collect.listen = function(target, listener, filter) {
 	  target.setAttribute("oncollect", "");
+		if (filter == undefined) {
+			// no filter
+		} else if (typeof filter == 'string') {
+			const l = listener; // save it
+			listener = function (e) {if (e.data == filter) {return l.bind(this)(e)}};
+		} else {
+      // assume filter is an array of strings to check
+			const l = listener; // save it
+			listener = function (e) {if (filter.includes(e.data)) {return l.bind(this)(e)}};
+    }
 	  target.addEventListener('collect', listener);
 		for (const [item, secret] of collect_items) {
 			const collect_event = new Event('collect');
