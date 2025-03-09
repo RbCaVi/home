@@ -21,8 +21,13 @@ mimetypes = {
 def generate(path):
     return "text/html", f"<html><head></head><body>{path}</body></html>"
 
-def isgenerated(path):
-    return path == 'generated.html'
+def generatedfiles():
+    files = ['generated.html']
+    return files
+
+def hiddenfiles():
+    files = []
+    return files
 
 def generator(path):
     return generate
@@ -55,16 +60,16 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         path = torelpath(self.path.split('?', maxsplit = 1)[0])
         print(path)
-        if isgenerated(path):
-            generated = generator(path)(path) # i'm <age> and this is aeh
-            if generated is None:
-                self.send_path('404.html', 'text/html', code = 404)
-                return
-            mimetype,data = generated
+        if path in hiddenfiles():
+            self.send_path('404.html', 'text/html', code = 404)
+            return
+        if path in generatedfiles():
+            mimetype,data = generator(path)(path) # i'm <age> and this is aeh
             if type(data) == str:
                 data = bytes(data, 'utf-8')
             self.send_data(data, mimetype)
             return
+        # these should emulate the github rules
         if self.try_send(path): return
         if self.try_send(path + '.html'): return
         if self.try_send(os.path.join(path, 'index.html')): return
