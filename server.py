@@ -6,7 +6,7 @@ import os
 
 import generators
 
-hostName = "localhost"
+hostname = "localhost"
 serverPort = 7999
 
 def torelpath(path):
@@ -64,8 +64,8 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
         self.send_path('404.html', 'text/html', code = 404)
 
 if __name__ == "__main__":
-    webServer = http.server.HTTPServer((hostName, serverPort), MyHandler)
-    print("Server started http://%s:%s" % (hostName, serverPort))
+    webServer = http.server.HTTPServer((hostname, serverPort), MyHandler)
+    print("Server started at http://%s:%s" % (hostname, serverPort))
 
     try:
         webServer.serve_forever()
