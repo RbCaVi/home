@@ -1,0 +1,25 @@
+###main###
+<!DOCTYPE html>
+<html>
+<head>
+	<base href = "###base###">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="cheese.css">
+  ###foreach#script###
+	<script type="text/javascript" src="###script###"></script>
+  ###endfor#script###
+	<title>website changelog i guess</title>
+</head>
+<body>
+  <a href="./">BACK HOME</a>
+  <h1>###title###</h1>
+  ###content###
+</body>
+###foreach#pagescript###
+<script>
+  ###pagescript###
+</script>
+###endfor#pagescript###
+</html>
+###/main###
