@@ -3,6 +3,8 @@
 import http.server
 import time
 import os
+import sys
+import traceback
 
 import generators
 
@@ -39,6 +41,24 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             self.send_data(f.read(), mimetype, code)
     
     def try_send(self, path):
+        del sys.modules['generators']
+        import generators
+        generators.base = "%s:%s" % (hostname, serverPort)
+        try:
+            print(path)
+            if path in generators.hiddenfiles():
+                self.send_path('404.html', 'text/html', code = 404)
+                return True
+            if path in generators.generatedfiles():
+                data = generators.getgenerator(path)(path) # i'm <age> and this is aeh
+                if type(data) == str:
+                    data = bytes(data, 'utf-8')
+                self.send_data(data, getmimetype(path))
+                return True
+        except Exception as e:
+            traceback.print_exc(e)
+            self.send_data(b"<html><head></head><body>oops" + bytes(str(e), 'utf-8') + "</body></html>", 'text/html', code = 404)
+            return True
         if os.path.exists(path) and os.path.isfile(path):
             self.send_path(path, getmimetype(path))
             return True
@@ -47,16 +67,6 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = torelpath(self.path.split('?', maxsplit = 1)[0])
-        print(path)
-        if path in generators.hiddenfiles():
-            self.send_path('404.html', 'text/html', code = 404)
-            return
-        if path in generators.generatedfiles():
-            data = generators.getgenerator(path)(path) # i'm <age> and this is aeh
-            if type(data) == str:
-                data = bytes(data, 'utf-8')
-            self.send_data(data, getmimetype(path))
-            return
         # these should emulate the github rules
         if self.try_send(path): return
         if self.try_send(path + '.html'): return
@@ -66,7 +76,6 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
 if __name__ == "__main__":
     webServer = http.server.HTTPServer((hostname, serverPort), MyHandler)
     print("Server started at http://%s:%s" % (hostname, serverPort))
-    generators.base = "%s:%s" % (hostname, serverPort)
 
     try:
         webServer.serve_forever()
