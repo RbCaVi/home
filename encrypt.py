@@ -30,28 +30,28 @@ def write(filename, data):
     with open(filename, 'w') as f:
         f.write(data)
 
-with open("plainsecrets.json") as f:
-    secrets = json.load(f)
+def encryptsecrets(s):
+    secrets = json.loads(s)
 
-encryptedsecrets = {};
+    encryptedsecrets = {};
 
-for item,data in secrets.items():
-    typ = data['typ']
-    if typ == 'file':
-        etype = 'text'
-        encrypted = encrypt(read(file), key)
-	elif typ == 'blob':
-		etype = 'data'
-		encrypted = encryptdata(readbin(file), key)
-	elif typ == 'text':
-		etype = 'text'
-		encrypted = encrypt(data['content'], key)
-	elif typ == 'data':
-		etype = 'data'
-		encrypted = encryptdata(data['content'], key)
-    else:
-        print(f"what kind of type is {typ}?")
-	encryptedsecrets[item] = [etype, encrypted]
+    for item,data in secrets[-1].items():
+        typ = data['type']
+        key = data['key']
+        if typ == 'file':
+            etype = 'text'
+            encrypted = crypt.encrypt(read(data['file']), key)
+        elif typ == 'blob':
+            etype = 'data'
+            encrypted = crypt.encryptdata(readbin(data['file']), key)
+        elif typ == 'text':
+            etype = 'text'
+            encrypted = crypt.encrypt(data['content'], key)
+        elif typ == 'data':
+            etype = 'data'
+            encrypted = crypt.encryptdata(data['content'], key)
+        else:
+            print(f"what kind of type is {typ}?")
+        encryptedsecrets[item] = [etype, encrypted]
 
-with open("secrets.json") as f:
-    json.dump(f, encryptedsecrets)
+    return json.dumps(encryptedsecrets)

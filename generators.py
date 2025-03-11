@@ -1,4 +1,5 @@
 import os
+import sys
 
 print("reloaded")
 
@@ -98,12 +99,27 @@ def generate(path):
     return replace(t0, t1)
 
 def generatedfiles():
-    files = ['generated.html']
+    files = ['generated.html', "secrets.json"]
     return files
 
 def hiddenfiles():
-    files = ['template.html']
+    files = ['template.html', "plainsecrets.json"]
     return files
 
+def delmodule(mod):
+    if mod in sys.modules:
+        del sys.modules[mod]
+
+def generatesecrets(plain):
+    def generatesecrets(path):
+        delmodule('encrypt')
+        delmodule('crypt')
+        delmodule('hash')
+        import encrypt
+        return encrypt.encryptsecrets(readfile(plain))
+    return generatesecrets
+
 def getgenerator(path):
+    if path == "secrets.json":
+        return generatesecrets("plainsecrets.json")
     return generate
