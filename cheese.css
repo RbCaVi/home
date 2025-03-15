@@ -1,17 +1,17 @@
 /* (not cheese) */
 
 * {
-	font-family: sans-serif;
-	color: #00ff00;
-	background: #333333;
+    font-family: sans-serif;
+    color: #00ff00;
+    background: #333333;
 }
 
 #factorio-thing b, .factorio-thing i {
-	color: #e69100;
+    color: #e69100;
 }
 
 #factorio-thing span.highlight {
-	color: #e69100;
+    color: #e69100;
 }
 
 div.image-container {
@@ -29,61 +29,61 @@ a {
 }
 
 #collectible-box {
-	text-align: center;
+    text-align: center;
 }
 
 #cheese-button {
-	background: green;
+    background: green;
 }
 
 #cheesed {
-	color: #ffa314;
+    color: #ffa314;
 }
 
 .chat-message {
-	white-space: break-spaces;
+    white-space: break-spaces;
 }
 
 .bold {
- font-weight: bold;
+    font-weight: bold;
 }
 
 .choice-1 {
- font-weight: bold;
- color: #17fdff;
+    font-weight: bold;
+    color: #17fdff;
 }
 
 .choice-2 {
- font-weight: bold;
- color: #17fdff;
- position: relative;
+    font-weight: bold;
+    color: #17fdff;
+    position: relative;
 }
 
 .choice-2 > :first-child {
- font-weight: default;
- color: default;
- position: absolute;
- display: none;
+    font-weight: default;
+    color: default;
+    position: absolute;
+    display: none;
 }
 
 .choice-2:hover > :first-child {
- display: block;
- top: 1em;
- left: 0;
+    display: block;
+    top: 1em;
+    left: 0;
 }
 
 #characters {
- background: white;
- position: relative;
+    background: white;
+    position: relative;
 }
 
 #characters * {
- position: absolute;
- background: none;
+    position: absolute;
+    background: none;
 }
 
 .flipped * {
-  transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .discord-colored {
@@ -125,11 +125,11 @@ a {
 }
 
 #guestbook-refresh {
-		float: right;
-		position: absolute;
-		bottom: 100%;
-		right: 0;
-		margin: 10px;
+    float: right;
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin: 10px;
 }
 
 .disabled-link {
