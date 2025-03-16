@@ -31,8 +31,6 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Generate files
         run: python regen.py
-      - name: Delete secret files
-        run: rm encrypt.mjs not-me.png
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
