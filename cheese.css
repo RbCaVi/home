@@ -136,3 +136,22 @@ a {
     color: #999;
     text-decoration: underline;
 }
+
+@keyframes a {
+  0% {
+    transform: translateY(-0.5em);
+  }
+
+  50% {
+    transform: translateY(0.5em);
+  }
+
+  100% {
+    transform: translateY(-0.5em);
+  }
+}
+
+.wiggle {
+  animation: 2s ease-in-out infinite a;
+  display: inline-block;
+}

@@ -1,6 +1,6 @@
 greeting
 - *r_excited {
-hi i'm rbcavi!
+[~wiggle hi i'm rbcavi!]
 }
 - *r_normal {
 i made this dialogue thing from scratch._200_
@@ -70,6 +70,6 @@ it reminds you of a certain @webcomic@https://www.homestuck.com@.
 touch
 - cube {
 you touch the [green [bold cube]].
-it is completely intangible.
+it is completely [~wiggle intangible].
 }
 > options

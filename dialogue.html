@@ -60,7 +60,7 @@ async function render(screen, speed) {
  const {characters, content} = screen;
  document.querySelector('#dialogue').textContent = '';
  await setCharacters(characters);
- await say(content, document.querySelector('#dialogue'), speed);
+ await say(content, document.querySelector('#dialogue'), speed, {offset: 0});
 }
 
 function wait(n) {
@@ -73,10 +73,20 @@ function wait(n) {
  return new Promise(res => setTimeout(res, n));
 }
 
-async function say(content, container, speed) {
+async function say(content, container, speed, anim) {
  if (typeof content == 'string') {
   for (const c of content) {
-   container.append(c);
+   if (anim.anim != undefined) {
+    const s = document.createElement('span');
+    s.style.display = 'inline-block';
+    s.style['animation-delay'] = anim.offset + "s";
+    s.classList.add(anim.anim);
+    anim.offset -= 0.1;
+    s.append(c);
+    container.append(s);
+   } else {
+    container.append(c);
+   }
    await wait(20 * speed);
   }
  } else if (typeof content == 'object' && !Array.isArray(content)) {
@@ -88,15 +98,24 @@ async function say(content, container, speed) {
    await setCharacters(content.content.split(' ').filter(s => s.length > 0));
    break;
   } case '%': {
-   await say(content.content, container, speed * +content.modifier);
+   await say(content.content, container, speed * +content.modifier, anim);
    break;
   } case '[': {
    const [style] = content.content[0].split(' ', 1);
    const text = [content.content[0].slice(content.content[0].indexOf(' ') + 1), ...content.content.slice(1)];
    const c = document.createElement('span');
-   c.classList.add(style);
+   let savedanim;
+   if (style.startsWith('~')) {
+    savedanim = anim.anim;
+    anim.anim = style.slice(1);
+   } else {
+    c.classList.add(style);
+   }
    container.append(c);
-   await say(text, c, speed);
+   await say(text, c, speed, anim);
+   if (style.startsWith('~')) {
+    anim.anim = savedanim;
+   }
    break;
   } case '@': {
    const c = document.createElement('a');
@@ -104,7 +123,7 @@ async function say(content, container, speed) {
    c.target="_blank";
    c.rel="noopener noreferrer";
    container.append(c);
-   await say(content.content, c, speed);
+   await say(content.content, c, speed, anim);
    break;
   } case '<': {
    if (content.content[0] == '' && typeof content.content[1] == 'object' && content.content[1].type == '<') {
@@ -120,7 +139,7 @@ async function say(content, container, speed) {
       const c = document.createElement('div');
       c.addEventListener('click', (e) => {e.stopPropagation(); converse(target, speed)});
       options.append(c);
-      await say(text, c, 0);
+      await say(text, c, 0, anim);
       continue;
      }
      break;
@@ -129,7 +148,7 @@ async function say(content, container, speed) {
     c.classList.add('choice-2');
     container.append(c);
     c.append(options);
-    await say([content.content[i].trim(), ...content.content.slice(i + 1)], c, speed);
+    await say([content.content[i].trim(), ...content.content.slice(i + 1)], c, speed, anim);
    } else {
     const [target] = content.content[0].trim().split(' ', 1);
     const text = [content.content[0].trim().slice(content.content[0].trim().indexOf(' ') + 1), ...content.content.slice(1)];
@@ -137,7 +156,7 @@ async function say(content, container, speed) {
     c.classList.add('choice-1');
     c.addEventListener('click', (e) => {e.stopPropagation(); converse(target, speed)});
     container.append(c);
-    await say(text, c, speed);
+    await say(text, c, speed, anim);
    }
    break;
   } default:
@@ -145,7 +164,7 @@ async function say(content, container, speed) {
   }
  } else {
   for (const part of content) {
-   await say(part, container, speed);
+   await say(part, container, speed, anim);
   }
  }
 }
