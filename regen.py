@@ -10,7 +10,8 @@ for path in generators.generatedfiles():
     generated[path] = data
 
 for path in generators.hiddenfiles():
-    os.remove(path)
+    if os.path.exists(path):
+        os.remove(path)
 
 for path,data in generated.items():
     with open(path, 'wb') as f:
