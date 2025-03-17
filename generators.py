@@ -53,9 +53,10 @@ def replace(s, parts):
             after = s[j + len("###/foreach###"):]
             parts2 = {**parts}
             middle2 = ''
-            for x in parts2[name]:
-                parts2[name] = [x]
-                middle2 += replacep(middle, parts2)
+            if name in parts2:
+                for x in parts2[name]:
+                    parts2[name] = [x]
+                    middle2 += replacep(middle, parts2)
             s = before + middle2 + after
         else:
             break
