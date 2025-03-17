@@ -84,7 +84,7 @@ def templatechain(path):
             else:
                 return [{"current": [f"code: {''.join(keys)}"]}, parse(readfile('keyfail.html')), parse(readfile('template.html'))]
     if path == "changelog.html":
-        return [parse(readfile('changelogdata.html')), parse(readfile('changelogtemplate.html')), parse(readfile('template.html'))]
+        return [parse(readfile('changelogdata.html')), parse(readfile('changelog.html')), parse(readfile('template.html'))]
     return [parse(readfile('generated.html')), parse(readfile('template.html'))]
 
 def readfile(file):
