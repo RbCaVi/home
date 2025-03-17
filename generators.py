@@ -67,7 +67,7 @@ def replace(s, parts):
 
 def templatechain(path):
     if path.startswith("keypad"):
-        keys = path.split('/')[1:-1]
+        keys = path[:-5].split('/')[1:]
         if len(keys) < 4:
             return [
                 {
@@ -105,11 +105,11 @@ def generatedfiles():
         for l2 in keys:
             for l3 in keys:
                 for l4 in keys:
-                    files.append(f'keypad/{l1}/{l2}/{l3}/{l4}/index.html')
-                files.append(f'keypad/{l1}/{l2}/{l3}/index.html')
-            files.append(f'keypad/{l1}/{l2}/index.html')
-        files.append(f'keypad/{l1}/index.html')
-    files.append(f'keypad/index.html')
+                    files.append(f'keypad/{l1}/{l2}/{l3}/{l4}.html')
+                files.append(f'keypad/{l1}/{l2}/{l3}.html')
+            files.append(f'keypad/{l1}/{l2}.html')
+        files.append(f'keypad/{l1}.html')
+    files.append(f'keypad.html')
     return files
 
 def hiddenfiles():
@@ -122,7 +122,6 @@ def hiddenfiles():
         "generators.py",
         "hash.py",
         "crypt.py",
-        "keypad.html",
         "keyfail.html",
         "keysuccess.html",
         "changelogdata.html",
