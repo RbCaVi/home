@@ -5,16 +5,6 @@ print("reloaded")
 
 base = "rbcavi.github.io/home"
 
-def templatechain(path):
-    return ['generated.html', 'template.html']
-
-def readfile(file):
-    with open(file) as f:
-        return f.read()
-
-def readfiles(files):
-    return [readfile(file) for file in files]
-
 def escape(s):
     return f"{s}".replace("<", "&lt;")
 
@@ -72,12 +62,19 @@ def replace(s, parts):
     s = replacep(s, parts)
     return s
 
+def templatechain(path):
+    return [parse(readfile('generated.html')), parse(readfile('template.html'))]
+
+def readfile(file):
+    with open(file) as f:
+        return f.read()
+
 def generate(path):
-    files = readfiles(templatechain(path))
-    t0 = parse(files[1])['main'][0]
-    t1 = parse(files[0])
-    t1 = {k:[replace(c, {}) for c in v] for k,v in t1.items()}
-    return replace(t0, t1)
+    templates = templatechain(path)
+    bits = {}
+    for template in templates:
+        bits.update({k:[replace(c, bits) for c in v] for k,v in template.items()})
+    return bits['main'][0]
 
 def generatedfiles():
     files = ['generated.html', "secrets.json"]
