@@ -45,10 +45,9 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
         import generators
         generators.base = "%s:%s" % (hostname, serverPort)
         try:
-            print(path)
+            print("trying", path)
             if path in generators.hiddenfiles():
-                self.send_path('404.html', 'text/html', code = 404)
-                return True
+                return False
             if path in generators.generatedfiles():
                 data = generators.getgenerator(path)(path) # i'm <age> and this is aeh
                 if type(data) == str:
