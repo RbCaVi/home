@@ -41,27 +41,33 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             self.send_data(f.read(), mimetype, code)
     
     def try_send(self, path):
+        path = path.replace('\\', '/')
         del sys.modules['generators']
         import generators
         generators.base = "%s:%s" % (hostname, serverPort)
         try:
             print("trying", path)
             if path in generators.hiddenfiles():
+                print("hidden", path)
                 return False
             if path in generators.generatedfiles():
+                print("generated", path)
                 data = generators.getgenerator(path)(path) # i'm <age> and this is aeh
                 if type(data) == str:
                     data = bytes(data, 'utf-8')
                 self.send_data(data, getmimetype(path))
                 return True
         except Exception as e:
+            print("error", path)
             traceback.print_exc(e)
             self.send_data(b"<html><head></head><body>oops" + bytes(str(e), 'utf-8') + "</body></html>", 'text/html', code = 404)
             return True
         if os.path.exists(path) and os.path.isfile(path):
+            print("file at", path)
             self.send_path(path, getmimetype(path))
             return True
         else:
+            print("not found", path)
             return False
 
     def do_GET(self):
