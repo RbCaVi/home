@@ -6,7 +6,7 @@ print("reloaded")
 base = "rbcavi.github.io/home"
 
 def templatechain(path):
-    return ['template.html', 'generated.html']
+    return ['generated.html', 'template.html']
 
 def readfile(file):
     with open(file) as f:
@@ -73,29 +73,10 @@ def replace(s, parts):
     return s
 
 def generate(path):
-    f = "<html><head></head><body>"
-    f += f"<pre>{path}</pre>"
-    f += "<pre>template chain</pre>"
-    chain = templatechain(path)
-    for c in chain:
-        f += f"<pre>{c}</pre>"
-    f += "<pre>template chain 2</pre>"
     files = readfiles(templatechain(path))
-    for c in files:
-        f += f"<pre>{escape(c)}</pre>"
-    f += "<pre>aaaaaaaaaaaaaaaaaaaaaaaaaaaa</pre>"
-    for i,c in enumerate(parse(f) for f in files):
-        f += f"<pre>{i}</pre>"
-        for name,c in c.items():
-            f += f"<pre>{name}=</pre>"
-            for c in c:
-                f += f"<pre>{escape(c)}</pre>"
-    t0 = parse(files[0])['main'][0]
-    t1 = parse(files[1])
+    t0 = parse(files[1])['main'][0]
+    t1 = parse(files[0])
     t1 = {k:[replace(c, {}) for c in v] for k,v in t1.items()}
-    print("a")
-    #f += f"<pre>{escape(replace(t0, t1))}</pre>"
-    f += "</body></html>"
     return replace(t0, t1)
 
 def generatedfiles():
