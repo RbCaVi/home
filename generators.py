@@ -64,6 +64,23 @@ def replace(s, parts):
     return s
 
 def templatechain(path):
+    if path.startswith("keypad"):
+        keys = path.split('/')[1:-1]
+        if len(keys) < 4:
+            return [
+                {
+                    "current": [f"code: {''.join(keys)}"],
+                    "currentkeys": keys,
+                    "keys": [*'123456789'],
+                },
+                parse(readfile('keypad.html')),
+                parse(readfile('template.html')),
+            ]
+        else:
+            if ''.join(keys) in ['1111', '1234', '9999', '4321', '8324']:
+                return [{"current": [f"code: {''.join(keys)}"]}, parse(readfile('keysuccess.html')), parse(readfile('template.html'))]
+            else:
+                return [{"current": [f"code: {''.join(keys)}"]}, parse(readfile('keyfail.html')), parse(readfile('template.html'))]
     return [parse(readfile('generated.html')), parse(readfile('template.html'))]
 
 def readfile(file):
@@ -79,10 +96,20 @@ def generate(path):
 
 def generatedfiles():
     files = ['generated.html', "secrets.json"]
+    keys = '123456789'
+    for l1 in keys:
+        for l2 in keys:
+            for l3 in keys:
+                for l4 in keys:
+                    files.append(f'keypad/{l1}/{l2}/{l3}/{l4}/index.html')
+                files.append(f'keypad/{l1}/{l2}/{l3}/index.html')
+            files.append(f'keypad/{l1}/{l2}/index.html')
+        files.append(f'keypad/{l1}/index.html')
+    files.append(f'keypad/index.html')
     return files
 
 def hiddenfiles():
-    files = ['template.html', "plainsecrets.json", "not-me.png", "server.py", "regen.py", "generators.py", "hash.py", "crypt.py"]
+    files = ['template.html', "plainsecrets.json", "not-me.png", "server.py", "regen.py", "generators.py", "hash.py", "crypt.py", "keypad.html"]
     return files
 
 def delmodule(mod):
