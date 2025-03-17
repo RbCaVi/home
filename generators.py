@@ -10,6 +10,7 @@ def escape(s):
 
 def parseone(s):
     s = s.strip()
+    #print("saerts", s[:100].encode('utf-8'))
     assert s.startswith('###')
     _,name,rest = s.split('###', maxsplit = 2)
     content,rest = rest.split(f'###/{name}###', maxsplit = 1)
@@ -53,10 +54,11 @@ def replace(s, parts):
             after = s[j + len("###/foreach###"):]
             parts2 = {**parts}
             middle2 = ''
-            if name in parts2:
-                for x in parts2[name]:
+            names = name.split('#')
+            for xs in zip(*[parts2.get(name, []) for name in names]):
+                for name,x in zip(names,xs):
                     parts2[name] = [x]
-                    middle2 += replacep(middle, parts2)
+                middle2 += replacep(middle, parts2)
             s = before + middle2 + after
         else:
             break
@@ -81,6 +83,8 @@ def templatechain(path):
                 return [{"current": [f"code: {''.join(keys)}"]}, parse(readfile('keysuccess.html')), parse(readfile('template.html'))]
             else:
                 return [{"current": [f"code: {''.join(keys)}"]}, parse(readfile('keyfail.html')), parse(readfile('template.html'))]
+    if path == "changelog.html":
+        return [parse(readfile('changelogdata.html')), parse(readfile('changelogtemplate.html')), parse(readfile('template.html'))]
     return [parse(readfile('generated.html')), parse(readfile('template.html'))]
 
 def readfile(file):
@@ -95,7 +99,7 @@ def generate(path):
     return bits['main'][0]
 
 def generatedfiles():
-    files = ['generated.html', "secrets.json"]
+    files = ['generated.html', "secrets.json", "changelog.html"]
     keys = '123456789'
     for l1 in keys:
         for l2 in keys:
@@ -121,6 +125,7 @@ def hiddenfiles():
         "keypad.html",
         "keyfail.html",
         "keysuccess.html",
+        "changelogdata.html",
     ]
     return files
 
