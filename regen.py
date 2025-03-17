@@ -14,5 +14,7 @@ for path in generators.hiddenfiles():
         os.remove(path)
 
 for path,data in generated.items():
+    if '/' in path:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'wb') as f:
         f.write(data)
