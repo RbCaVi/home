@@ -109,7 +109,19 @@ def generatedfiles():
     return files
 
 def hiddenfiles():
-    files = ['template.html', "plainsecrets.json", "not-me.png", "server.py", "regen.py", "generators.py", "hash.py", "crypt.py", "keypad.html"]
+    files = [
+        'template.html',
+        "plainsecrets.json",
+        "not-me.png",
+        "server.py",
+        "regen.py",
+        "generators.py",
+        "hash.py",
+        "crypt.py",
+        "keypad.html",
+        "keyfail.html",
+        "keysuccess.html",
+    ]
     return files
 
 def delmodule(mod):
