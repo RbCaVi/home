@@ -1,3 +1,5 @@
+// i painstakingly carved this out of emscripten's generated code
+
 var out = Module.print;
 var err = Module.printErr || console.error.bind(console);
 
