@@ -20,6 +20,7 @@ mimetypes = {
     '.css': 'text/css',
     '.png': 'image/png',
     '.json': 'application/json',
+    '.wasm': 'application/wasm',
 }
 
 def getmimetype(path):
