@@ -8,7 +8,10 @@
   <body>
     <p>Upload a .plp file from parserlang here</p>
     <input type="file" id = "fileinput">
-    <button onclick="run()">run</button>
+    <button onclick="runf()">run</button>
+    <br>
+    <p>or try one of these</p>
+    <button onclick="runp('print.plp')">print empty string 5 times in a row</button>
     <br>
 
     <textarea id="output" rows="8"></textarea>
@@ -30,9 +33,18 @@
       let init = false;
       promiseInitialized.then(() => init = true);
 
-      async function run() {
-        document.getElementById('output').value = ''; // clear
+      async function runf() {
         const data = new Uint8Array(await document.getElementById('fileinput').files[0].arrayBuffer());
+        run(data);
+      }
+
+      async function runp(path) {
+        const data = new Uint8Array(await (await fetch(path)).arrayBuffer());
+        run(data);
+      }
+
+      function run(data) {
+        document.getElementById('output').value = ''; // clear
         const stack = wasmExports.stackSave();
         const ret = wasmExports.stackAlloc(data.length);
         HEAP8.set(data, ret);
