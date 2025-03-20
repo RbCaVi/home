@@ -11,12 +11,18 @@
     <button onclick="runf()">run</button>
     <br>
     <p>or try one of these</p>
-    <button onclick="runp('print.plp')">print empty string 5 times in a row</button>
+    <button onclick="runp('print')">print empty string 5 times in a row</button>
     <br>
 
+
+    <p>Source code (only if you choose one of the presets)</p>
+    <textarea id="source" rows="8"></textarea>
+    <br>
+    <p>Output</p>
     <textarea id="output" rows="8"></textarea>
 
     <script type='text/javascript'>
+      document.getElementById('source').value = ''; // clear browser cache
       document.getElementById('output').value = ''; // clear browser cache
       var Module = {
         preRun: [],
@@ -35,11 +41,13 @@
 
       async function runf() {
         const data = new Uint8Array(await document.getElementById('fileinput').files[0].arrayBuffer());
+        document.getElementById('source').value = '';
         run(data);
       }
 
       async function runp(path) {
-        const data = new Uint8Array(await (await fetch(path)).arrayBuffer());
+        const data = new Uint8Array(await (await fetch(path + '.plp')).arrayBuffer());
+        document.getElementById('source').value = await (await fetch(path + '.pls')).text();
         run(data);
       }
 
