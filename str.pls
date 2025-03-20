@@ -1,0 +1,1 @@
+return (["a", "", "ham", "a\na", "a\"a", "a\\a", "a\\\na", "a\\\\na"])
