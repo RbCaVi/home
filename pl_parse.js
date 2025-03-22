@@ -124,46 +124,47 @@ dump = function(stmt) {
 	} else if (typ == 'EXPR') {
 		const op = stmt[1];
 		const arity = stmt.length - 2;
+    let opid;
 		if ([op, arity] in opids) {
 			opid = opids[[op, arity]];
     } else {
 			opid = opids[[op, 0]]
     }
-		es = stmt.slice(2).map(dump);
-		lens = es.map(e => e.byteLength);
+		const es = stmt.slice(2).map(dump);
+		const lens = es.map(e => e.byteLength);
     return toBuffer(types[typ], opid, arity, ...lens, ...es);
 	} else if (typ == 'INT') {
-		num = stmt[1];
+		const num = stmt[1];
     return toBuffer(types[typ], num);
 	} else if (typ == 'FLOAT') {
-		num = stmt[1];
+		const num = stmt[1];
     return toBuffer(types[typ], {type: 'float', value: num});
 	} else if (typ == 'STR') {
-		string = stmt[1];
-    string2 = new TextEncoder().encode(string);
+		const string = stmt[1];
+    const string2 = new TextEncoder().encode(string);
     return toBuffer(types[typ], string2.byteLength, string2);
 	} else if (typ == 'SYM') {
-		sym = stmt[1];
-    sym2 = new TextEncoder().encode(sym);
+		const sym = stmt[1];
+    const sym2 = new TextEncoder().encode(sym);
     return toBuffer(types[typ], sym2.byteLength, sym2);
 	} else if (typ == 'YIELD') {
-		[, val] = stmt;
+		const [, val] = stmt;
     return toBuffer(types[typ], dump(val));
 	} else if (typ == 'SETSTMT') {
-		[, vari, val] = stmt;
-		vari = dump(vari)
-		val = dump(val)
-    return toBuffer(types[typ], vari.byteLength, val.byteLength, vari, val);
+		const [, vari, val] = stmt;
+		const e1 = dump(vari);
+		const e2 = dump(val);
+    return toBuffer(types[typ], e1.byteLength, e2.byteLength, e1, e2);
 	} else if (typ == 'FOR') {
-		_,vari,val,code = stmt
-    vari = new TextEncoder().encode(vari);
-		val = dump(val)
-		code = dump(code)
-    return toBuffer(types[typ], vari.byteLength, val.byteLength, code.byteLength, vari, val, code);
+		const [, vari, val, code] = stmt;
+    const vari2 = new TextEncoder().encode(vari);
+		const e1 = dump(val)
+		const e2 = dump(code)
+    return toBuffer(types[typ], vari2.byteLength, e1.byteLength, e2.byteLength, vari2, e1, e2);
 	} else if (typ == 'WHILE') {
-		[, cond, code] = stmt;
-		e1 = dump(cond);
-		e2 = dump(code);
+		const [, cond, code] = stmt;
+		const e1 = dump(cond);
+		const e2 = dump(code);
     return toBuffer(types[typ], e1.byteLength, e2.byteLength, e1, e2);
 	} else {
     return toBuffer(types[typ]);
