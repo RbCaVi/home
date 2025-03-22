@@ -32,13 +32,14 @@ LBR='LBR'
 RBR='RBR'
 DOT='DOT'
 
-numregex = /[0-9]*/
+numregex = /[0-9]+/y
 
-stringregex = /"([^"\\]|\\([n\\"]|x[0-9a-fA-F]{2}))*"/;
+stringregex = /"(([^"\\]|\\([n\\"]|x[0-9a-fA-F]{2}))*)"/y;
 
 getInt = function(s) {
   // not a variable
   var m;
+  numregex.lastIndex = 0;
   if ((m = numregex.exec(s)) != null) {
     return [+m[0],s.slice(m[0].length)];
   }
@@ -47,8 +48,9 @@ getInt = function(s) {
 
 getStr = function(s) {
   // not a variable
-  var m;
-  if ((m = stringregex.exec(s)) != null) {
+  stringregex.lastIndex = 0;
+  var m = stringregex.exec(s);
+  if (m != null) {
     let instr = [...m[1]]
     let outstr = ''
     while (instr.length > 0) {
@@ -73,7 +75,7 @@ getStr = function(s) {
 getSym = function(s) {
   // not a variable
   var m;
-  if ((m = /[a-zA-Z][a-zA-Z0-9]*/.exec(s)) != null) {
+  if ((m = /[a-zA-Z][a-zA-Z0-9]*/y.exec(s)) != null) {
     return [m[0],s.slice(m[0].length)];
   }
   return [null, s];
@@ -114,16 +116,16 @@ getToken = function(s, lastType, comma) {
     return [null, ss];
   } else if ([LPAR, CALL, IDX, OP, UOP, LBR, COMMA].includes(lastType)) {
     if (ss.startsWith('(')) {
-      return [LPAR],ss.slice(1);
+      return [[LPAR],ss.slice(1)];
     }
     if (ss.startsWith('[')) {
-      return [LBR],ss.slice(1);
+      return [[LBR],ss.slice(1)];
     }
-    if (lastType in [CALL,COMMA] && ss.startsWith(')')) {
-      return [RPAR],ss.slice(1);
+    if ([CALL,COMMA].includes(lastType) && ss.startsWith(')')) {
+      return [[RPAR],ss.slice(1)];
     }
-    if (lastType in [LBR,COMMA] && ss.startsWith(']')) {
-      return [RBR],ss.slice(1);
+    if ([LBR,COMMA].includes(lastType) && ss.startsWith(']')) {
+      return [[RBR],ss.slice(1)];
     }
     for (const uop of uops) {
       if (ss.startsWith(uop)) {
@@ -254,7 +256,7 @@ addToken = function(token, lastType, values, ops, parens) {
 
 evaluate = function(expr) {
   values = [];
-  ops = [];
+  let ops = [];
   parens = [];
 
   s = expr

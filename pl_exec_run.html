@@ -15,7 +15,7 @@
 			}
 
 			prgm = function(s) {
-				s = s.replace(/#[^\n]*(\n|$)/, '\n');
+				s = s.replace(/#[^\n]*(\n|$)/g, '\n');
 				return concat(stmts, eof)(s).next().value[0][0];
 			}
 		</script>
