@@ -10,7 +10,7 @@ stmtwrap = function(s) {
 	return stmt(s);
 }
 
-stmts = transform(star(noneerror(stmtwrap)))(function(data) {
+stmts = transform(star(stmtwrap))(function(data) {
 	return ["BLOCK", ...data];
 })
 
@@ -38,7 +38,7 @@ setstmt = transform(concatstrip(expr, strs('='), expr))(function(data) {
 
 SIG='SIG'
 
-declare = transform(concatstrip(strs('def'), errorafter(sym), strs('='), expr))(function(data) {
+declare = transform(concatstrip(strs('def'), sym, strs('='), expr))(function(data) {
 	const [, v, , e] = data
 	return ['DEF', v, e];
 })
@@ -48,14 +48,15 @@ ifstmt = transform(concatstrip(strs('if'), expr, strs('then'), blockstmt))(funct
 	return ['IF', cond, ["BLOCK", ...stmts]];
 })
 
-def commasep(p):
-	@transform(optional(concatstrip(p,star(concatstrip(strs(','),p)),optional(strs(',')))))
-	def commasep(data):
-		if data is None:
-			return []
-		d,others,_=data
-		return [d,*[arg for _,arg in others]]
-	return commasep
+commasep = function(p) {
+	return transform(optional(concatstrip(p,star(concatstrip(strs(','),p)),optional(strs(',')))))(function(data) {
+		if (data == null) {
+			return [];
+    }
+		[d, others, ] = data;
+		return [d, ...others.map(([, arg]) => arg)];
+  })
+}
 
 arg = sym
 
@@ -83,8 +84,8 @@ exprstmt = transform(concatstrip(alternate(strs('return'),strs('yield'),strs('')
 })
 
 forstmt = transform(concatstrip(strs('for'),sym,strs('in'),expr,strs('do'),blockstmt))(function(data) {
-	const [, var, , it, , [, ...stmts]] = data;
-	return ['FOR', var, it, ["BLOCK", ...stmts]];
+	const [, v, , it, , [, ...stmts]] = data;
+	return ['FOR', v, it, ["BLOCK", ...stmts]];
 })
 
 whilestmt = transform(concatstrip(strs('while'),expr,strs('do'),blockstmt))(function(data) {

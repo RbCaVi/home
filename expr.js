@@ -34,15 +34,13 @@ DOT='DOT'
 
 numregex = /[0-9]*/
 
-stringregex = /"([^"\\]|\\([n\\"]|x[0-9a-fA-F]{2}))*"/
-
-import re
+stringregex = /"([^"\\]|\\([n\\"]|x[0-9a-fA-F]{2}))*"/;
 
 getInt = function(s) {
   // not a variable
   var m;
   if ((m = numregex.exec(s)) != null) {
-    return [int(m[0]),s.slice(m[0].length)];
+    return [+m[0],s.slice(m[0].length)];
   }
   return [null, s]
 }
@@ -88,47 +86,47 @@ getToken = function(s, lastType, comma) {
     if (sym != null) {
       return [[SYM, sym], snew]
     }
-    raise Exception(f'no token: {s} after {lastType}')
+    return [null, ss];
   } else if ([INT, STR, SYM, RPAR, RBR].includes(lastType)) {
     for (const op of ops) {
-      if (ss.startswith(op)) {
+      if (ss.startsWith(op)) {
         return [[OP, op], ss.slice(op.length)];
       }
     }
-    if (comma and ss.startswith(',')) {
+    if (comma && ss.startsWith(',')) {
       return [[COMMA, ','], ss.slice(1)];
     }
-    if (ss.startswith(')')) {
+    if (ss.startsWith(')')) {
       return [[RPAR], ss.slice(1)];
     }
-    if (ss.startswith(']')) {
+    if (ss.startsWith(']')) {
       return [[RBR], ss.slice(1)];
     }
-    if (ss.startswith('(')) {
+    if (ss.startsWith('(')) {
       return [[CALL], ss.slice(1)];
     }
-    if (ss.startswith('[')) {
+    if (ss.startsWith('[')) {
       return [[IDX], ss.slice(1)];
     }
-    if (ss.startswith('.')) {
+    if (ss.startsWith('.')) {
       return [[DOT], ss.slice(1)];
     }
     return [null, ss];
   } else if ([LPAR, CALL, IDX, OP, UOP, LBR, COMMA].includes(lastType)) {
-    if (ss.startswith('(')) {
+    if (ss.startsWith('(')) {
       return [LPAR],ss.slice(1);
     }
-    if (ss.startswith('[')) {
+    if (ss.startsWith('[')) {
       return [LBR],ss.slice(1);
     }
-    if (lastType in [CALL,COMMA] and ss.startswith(')')) {
+    if (lastType in [CALL,COMMA] && ss.startsWith(')')) {
       return [RPAR],ss.slice(1);
     }
-    if (lastType in [LBR,COMMA] and ss.startswith(']')) {
+    if (lastType in [LBR,COMMA] && ss.startsWith(']')) {
       return [RBR],ss.slice(1);
     }
     for (const uop of uops) {
-      if (ss.startswith(uop)) {
+      if (ss.startsWith(uop)) {
         return [[UOP, uop], ss.slice(uop.length)];
       }
     }

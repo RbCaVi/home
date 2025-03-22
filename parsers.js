@@ -33,7 +33,11 @@ concat = function(...ps) {
 		}
 	}
 	if (ps.length == 1) {
-		return ps[0];
+		return function*(s) {
+			for (const [data, s2] of ps[0](s)) {
+				yield [[data], s2];
+			}
+		}
 	}
 	const p1 = ps[0];
 	const p2 = concat(...ps.slice(1));
@@ -51,6 +55,9 @@ star = function(p) {
 	let p2;
 	const star = function*(s) {
 		for (const [data1, s1] of p(s)) {
+      if (s1 == s) {
+        continue;
+      }
 			for (const [data2, s2] of p2(s1)) {
 				data2.unshift(data1);
 				yield [data2, s2];
@@ -64,7 +71,7 @@ star = function(p) {
 
 transform = function(p) {
 	return function(f) {
-		return function(s) {
+		return function*(s) {
 			for (const [data, s2] of p(s)) {
 				yield [f(data), s2];
 			}
@@ -73,7 +80,7 @@ transform = function(p) {
 }
 
 parserify = function(f) {
-	return function(s) {
+	return function*(s) {
 		const [data, s2] =f(s);
 		if (data != null) {
 			yield [data, s2];
@@ -82,7 +89,7 @@ parserify = function(f) {
 }
 
 optional = function(p) {
-	return function(s) {
+	return function*(s) {
 		for (const [data, s2] of p(s)) {
 			yield [data, s2];
 		}
