@@ -125,7 +125,7 @@ toBuffer = function(...args) {
 }
 
 dump = function(stmt) {
-	const typ = stmt.pop();
+	const typ = stmt.shift();
 	if (typ == 'BLOCK') {
 		const es = stmt.map(dump);
 		const lens = es.map(e => e.byteLength);
@@ -135,7 +135,7 @@ dump = function(stmt) {
 		const lens = es.map(e => e.byteLength);
     return toBuffer(types[typ], stmt.length, ...lens, ...es);
 	} else if (typ == 'EXPR') {
-		const op = stmt.pop();
+		const op = stmt.shift();
 		const arity = stmt.length;
     let opid;
 		if ([op, arity] in opids) {
