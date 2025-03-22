@@ -92,77 +92,77 @@ toBuffer = function(...args) {
 }
 
 dump = function(stmt) {
-	const typ = stmt[0]
+	const typ = stmt.pop();
 	if (typ == 'BLOCK') {
-		const es = stmt.slice(1).map(dump);
+		const es = stmt.map(dump);
 		const lens = es.map(e => e.byteLength);
-    return toBuffer(types[typ], stmt.length - 1, ...lens, ...es);
+    return toBuffer(types[typ], stmt.length, ...lens, ...es);
 	} else if (typ == 'DEFFUNC') {
-		const [, name, sig, code] = stmt;
+		const [name, sig, code] = stmt;
 		const e1 = dump(sig);
 		const e2 = dump(code);
     const name2 = new TextEncoder().encode(name);
     return toBuffer(types[typ], name2.byteLength, e1.byteLength, e2.byteLength, name2, e1, e2);
 	} else if (typ == 'IF') {
-		const [, cond, code] = stmt;
+		const [cond, code] = stmt;
 		const e1 = dump(cond);
 		const e2 = dump(code);
     return toBuffer(types[typ], e1.byteLength, e2.byteLength, e1, e2);
 	} else if (typ == 'DEF') {
-		const [, name, val] = stmt;
+		const [name, val] = stmt;
     const name2 = new TextEncoder().encode(name);
     return toBuffer(types[typ], name2.byteLength, name2, dump(val));
 	} else if (typ == 'RETURN') {
     return toBuffer(types[typ]);
 	} else if (typ == 'RETURNV') {
-		const [, val] = stmt;
+		const [val] = stmt;
     return toBuffer(types[typ], dump(val));
 	} else if (typ == 'SIG') {
-		const es = stmt.slice(1).map(arg => new TextEncoder().encode(arg));
+		const es = stmt.map(arg => new TextEncoder().encode(arg));
 		const lens = es.map(e => e.byteLength);
-    return toBuffer(types[typ], stmt.length - 1, ...lens, ...es);
+    return toBuffer(types[typ], stmt.length, ...lens, ...es);
 	} else if (typ == 'EXPR') {
-		const op = stmt[1];
-		const arity = stmt.length - 2;
+		const op = stmt.pop();
+		const arity = stmt.length;
     let opid;
 		if ([op, arity] in opids) {
 			opid = opids[[op, arity]];
     } else {
 			opid = opids[[op, 0]]
     }
-		const es = stmt.slice(2).map(dump);
+		const es = stmt.map(dump);
 		const lens = es.map(e => e.byteLength);
     return toBuffer(types[typ], opid, arity, ...lens, ...es);
 	} else if (typ == 'INT') {
-		const num = stmt[1];
+		const [num] = stmt;
     return toBuffer(types[typ], num);
 	} else if (typ == 'FLOAT') {
-		const num = stmt[1];
+		const [num] = stmt;
     return toBuffer(types[typ], {type: 'float', value: num});
 	} else if (typ == 'STR') {
-		const string = stmt[1];
+		const [string] = stmt;
     const string2 = new TextEncoder().encode(string);
     return toBuffer(types[typ], string2.byteLength, string2);
 	} else if (typ == 'SYM') {
-		const sym = stmt[1];
+		const [sym] = stmt;
     const sym2 = new TextEncoder().encode(sym);
     return toBuffer(types[typ], sym2.byteLength, sym2);
 	} else if (typ == 'YIELD') {
-		const [, val] = stmt;
+		const [val] = stmt;
     return toBuffer(types[typ], dump(val));
 	} else if (typ == 'SETSTMT') {
-		const [, vari, val] = stmt;
+		const [vari, val] = stmt;
 		const e1 = dump(vari);
 		const e2 = dump(val);
     return toBuffer(types[typ], e1.byteLength, e2.byteLength, e1, e2);
 	} else if (typ == 'FOR') {
-		const [, vari, val, code] = stmt;
+		const [vari, val, code] = stmt;
     const vari2 = new TextEncoder().encode(vari);
 		const e1 = dump(val)
 		const e2 = dump(code)
     return toBuffer(types[typ], vari2.byteLength, e1.byteLength, e2.byteLength, vari2, e1, e2);
 	} else if (typ == 'WHILE') {
-		const [, cond, code] = stmt;
+		const [cond, code] = stmt;
 		const e1 = dump(cond);
 		const e2 = dump(code);
     return toBuffer(types[typ], e1.byteLength, e2.byteLength, e1, e2);
