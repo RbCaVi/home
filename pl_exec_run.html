@@ -59,8 +59,15 @@
       }
 
       async function runp(path) {
-        const data = new Uint8Array(await (await fetch(path + '.plp')).arrayBuffer());
+        const data1 = new Uint8Array(await (await fetch(path + '.plp')).arrayBuffer());
         document.getElementById('source').value = await (await fetch(path + '.pls')).text();
+				const a = prgm(document.getElementById('source').value);
+				console.log(a);
+				const data = dump(a);
+				console.log(data);
+				console.log(data1);
+				console.log(data.length == data1.length);
+				for (let i = 0; i < data.length; i++) {console.log(data[i] == data1[i])}
         run(data);
       }
 
