@@ -23,6 +23,20 @@ opids = {
   [["[", 0]]: 10,
 }
 
+opnames = [
+  "-",
+  "+",
+  "-",
+  "*",
+  "/",
+  "",
+  "%",
+  "==",
+  "(",
+  "[]",
+  "[",
+]
+
 types = Object.fromEntries([
 	'BLOCK',
 	'DEFFUNC',
@@ -41,6 +55,25 @@ types = Object.fromEntries([
 	'FOR',
 	'WHILE',
 ].entries().map(([i, typ]) => [typ, i]))
+
+typenames = [
+	'BLOCK',
+	'DEFFUNC',
+	'IF',
+	'DEF',
+	'RETURN',
+	'RETURNV',
+	'SIG',
+	'EXPR',
+	'INT',
+	'FLOAT',
+	'STR',
+	'SYM',
+	'YIELD',
+	'SETSTMT',
+	'FOR',
+	'WHILE',
+]
 
 toBuffer = function(...args) {
   args = args.map(v => {
@@ -156,5 +189,88 @@ dump = function(stmt) {
     return toBuffer(types[typ], s2.byteLength, s2);
 	} else {
     return toBuffer(types[typ]);
+  }
+}
+
+bufferFromArray = arr => new DataView(arr.buffer, arr.byteOffset, arr.byteLength);
+
+getInts32 = function(view, i, n) {
+  const ints = [];
+  for (let j = i; j < i + 4 * n; j += 4) {
+    ints.push(view.getInt32(j, true));
+  }
+  return ints;
+}
+
+getSubarrays_ = function(data, i, lens) {
+  const subarrays = [];
+  for (let len of lens) {
+    subarrays.push(data.subarray(i, i + len));
+    i += len;
+  }
+  return [subarrays, data.subarray(i)];
+}
+
+getSubarrays = function(data, view, i, arity, hasRest = false) {
+  const lens = getInts32(view, i, arity);
+  const [subarrays, rest] = getSubarrays_(data, i + arity * 4, lens);
+  if (hasRest) {
+    subarrays.push(rest);
+  }
+  return subarrays;
+}
+
+decode = function(data) {
+  return new TextDecoder().decode(data);
+}
+
+undump = function(data) {
+  const view = bufferFromArray(data);
+  const typ = typenames[view.getInt32(0, true)];
+	if (typ == 'BLOCK') {
+    const arity = view.getInt32(4, true);
+    const es = getSubarrays(data, view, 8, arity).map(undump);
+    return [typ, ...es];
+	} else if (typ == 'SIG') {
+    const arity = view.getInt32(4, true);
+    const es = getSubarrays(data, view, 8, arity).map(decode);
+    return [typ, ...es];
+	} else if (typ == 'EXPR') {
+    const opid = view.getInt32(4, true);
+    const arity = view.getInt32(8, true);
+    const es = getSubarrays(data, view, 12, arity).map(undump);
+    const op = opnames[opid];
+    return [typ, op, ...es];
+	} else if (typ == 'DEFFUNC') {
+    const [namedata, sigdata, codedata] = getSubarrays(data, view, 4, 3);
+    return [typ, decode(namedata), undump(sigdata), undump(codedata)];
+	} else if (typ == 'IF' || typ == 'WHILE') {
+    const [conddata, codedata] = getSubarrays(data, view, 4, 2);
+    return [typ, undump(conddata), undump(codedata)];
+	} else if (typ == 'FOR') {
+    const [vardata, valdata, codedata] = getSubarrays(data, view, 4, 3);
+    return [typ, decode(vardata), undump(valdata), undump(codedata)];
+	} else if (typ == 'DEF') {
+    const [namedata, valdata] = getSubarrays(data, view, 4, 1, true);
+    return [typ, decode(namedata), undump(valdata)];
+	} else if (typ == 'SETSTMT') {
+    const [vardata, valdata] = getSubarrays(data, view, 4, 2);
+    return [typ, undump(vardata), undump(valdata)];
+	} else if (typ == 'RETURN') {
+    return [typ];
+	} else if (typ == 'RETURNV' || typ == 'YIELD') {
+    const [valdata] = getSubarrays(data, view, 4, 0, true);
+    return [typ, undump(valdata)];
+	} else if (typ == 'INT') {
+    const num = view.getInt32(4, true);
+    return [typ, num];
+	} else if (typ == 'FLOAT') {
+    const num = view.getFloat32(4, true);
+    return [typ, num];
+	} else if (typ == 'STR' || typ == 'SYM') {
+    const [sdata] = getSubarrays(data, view, 4, 1);
+    return [typ, decode(sdata)];
+	} else {
+    return [typ];
   }
 }

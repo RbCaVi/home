@@ -66,6 +66,8 @@
 				const data = dump(a);
 				console.log(data);
 				console.log(data1);
+				console.log(undump(data));
+				console.log(undump(data1));
 				console.log(data.length == data1.length);
 				for (let i = 0; i < data.length; i++) {console.log(data[i] == data1[i])}
         run(data);
