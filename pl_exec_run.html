@@ -10,11 +10,10 @@
 		<script type="text/javascript" src="pl_parse.js"></script>
   </head>
   <body>
-    <p>Upload a .plp file from parserlang here</p>
+    <p>upload a .plp file from parserlang here</p>
     <input type="file" id = "fileinput">
-    <button onclick="runf()">run</button>
     <br>
-    <p>or try one of these</p>
+    <p>try one of these</p>
     <button onclick="runp('print')">print empty string 5 times in a row</button>
     <!-- button onclick="runp('test')">syntax sampler</button -->
     <button onclick="runp('strcmp')">string equality</button>
@@ -28,9 +27,11 @@
     <br>
 
 
-    <p>Source code (only if you choose one of the presets)</p>
+    <p>or write source code here</p>
     <textarea id="source" rows="8"></textarea>
     <br>
+    <button onclick="runs()">run</button>
+		<br>
     <p>Output</p>
     <textarea id="output" rows="8"></textarea>
 
@@ -49,14 +50,15 @@
     </script>
     <script type="text/javascript" src="pl_exec_run.js"></script>
     <script type="text/javascript">
-      let init = false;
-      promiseInitialized.then(() => init = true);
+			document.getElementById('fileinput').addEventListener('change', async function(event) {
+				const file = event.target.files[0];
 
-      async function runf() {
-        const data = new Uint8Array(await document.getElementById('fileinput').files[0].arrayBuffer());
-        document.getElementById('source').value = '';
-        run(data);
-      }
+				if (file) {
+					const data = new Uint8Array(await file.arrayBuffer());
+					document.getElementById('source').value = render(undump(data));
+					run(data);
+				}
+			})
 
       async function runp(path) {
         document.getElementById('source').value = await (await fetch(path + '.pls')).text();
@@ -64,7 +66,14 @@
         run(data);
       }
 
-      function run(data) {
+      async function runs(path) {
+				const data = dump(prgm(document.getElementById('source').value));
+        run(data);
+      }
+
+      async function run(data) {
+				await promiseInitialized;
+        document.getElementById('fileinput').value = ''; // clear
         document.getElementById('output').value = ''; // clear
         const stack = wasmExports.stackSave();
         const ret = wasmExports.stackAlloc(data.length);

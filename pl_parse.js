@@ -274,3 +274,75 @@ undump = function(data) {
     return [typ];
   }
 }
+
+indentspaces = "  "
+
+indent = function(s) {
+  return s.replace(/^/mg, indentspaces);
+}
+
+render = function(stmt) {
+	const typ = stmt.shift();
+	if (typ == 'BLOCK') {
+    return stmt.map(render).join('\n');
+	} else if (typ == 'SIG') {
+    return stmt.join(', ');
+	} else if (typ == 'EXPR') {
+		const op = stmt.shift();
+    if (op == '(') {
+      return render(stmt[0]) + '(' + stmt.slice(1).map(render).join(', ') + ')';
+    }
+    if (op == '[') {
+      return render(stmt[0]) + '[' + stmt.slice(1).map(render).join(', ') + ']';
+    }
+    if (op == '[]') {
+      return '[' + stmt.map(render).join(', ') + ']';
+    }
+		const arity = stmt.length;
+    if (arity == 1) {
+      return op + render(stmt[0]);
+    }
+    if (arity == 2) {
+      return render(stmt[0]) + ' ' + op + ' ' + render(stmt[1]);
+    }
+    return '$op' + op + '(' + stmt.join(', ') + ')';
+	} else if (typ == 'DEFFUNC') {
+		const [name, sig, code] = stmt;
+    return 'fn ' + name + '(' + render(sig) + ') {\n' + indent(render(code)) + '\n}';
+	} else if (typ == 'IF') {
+		const [cond, code] = stmt;
+    return 'if (' + render(cond) + ') {\n' + indent(render(code)) + '\n}';
+	} else if (typ == 'WHILE') {
+		const [cond, code] = stmt;
+    return 'while (' + render(cond) + ') {\n' + indent(render(code)) + '\n}';
+	} else if (typ == 'FOR') {
+		const [vari, val, code] = stmt;
+    return 'for ' + vari + ' in ' + render(val) + ' do {\n' + indent(render(code)) + '\n}';
+	} else if (typ == 'DEF') {
+		const [name, val] = stmt;
+    return 'def ' + name + ' = ' + render(val);
+	} else if (typ == 'SETSTMT') {
+		const [vari, val] = stmt;
+    return 'def ' + render(vari) + ' = ' + render(val);
+	} else if (typ == 'RETURN') {
+    return 'return';
+	} else if (typ == 'RETURNV') {
+		const [val] = stmt;
+    return 'return ' + render(val);
+	} else if (typ == 'YIELD') {
+		const [val] = stmt;
+    return 'yield ' + render(val);
+	} else if (typ == 'INT') {
+		const [num] = stmt;
+    return num.toString();
+	} else if (typ == 'FLOAT') {
+		const [num] = stmt;
+    return num.toString();
+	} else if (typ == 'STR') {
+		const [s] = stmt;
+    return JSON.stringify(s);
+	} else if (typ == 'SYM') {
+		const [s] = stmt;
+    return s;
+	}
+}
