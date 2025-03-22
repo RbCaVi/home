@@ -4,6 +4,21 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>a</title>
+		<script type="text/javascript" src="parsers.js"></script>
+		<script type="text/javascript" src="expr.js"></script>
+		<script type="text/javascript" src="stmt.js"></script>
+		<script type="text/javascript">
+			eof = function*(s) {
+				if (s.trim() == '') {
+					yield [null, '']
+				}
+			}
+
+			prgm = function(s) {
+				s = s.replace(/#[^\n]*(\n|$)/, '\n');
+				return concat(stmts, eof)(s).next().value[0][0];
+			}
+		</script>
   </head>
   <body>
     <p>Upload a .plp file from parserlang here</p>
