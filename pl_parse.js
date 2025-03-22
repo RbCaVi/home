@@ -5,8 +5,22 @@ eof = function*(s) {
 }
 
 prgm = function(s) {
-	s = re.sub('#[^\n]*(\n|$)', '\n', s);
-	return concat(stmts, eof)(s).next()[0][0];
+	s = s.replace(/#[^\n]*(\n|$)/g, '\n');
+	return concat(stmts, eof)(s).next().value[0][0];
+}
+
+opids = {
+  [["-", 1]]: 0,
+  [["+", 2]]: 1,
+  [["-", 2]]: 2,
+  [["*", 2]]: 3,
+  [["/", 2]]: 4,
+  [["", 2]]: 5, // idiv
+  [["%", 2]]: 6,
+  [["==", 2]]: 7,
+  [["(", 0]]: 8,
+  [["[]", 0]]: 9,
+  [["[", 0]]: 10,
 }
 
 types = Object.fromEntries([
@@ -28,109 +42,130 @@ types = Object.fromEntries([
 	'WHILE',
 ].entries().map(([i, typ]) => [typ, i]))
 
-dump = function(stmt) {
-	typ = stmt[0]
-	data = struct.pack('<I', types[typ])
-	if typ == 'BLOCK':
-		data += struct.pack('<I', len(stmt) - 1)
-		es = [dump(e) for e in stmt[1:]]
-		lens = [len(e) for e in es]
-		for l in lens:
-			data += struct.pack('<I', l)
-		for e in es:
-			data += e
-	elif typ == 'DEFFUNC':
-		_,name,sig,code = stmt
-		e1 = dump(sig)
-		e2 = dump(code)
-		data += struct.pack("<III", len(name.encode('utf-8')), len(e1), len(e2))
-		data += name.encode('utf-8')
-		data += e1
-		data += e2
-	elif typ == 'IF':
-		_,cond,code = stmt
-		e1 = dump(cond)
-		e2 = dump(code)
-		data += struct.pack("<II", len(e1), len(e2))
-		data += e1
-		data += e2
-	elif typ == 'DEF':
-		_,name,val = stmt
-		data += struct.pack('<I', len(name))
-		data += name.encode('utf-8')
-		data += dump(val)
-	elif typ == 'RETURN':
-		pass
-	elif typ == 'RETURNV':
-		_,val = stmt
-		data += dump(val)
-	elif typ == 'SIG':
-		data += struct.pack('<I', len(stmt) - 1)
-		es = [e.encode() for e in stmt[1:]]
-		lens = [len(e) for e in es]
-		for l in lens:
-			data += struct.pack('<I', l)
-		for e in es:
-			data += e
-	elif typ == 'EXPR':
-		op = stmt[1]
-		arity = len(stmt) - 2
-		if (op, arity) in opids:
-			opid = opids[(op, arity)]
-		else:
-			opid = opids[(op, 0)]
-		data += struct.pack('<II', opid, arity)
-		es = [dump(e) for e in stmt[2:]]
-		lens = [len(e) for e in es]
-		for l in lens:
-			data += struct.pack('<I', l)
-		for e in es:
-			data += e
-	elif typ == 'INT':
-		num = stmt[1]
-		data += struct.pack('<I', num)
-	elif typ == 'FLOAT':
-		num = stmt[1]
-		data += struct.pack('<F', num)
-	elif typ == 'STR':
-		string = stmt[1]
-		data += struct.pack('<I', len(string))
-		data += string.encode('utf-8')
-	elif typ == 'SYM':
-		sym = stmt[1]
-		data += struct.pack('<I', len(sym))
-		data += sym.encode('utf-8')
-	elif typ == 'YIELD':
-		_,val = stmt
-		data += dump(val)
-	elif typ == 'SETSTMT':
-		_,var,val = stmt
-		var = dump(var)
-		val = dump(val)
-		data += struct.pack('<II', len(var), len(val))
-		data += var
-		data += val
-	elif typ == 'FOR':
-		_,var,val,code = stmt
-		var = var.encode('utf-8')
-		val = dump(val)
-		code = dump(code)
-		data += struct.pack('<III', len(var), len(val), len(code))
-		data += var
-		data += val
-		data += code
-	elif typ == 'WHILE':
-		_,cond,code = stmt
-		cond = dump(cond)
-		code = dump(code)
-		data += struct.pack('<II', len(cond), len(code))
-		data += cond
-		data += code
-	else:
-		raise ValueError(f'what??? ({stmt})')
-	return data
+toBuffer = function(...args) {
+  args = args.map(v => {
+    if (Number.isInteger(v)) {
+      return {type: 'integer', value: v};
+    }
+    if (v instanceof ArrayBuffer) {
+      return {type: 'array', value: v};
+    }
+    if (v instanceof Uint8Array) {
+      return {type: 'array', value: v};
+    }
+    if (typeof v == 'string') {
+      return {type: 'array', value: new TextEncoder().encode(v)};
+    }
+    return v;
+  });
+  const lengths = args.map(({type, value}) => {
+    switch (type) {
+      case 'integer':
+        return 4;
+      case 'array':
+        return value.byteLength;
+      default:
+        return 0;
+    }
+  });
+  
+  const offsets = [];
+  const length = lengths.reduce((sum, v, i) => (offsets.push([sum, args[i]]), sum + v), 0);
+  
+  const buffer = new ArrayBuffer(length);
+  const view = new DataView(buffer);
+  const data = new Uint8Array(buffer);
+  
+  for (const [offset, {type, value}] of offsets) {
+    switch (type) {
+      case 'integer':
+        view.setInt32(offset, value, true);
+        break;
+      case 'array':
+        data.set(value, offset);
+        break;
+      default:
+      break;
+    }
+  }
+  return data;
 }
 
-with open(fileout, 'wb') as f:
-	print(prgm(source))
-	f.write(dump(prgm(source)))
+dump = function(stmt) {
+	const typ = stmt[0]
+	if (typ == 'BLOCK') {
+		const es = stmt.slice(1).map(dump);
+		const lens = es.map(e => e.byteLength);
+    return toBuffer(types[typ], stmt.length - 1, ...lens, ...es);
+	} else if (typ == 'DEFFUNC') {
+		const [, name, sig, code] = stmt;
+		const e1 = dump(sig);
+		const e2 = dump(code);
+    const name2 = new TextEncoder().encode(name);
+    return toBuffer(types[typ], name2.byteLength, e1.byteLength, e2.byteLength, name2, e1, e2);
+	} else if (typ == 'IF') {
+		const [, cond, code] = stmt;
+		const e1 = dump(cond);
+		const e2 = dump(code);
+    return toBuffer(types[typ], e1.byteLength, e2.byteLength, e1, e2);
+	} else if (typ == 'DEF') {
+		const [, name, val] = stmt;
+    const name2 = new TextEncoder().encode(name);
+    return toBuffer(types[typ], name2.byteLength, name2, dump(val));
+	} else if (typ == 'RETURN') {
+    return toBuffer(types[typ]);
+	} else if (typ == 'RETURNV') {
+		const [, val] = stmt;
+    return toBuffer(types[typ], dump(val));
+	} else if (typ == 'SIG') {
+		const es = stmt.slice(1).map(arg => new TextEncoder().encode(arg));
+		const lens = es.map(e => e.byteLength);
+    return toBuffer(types[typ], stmt.length - 1, ...lens, ...es);
+	} else if (typ == 'EXPR') {
+		const op = stmt[1];
+		const arity = stmt.length - 2;
+		if ([op, arity] in opids) {
+			opid = opids[[op, arity]];
+    } else {
+			opid = opids[[op, 0]]
+    }
+		es = stmt.slice(2).map(dump);
+		lens = es.map(e => e.byteLength);
+    return toBuffer(types[typ], opid, arity, ...lens, ...es);
+	} else if (typ == 'INT') {
+		num = stmt[1];
+    return toBuffer(types[typ], num);
+	} else if (typ == 'FLOAT') {
+		num = stmt[1];
+    return toBuffer(types[typ], {type: 'float', value: num});
+	} else if (typ == 'STR') {
+		string = stmt[1];
+    string2 = new TextEncoder().encode(string);
+    return toBuffer(types[typ], string2.byteLength, string2);
+	} else if (typ == 'SYM') {
+		sym = stmt[1];
+    sym2 = new TextEncoder().encode(sym);
+    return toBuffer(types[typ], sym2.byteLength, sym2);
+	} else if (typ == 'YIELD') {
+		[, val] = stmt;
+    return toBuffer(types[typ], dump(val));
+	} else if (typ == 'SETSTMT') {
+		[, vari, val] = stmt;
+		vari = dump(vari)
+		val = dump(val)
+    return toBuffer(types[typ], vari.byteLength, val.byteLength, vari, val);
+	} else if (typ == 'FOR') {
+		_,vari,val,code = stmt
+    vari = new TextEncoder().encode(vari);
+		val = dump(val)
+		code = dump(code)
+    return toBuffer(types[typ], vari.byteLength, val.byteLength, code.byteLength, vari, val, code);
+	} else if (typ == 'WHILE') {
+		[, cond, code] = stmt;
+		e1 = dump(cond);
+		e2 = dump(code);
+    return toBuffer(types[typ], e1.byteLength, e2.byteLength, e1, e2);
+	} else {
+    return toBuffer(types[typ]);
+  }
+}
