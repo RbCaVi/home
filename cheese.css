@@ -194,3 +194,8 @@ a {
 .raypath-image {
     width: 200px;
 }
+
+.code {
+  white-space: pre;
+  font-family: monospace;
+}
