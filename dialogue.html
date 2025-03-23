@@ -26,11 +26,13 @@ fetch('dialogue-1.txt').then(
 
 let skip = false;
 
+let nextbutton = document.querySelector('#nextbutton');
+
 document.querySelector('#dialogue').addEventListener('click', () => {skip = true;})
 
 async function converse(key, speed = 1) {
  const segment = window.dialogue[key];
- document.querySelector('#nextbutton').removeEventListener('click', document.querySelector('#nextbutton').f);
+ nextbutton.removeEventListener('click', nextbutton.f);
  await render(segment.screens[0], speed);
  for (const screen of segment.screens.slice(1)) {
   await showNextButton();
@@ -43,15 +45,15 @@ async function converse(key, speed = 1) {
 }
 
 async function showNextButton() {
- document.querySelector('#nextbutton').style.display = 'inline-block';
+ nextbutton.style.display = 'inline-block';
  return new Promise(res => {
   const f = () => {
-   document.querySelector('#nextbutton').removeEventListener('click', f);
-   document.querySelector('#nextbutton').style.display = 'none';
+   nextbutton.removeEventListener('click', f);
+   nextbutton.style.display = 'none';
    res();
   };
-  document.querySelector('#nextbutton').f = f;
-  document.querySelector('#nextbutton').addEventListener('click', f);
+  nextbutton.f = f;
+  nextbutton.addEventListener('click', f);
  });
 }
 
