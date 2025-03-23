@@ -84,7 +84,7 @@ async function say(content, container, speed, anim) {
  if (typeof content == 'string') {
   for (const c of content) {
    if (anim.anim != undefined) {
-	  container.append(element('span', {style: {display: 'inline-block', 'animation-delay': anim.offset + 's'}, classes: [anim.anim]}, c));
+	  container.append(element('span', {style: {display: 'inline-block', 'animation-delay': anim.offset + 's'}, class_: anim.anim}, c));
     anim.offset -= 0.1;
    } else {
     container.append(c);
@@ -144,12 +144,12 @@ async function say(content, container, speed, anim) {
      }
      break;
     }
-    await say([parts[i].trim(), ...parts.slice(i + 1)], a(element('span', {classes: ['choice-2']}, options)), speed, anim);
+    await say([parts[i].trim(), ...parts.slice(i + 1)], a(element('span', {class_: 'choice-2'}, options)), speed, anim);
    } else {
 	  const first = content.content[0].trim();
     const [target] = first.split(' ', 1);
     const text = [first.slice(first.indexOf(' ') + 1), ...content.content.slice(1)];
-    await say(text, a(element('span', {classes: ['choice-1'], events: {click: e => {e.stopPropagation(); converse(target, speed)}}})), speed, anim);
+    await say(text, a(element('span', {class_: 'choice-1', events: {click: e => {e.stopPropagation(); converse(target, speed)}}})), speed, anim);
    }
    break;
   } default:

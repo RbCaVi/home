@@ -7,8 +7,8 @@ function element(type, attrs = {}, ...parts) {
     }
   }
 
-  if ("id" in attrs) {
-    e.id = attrs.id;
+  if ("class_" in attrs) {
+    e.classList.add(attrs.class_);
   }
 
   if ("events" in attrs) {
@@ -16,8 +16,12 @@ function element(type, attrs = {}, ...parts) {
       e.addEventListener(event, attrs.events[event]);
     }
   }
+
+  if ("text" in attrs) {
+    e.textContent = attrs.text;
+  }
   
-  const copied = ['style', 'type', 'src', 'width', 'height', 'href', 'target', 'rel'];
+  const copied = ['id', 'style', 'type', 'src', 'width', 'height', 'href', 'target', 'rel'];
   for (const prop of copied) {
     if (prop in attrs) {
       e[prop] = attrs[prop];

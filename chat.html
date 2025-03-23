@@ -8,6 +8,7 @@
 	<script type="text/javascript" src="db.js"></script>
 	<script type="text/javascript" src="auth.js"></script>
 	<script type="text/javascript" src="message.js"></script>
+	<script type="text/javascript" src="element.js"></script>
 	<link rel="stylesheet" href="cheese.css">
 	<title>W chat</title>
 </head>
@@ -72,52 +73,24 @@
 			}
       
 			for (const {timestamp, to, count, message, user} of squashedmessages) {
-				const messagecontainer = document.createElement('p');
-				messagecontainer.classList.add('chat-message');
-        
-				const userbox = document.createElement('span');
-				userbox.classList.add('chat-user');
-				userbox.textContent = user;
-				messagecontainer.appendChild(userbox);
+				const messagecontainer = element('p', {class_: 'chat-message'}, element('span', {class_: 'chat-user', text: user}));
         
         if (count == 1) {
-          messagecontainer.append(' at ');
-          
-          const timestampbox = document.createElement('span');
-          timestampbox.classList.add('chat-timestamp');
-          timestampbox.textContent = timestamp;
-          messagecontainer.appendChild(timestampbox);
+          messagecontainer.append(' at ', element('span', {class_: 'chat-timestamp', text: timestamp}));
         } else {
-          messagecontainer.append(' ');
-          
-          const countbox = document.createElement('span');
-          countbox.classList.add('chat-count');
-          countbox.textContent = count;
-          messagecontainer.appendChild(countbox);
-          
-          messagecontainer.append(' times from ');
-          
-          const frombox = document.createElement('span');
-          frombox.classList.add('chat-from');
-          frombox.textContent = timestamp;
-          messagecontainer.appendChild(frombox);
-          
-          messagecontainer.append(' to ');
-          
-          const tobox = document.createElement('span');
-          tobox.classList.add('chat-to');
-          tobox.textContent = to;
-          messagecontainer.appendChild(tobox);
+          messagecontainer.append(
+						' ',
+						element('span', {class_: 'chat-count', text: count),
+						' times from ',
+						element('span', {class_: 'chat-from', text: timestamp),
+						' to ',
+						element('span', {class_: 'chat-to', text: to)
+					);
         }
         
-				messagecontainer.append(': ');
+				messagecontainer.append(': ', element('span', {class_: 'chat-message', text: message}));
 				
-        const messagebox = document.createElement('span');
-				messagebox.classList.add('chat-message');
-				messagebox.textContent = message;
-				messagecontainer.appendChild(messagebox);
-				
-        div.appendChild(messagecontainer);
+        div.append(messagecontainer);
 			}
 		});
 	}
