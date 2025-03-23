@@ -16,17 +16,12 @@ function element(type, attrs = {}, ...parts) {
       e.addEventListener(event, attrs.events[event]);
     }
   }
-
-  if ("style" in attrs) {
-    e.style = attrs.style;
-  }
-
-  if ("type" in attrs) {
-    e.type = attrs.type;
-  }
-
-  if ("src" in attrs) {
-    e.src = attrs.src;
+  
+  const copied = ['style', 'type', 'src'];
+  for (const prop in copied) {
+    if (prop in attrs) {
+      e[prop] = attrs[prop];
+    }
   }
 
   for (const part of parts) {
