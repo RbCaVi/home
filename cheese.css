@@ -190,3 +190,7 @@ a {
     width: 100%;
     resize: none;
 }
+
+.raypath-image {
+    width: 200px;
+}
