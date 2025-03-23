@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script type="text/javascript" src="parsedialogue.js"></script>
+	<script type="text/javascript" src="element.js"></script>
 	<link rel="stylesheet" href="cheese.css">
 	<title>talking demo</title>
 </head>
@@ -76,16 +77,15 @@ function wait(n) {
 }
 
 async function say(content, container, speed, anim) {
+ const a = function(c) {
+  container.append(c);
+	return c;
+ };
  if (typeof content == 'string') {
   for (const c of content) {
    if (anim.anim != undefined) {
-    const s = document.createElement('span');
-    s.style.display = 'inline-block';
-    s.style['animation-delay'] = anim.offset + "s";
-    s.classList.add(anim.anim);
+	  container.append(element('span', {style: {display: 'inline-block', 'animation-delay': anim.offset + 's'}, classes: [anim.anim]}, c));
     anim.offset -= 0.1;
-    s.append(c);
-    container.append(s);
    } else {
     container.append(c);
    }
@@ -105,14 +105,15 @@ async function say(content, container, speed, anim) {
   } case '[': {
    const [style] = content.content[0].split(' ', 1);
    const text = [content.content[0].slice(content.content[0].indexOf(' ') + 1), ...content.content.slice(1)];
-   const c = document.createElement('span');
    let savedanim;
+	 const classes = [];
    if (style.startsWith('~')) {
     savedanim = anim.anim;
     anim.anim = style.slice(1);
    } else {
-    c.classList.add(style);
+    classes.push(style);
    }
+	 const c = element('span', {classes});
    container.append(c);
    await say(text, c, speed, anim);
    if (style.startsWith('~')) {
@@ -120,45 +121,35 @@ async function say(content, container, speed, anim) {
    }
    break;
   } case '@': {
-   const c = document.createElement('a');
-   c.href = content.modifier;
-   c.target="_blank";
-   c.rel="noopener noreferrer";
-   container.append(c);
-   await say(content.content, c, speed, anim);
+   await say(content.content, a(element('a', {href: content.modifier, target: "_blank", rel: "noopener noreferrer"})), speed, anim);
    break;
   } case '<': {
-   if (content.content[0] == '' && typeof content.content[1] == 'object' && content.content[1].type == '<') {
-    const options = document.createElement('div');
+	 const parts = content.content;
+   if (parts[0] == '' && typeof parts[1] == 'object' && parts[1].type == '<') {
+    const options = element('div');
     let i;
-    for (i = 0; i < content.content.length; i++) {
-     if (typeof content.content[i] == 'string' && content.content[i].trim() == '') {
+    for (i = 0; i < parts.length; i++) {
+		 const part = parts[i];
+     if (typeof part == 'string' && part.trim() == '') {
       continue;
      }
-     if (!Array.isArray(content.content[i]) && content.content[i].type == '<') {
-      const [target] = content.content[i].content[0].trim().split(' ', 1);
-      const text = [content.content[i].content[0].trim().slice(content.content[i].content[0].trim().indexOf(' ') + 1), ...content.content[i].content.slice(1)];
-      const c = document.createElement('div');
-      c.addEventListener('click', (e) => {e.stopPropagation(); converse(target, speed)});
+     if (!Array.isArray(part) && part.type == '<') {
+		  const first = part.content[0].trim();
+      const [target] = first.split(' ', 1);
+      const text = [first.slice(first.indexOf(' ') + 1), ...part.content.slice(1)];
+      const c = element('div', {events: {click: e => {e.stopPropagation(); converse(target, speed)}}});
       options.append(c);
-      await say(text, c, 0, anim);
+      say(text, c, 0, anim);
       continue;
      }
      break;
     }
-    const c = document.createElement('span');
-    c.classList.add('choice-2');
-    container.append(c);
-    c.append(options);
-    await say([content.content[i].trim(), ...content.content.slice(i + 1)], c, speed, anim);
+    await say([parts[i].trim(), ...parts.slice(i + 1)], a(element('span', {classes: ['choice-2']}, options)), speed, anim);
    } else {
-    const [target] = content.content[0].trim().split(' ', 1);
-    const text = [content.content[0].trim().slice(content.content[0].trim().indexOf(' ') + 1), ...content.content.slice(1)];
-    const c = document.createElement('span');
-    c.classList.add('choice-1');
-    c.addEventListener('click', (e) => {e.stopPropagation(); converse(target, speed)});
-    container.append(c);
-    await say(text, c, speed, anim);
+	  const first = content.content[0].trim();
+    const [target] = first.split(' ', 1);
+    const text = [first.slice(first.indexOf(' ') + 1), ...content.content.slice(1)];
+    await say(text, a(element('span', {classes: ['choice-1'], events: {click: e => {e.stopPropagation(); converse(target, speed)}}})), speed, anim);
    }
    break;
   } default:
@@ -200,14 +191,13 @@ async function setCharacters(characters) {
     c = c.slice(m.length + 1);
    }
   }
-  const container = document.createElement('div');
-  const img = document.createElement('img');
-  img.src = urls[c];
+	const classes = [];
   if (ms.includes('flipped')) {
-   container.classList.add('flipped');
+   classes.push('flipped');
   }
-  container.append(img);
-  document.querySelector('#characters').append(container);
+  document.querySelector('#characters').append(element('div', {classes},
+		element('img', {src: urls[c]})
+	));
   if (!speaking) {
    stopAnim(img);
   }
@@ -218,16 +208,8 @@ async function setCharacters(characters) {
 // https://dev.to/grahamthedev/stopping-gif-animations-on-dev-to-for-those-who-prefer-reduced-motion-59pg
 var stopAnim = function (img) {
  var coverImage = function () {
-  var width = img.width;
-  var height = img.height;
-  var canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
+  var canvas = element('canvas', {width: img.width, height: img.height, style: {position: 'absolute', top: "0"}});
   canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-  canvas.style.position = 'absolute';
-  canvas.style.top = "0";
-  //canvas.style.left = "50%";
-  //canvas.style.transform = "translate(-50%, 0)";
   var parent = img.parentNode;
   parent.style.position = "relative";
   parent.style.display = "block";
