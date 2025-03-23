@@ -8,6 +8,7 @@
 		<script type="text/javascript" src="expr.js"></script>
 		<script type="text/javascript" src="stmt.js"></script>
 		<script type="text/javascript" src="pl_parse.js"></script>
+    <script type="text/javascript" src="pl_exec_run.js"></script>
   </head>
   <body>
     <p>upload a .plp file from parserlang here</p>
@@ -26,30 +27,28 @@
     <button onclick="runp('bind')">the bind builtin</button>
     <br>
 
+		<div class = "column-container">
+			<div class = "column">
+				<p>or write source code here</p>
+				<textarea id="source" rows="30"></textarea>
+				<br>
+				<button onclick="runs()">run</button>
+			</div>
+			<div class = "column">
+				<p>Output</p>
+				<textarea id="output" rows="30"></textarea>
+			</div>
+		</div>
 
-    <p>or write source code here</p>
-    <textarea id="source" rows="8"></textarea>
-    <br>
-    <button onclick="runs()">run</button>
-		<br>
-    <p>Output</p>
-    <textarea id="output" rows="8"></textarea>
-
-    <script type='text/javascript'>
+    <script type="text/javascript">
       document.getElementById('source').value = ''; // clear browser cache
       document.getElementById('output').value = ''; // clear browser cache
-      var Module = {
-        preRun: [],
-        postRun: [],
-        print: function(text) {
-          console.log(text);
-          document.getElementById('output').value += text + "\n";
-          document.getElementById('output').scrollTop = document.getElementById('output').scrollHeight;
-        }
-      };
-    </script>
-    <script type="text/javascript" src="pl_exec_run.js"></script>
-    <script type="text/javascript">
+      var print = function(text) {
+				console.log(text);
+				document.getElementById('output').value += text + "\n";
+				document.getElementById('output').scrollTop = document.getElementById('output').scrollHeight;
+			};
+			
 			document.getElementById('fileinput').addEventListener('change', async function(event) {
 				const file = event.target.files[0];
 

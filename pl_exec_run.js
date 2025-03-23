@@ -1,7 +1,6 @@
 // i painstakingly carved this out of emscripten's generated code
 
-var out = Module.print;
-var err = Module.printErr || console.error.bind(console);
+var printError = console.error.bind(console);
 
 if (typeof WebAssembly != 'object') {
   abort('no native wasm support detected');
@@ -12,7 +11,7 @@ var HEAP8, HEAPU8, HEAPU32;
 
 function abort(what) {
   what = 'Aborted(' + what + ')';
-  err(what);
+  printError(what);
 
   throw new WebAssembly.RuntimeError(what);
 }
@@ -86,7 +85,7 @@ fetch('pl_exec_run.wasm').then((response) => {
         var printChar = (stream, curr) => {
           var buffer = printCharBuffers[stream];
           if (curr === 0 || curr === 10) {
-            (stream === 1 ? out : err)(UTF8ArrayToString(buffer, 0));
+            (stream === 1 ? print : printError)(UTF8ArrayToString(buffer, 0));
             buffer.length = 0;
           } else {
             buffer.push(curr);
