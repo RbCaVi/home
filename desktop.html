@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script type="text/javascript" src="window.js"></script>
+	<script type="text/javascript" src="element.js"></script>
 	<link rel="stylesheet" href="cheese.css">
 	<link rel="stylesheet" href="window.css">
 	<title>winux</title>
@@ -21,40 +22,6 @@
   <button onclick = "spawnWindow({init: termWindow});">echo (echo (echo) echo) echo</button>
 </body>
 <script>
-  function element(type, attrs = {}, ...parts) {
-    const e = document.createElement(type);
-
-    if ("classes" in attrs) {
-      for (const c of attrs.classes) {
-        e.classList.add(c);
-      }
-    }
-
-    if ("id" in attrs) {
-      e.id = attrs.id;
-    }
-
-    if ("events" in attrs) {
-      for (const event in attrs.events) {
-        e.addEventListener(event, attrs.events[event]);
-      }
-    }
-
-    if ("style" in attrs) {
-      e.style = attrs.style;
-    }
-
-    if ("type" in attrs) {
-      e.type = attrs.type;
-    }
-
-    for (const part of parts) {
-      e.append(part);
-    }
-
-    return e;
-  }
-  
   async function loadScript(source, tester) {
     if (window[tester] == undefined) {
       const script = document.createElement("script");
