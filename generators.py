@@ -99,7 +99,7 @@ def generate(path):
     return bits['main'][0]
 
 def generatedfiles():
-    files = ['plc.html', 'generated.html', "secrets.json", "changelog.html", 'raypath.html', 'parserlang.html']
+    files = ['plc.html', 'generated.html', "secrets.json", "changelog.html", 'raypath.html', 'parserlang.html', 'links.html']
     keys = '123456789'
     for l1 in keys:
         for l2 in keys:
