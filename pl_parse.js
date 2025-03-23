@@ -281,10 +281,15 @@ indent = function(s) {
   return s.replace(/^/mg, indentspaces);
 }
 
+rendertop = function(stmt) {
+  // assume the top level element is a BLOCK
+  return stmt.slice(1).map(render).join('\n');
+}
+
 render = function(stmt) {
 	const typ = stmt.shift();
 	if (typ == 'BLOCK') {
-    return stmt.map(render).join('\n');
+    return '{\n' + indent(stmt.map(render).join('\n')) + '\n}';
 	} else if (typ == 'SIG') {
     return stmt.join(', ');
 	} else if (typ == 'EXPR') {
@@ -308,16 +313,16 @@ render = function(stmt) {
     return '$op' + op + '(' + stmt.join(', ') + ')';
 	} else if (typ == 'DEFFUNC') {
 		const [name, sig, code] = stmt;
-    return 'fn ' + name + '(' + render(sig) + ') {\n' + indent(render(code)) + '\n}';
+    return 'fn ' + name + '(' + render(sig) + ') ' + render(code) + '';
 	} else if (typ == 'IF') {
 		const [cond, code] = stmt;
-    return 'if (' + render(cond) + ') {\n' + indent(render(code)) + '\n}';
+    return 'if (' + render(cond) + ') then ' + render(code) + '';
 	} else if (typ == 'WHILE') {
 		const [cond, code] = stmt;
-    return 'while (' + render(cond) + ') {\n' + indent(render(code)) + '\n}';
+    return 'while (' + render(cond) + ') do ' + render(code) + '';
 	} else if (typ == 'FOR') {
 		const [vari, val, code] = stmt;
-    return 'for ' + vari + ' in ' + render(val) + ' do {\n' + indent(render(code)) + '\n}';
+    return 'for ' + vari + ' in ' + render(val) + ' do ' + render(code) + '';
 	} else if (typ == 'DEF') {
 		const [name, val] = stmt;
     return 'def ' + name + ' = ' + render(val);
