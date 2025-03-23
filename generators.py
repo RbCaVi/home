@@ -85,7 +85,7 @@ def templatechain(path):
                 return [{"current": [f"code: {''.join(keys)}"]}, parse(readfile('keyfail.html')), parse(readfile('template.html'))]
     if path == "changelog.html":
         return [parse(readfile('changelogdata.html')), parse(readfile('changelog.html')), parse(readfile('template.html'))]
-    return [parse(readfile('generated.html')), parse(readfile('template.html'))]
+    return [parse(readfile(path)), parse(readfile('template.html'))]
 
 def readfile(file):
     with open(file) as f:
@@ -99,7 +99,7 @@ def generate(path):
     return bits['main'][0]
 
 def generatedfiles():
-    files = ['generated.html', "secrets.json", "changelog.html"]
+    files = ['plc.html', 'generated.html', "secrets.json", "changelog.html"]
     keys = '123456789'
     for l1 in keys:
         for l2 in keys:

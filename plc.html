@@ -1,0 +1,86 @@
+###pagetitle###
+pl but ONLINE!!!!!
+###/pagetitle###
+
+###title###
+parserlang online compiler ("POC" for no reason at all)
+###/title###
+
+###script###parsers.js###/script###
+###script###expr.js###/script###
+###script###stmt.js###/script###
+###script###pl_parse.js###/script###
+###script###pl_exec_run.js###/script###
+
+###content###
+<p>upload a .plp file from parserlang here</p>
+<input type="file" id = "fileinput">
+<br>
+<p>try one of these (examples)</p>
+<button onclick="runp('print')">print empty string 5 times in a row</button>
+<!-- button onclick="runp('test')">syntax sampler</button -->
+<button onclick="runp('strcmp')">string equality</button>
+<button onclick="runp('str')">strings</button>
+<!-- button onclick="runp('parsers1')">idk parsers or something</button -->
+<!-- button onclick="runp('fib')">fibonaci</button -->
+<button onclick="runp('each2')">implicit generator showcase</button>
+<!-- button onclick="runp('each')">uhhh....</button -->
+<button onclick="runp('builtin')">we do a little builtins</button>
+<button onclick="runp('bind')">the bind builtin</button>
+<br>
+
+<div class = "column-container">
+  <div class = "column">
+    <p>or write source code here</p>
+    <textarea id="source" rows="30"></textarea>
+    <br>
+    <button onclick="runs()">run</button>
+  </div>
+  <div class = "column">
+    <p>Output</p>
+    <textarea id="output" rows="30"></textarea>
+  </div>
+</div>
+###/content###
+
+###pagescript###
+document.getElementById('source').value = ''; // clear browser cache
+document.getElementById('output').value = ''; // clear browser cache
+var print = function(text) {
+  console.log(text);
+  document.getElementById('output').value += text + "\n";
+  document.getElementById('output').scrollTop = document.getElementById('output').scrollHeight;
+};
+
+document.getElementById('fileinput').addEventListener('change', async function(event) {
+  const file = event.target.files[0];
+
+  if (file) {
+    const data = new Uint8Array(await file.arrayBuffer());
+    document.getElementById('source').value = render(undump(data));
+    run(data);
+  }
+})
+
+async function runp(path) {
+  document.getElementById('source').value = await (await fetch(path + '.pls')).text();
+  const data = dump(prgm(document.getElementById('source').value));
+  run(data);
+}
+
+async function runs(path) {
+  const data = dump(prgm(document.getElementById('source').value));
+  run(data);
+}
+
+async function run(data) {
+  await promiseInitialized;
+  document.getElementById('fileinput').value = ''; // clear
+  document.getElementById('output').value = ''; // clear
+  const stack = wasmExports.stackSave();
+  const ret = wasmExports.stackAlloc(data.length);
+  HEAP8.set(data, ret);
+  wasmExports.run(ret);
+  wasmExports.stackRestore(stack);
+}
+###/pagescript###

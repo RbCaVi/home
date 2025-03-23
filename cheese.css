@@ -176,3 +176,17 @@ a {
     border: outset 2px white;
     background: lightgray;
 }
+
+.column-container {
+    display: flex;
+}
+
+.column {
+    width: 100%;
+    margin: 10px;
+}
+
+.column #source, .column #output {
+    width: 100%;
+    resize: none;
+}
