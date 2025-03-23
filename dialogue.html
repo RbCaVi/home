@@ -195,8 +195,9 @@ async function setCharacters(characters) {
   if (ms.includes('flipped')) {
    classes.push('flipped');
   }
+	let img;
   document.querySelector('#characters').append(element('div', {classes},
-		element('img', {src: urls[c]})
+		img = element('img', {src: urls[c]})
 	));
   if (!speaking) {
    stopAnim(img);
@@ -209,7 +210,7 @@ async function setCharacters(characters) {
 var stopAnim = function (img) {
  var coverImage = function () {
   var canvas = element('canvas', {width: img.width, height: img.height, style: {position: 'absolute', top: "0"}});
-  canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+  canvas.getContext('2d').drawImage(img, 0, 0);
   var parent = img.parentNode;
   parent.style.position = "relative";
   parent.style.display = "block";

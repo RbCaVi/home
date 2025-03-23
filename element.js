@@ -18,7 +18,7 @@ function element(type, attrs = {}, ...parts) {
   }
   
   const copied = ['style', 'type', 'src', 'width', 'height', 'href', 'target', 'rel'];
-  for (const prop in copied) {
+  for (const prop of copied) {
     if (prop in attrs) {
       e[prop] = attrs[prop];
     }
