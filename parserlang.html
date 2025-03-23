@@ -1,78 +1,76 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="cheese.css">
-	<title>some technical info about parserlang</title>
-</head>
-<body>
-  <a href="./">BACK HOME</a>
-  <h1>parserlang</h1>
-  <p>(dm me if you have a better name)</p>
-  <h2>things you probably already know:</h2>
-  <ul>
-    <li>parserlang is a programming language</li>
-    <li>i made it to write parsers</li>
-  </ul>
-  <p>anyway, on to the things you may not know</p>
-  <h2>things you may not know: pv</h2>
-  <p>
-    because i made it to write parsers, one of the features i have planned is simple backtracking
-  </p>
-  <p>
-    like when you're (i was) writing a recursive descent parser with parser combinators, the concat combinator is hard to write in a non recursive way (you have to write your own stack)
-  </p>
-  <p>
-    so that's one feature i planned
-  </p>
-  <p>
-    then to have backtracking in a "sane" way, the values have to be immutable
-  </p>
-  <p>
-    at some point i thought "oh jq does basically the same thing right?" and copied the entire jv (jq value) implementation and called it pv
-  </p>
-  <p>
-    (and quickly found out how much the different jv kinds (types) reference internal details)
-  </p>
-  <p>
-    so i just copied (most of) the header files and some of the implementation for the more complex kinds
-  </p>
-  <p>
-    but now i'm mostly done with rewriting jv in a way that i like
-  </p>
-  <p>
-    so it has immutable values like jv and 9 kinds: null, bool, int, double, string, array, object, iterator, function (i split number into int and double, and added iterator and function)
-  </p>
-  <p>
-    it also has some functions with single or double dispatch - equal, hash, to_string
-  </p>
-  <h2>pl</h2>
-  <p>
-    now on top of pv i made pl, which is a based stack vm (like lua)
-  </p>
-  <p>
-    it's not too unusual (i think) - there are a couple of opcode sections:
-  </p>
-  <ul>
-    <li>stack manipulation - dup swap pop</li>
-    <li>empty constructors - null bool int double array object</li>
-    <li>push global constant</li>
-    <li>various array and object functions - set get len etc.</li>
-    <li>number operators - <code>+</code> <code>-</code> <code>*</code> <code>/</code> etc.</li>
-    <li>call (of course)</li>
-    <li>jumps - conditional and unconditional</li>
-    <li>iterator constructors - from array or object - or call function as generator</li>
-		<li>iteration - normal and backtracking</li>
-    <li>three return opcodes - return, yield, and end generator</li>
-  </ul>
-  <p>
-    i currently have functional iteration and function calls - both as normal function and as generator
-  </p>
-  <p>
-    there's also an assembler, which takes code like this:
-  </p>
-  <p class = "code">def n1 num 4
+###pagetitle###
+some technical info about parserlang
+###/pagetitle###
+
+###title###
+parserlang
+###/title###
+
+###content###
+<p>(dm me if you have a better name)</p>
+<h2>things you probably already know:</h2>
+<ul>
+	<li>parserlang is a programming language</li>
+	<li>i made it to write parsers</li>
+</ul>
+<p>anyway, on to the things you may not know</p>
+<h2>things you may not know: pv</h2>
+<p>
+	because i made it to write parsers, one of the features i have planned is simple backtracking
+</p>
+<p>
+	like when you're (i was) writing a recursive descent parser with parser combinators, the concat combinator is hard to write in a non recursive way (you have to write your own stack)
+</p>
+<p>
+	so that's one feature i planned
+</p>
+<p>
+	then to have backtracking in a "sane" way, the values have to be immutable
+</p>
+<p>
+	at some point i thought "oh jq does basically the same thing right?" and copied the entire jv (jq value) implementation and called it pv
+</p>
+<p>
+	(and quickly found out how much the different jv kinds (types) reference internal details)
+</p>
+<p>
+	so i just copied (most of) the header files and some of the implementation for the more complex kinds
+</p>
+<p>
+	but now i'm mostly done with rewriting jv in a way that i like
+</p>
+<p>
+	so it has immutable values like jv and 9 kinds: null, bool, int, double, string, array, object, iterator, function (i split number into int and double, and added iterator and function)
+</p>
+<p>
+	it also has some functions with single or double dispatch - equal, hash, to_string
+</p>
+<h2>pl</h2>
+<p>
+	now on top of pv i made pl, which is a based stack vm (like lua)
+</p>
+<p>
+	it's not too unusual (i think) - there are a couple of opcode sections:
+</p>
+<ul>
+	<li>stack manipulation - dup swap pop</li>
+	<li>empty constructors - null bool int double array object</li>
+	<li>push global constant</li>
+	<li>various array and object functions - set get len etc.</li>
+	<li>number operators - <code>+</code> <code>-</code> <code>*</code> <code>/</code> etc.</li>
+	<li>call (of course)</li>
+	<li>jumps - conditional and unconditional</li>
+	<li>iterator constructors - from array or object - or call function as generator</li>
+	<li>iteration - normal and backtracking</li>
+	<li>three return opcodes - return, yield, and end generator</li>
+</ul>
+<p>
+	i currently have functional iteration and function calls - both as normal function and as generator
+</p>
+<p>
+	there's also an assembler, which takes code like this:
+</p>
+<p class = "code">def n1 num 4
 def n2 num 34
 def a arr n1 n2
 
@@ -80,22 +78,22 @@ defglobals add a
 defmain main
 
 func add
-  // takes 2 arguments
-  add
-  ret
+// takes 2 arguments
+add
+ret
 endfunc
 
 func main
-  pushglobal 0
-  pushint 15
-  pushint 52
-  call 2
-  ret
+pushglobal 0
+pushint 15
+pushint 52
+call 2
+ret
 endfunc</p>
-  <p>
-    and a debug code executor (which can execute that assembled code):
-  </p>
-  <p class = "code">main bytecode:
+<p>
+	and a debug code executor (which can execute that assembled code):
+</p>
+<p class = "code">main bytecode:
 PUSHGLOBAL 0
 PUSHINT 15
 PUSHINT 52
@@ -112,75 +110,74 @@ global 1:
 .: []
 ./0: 4.000000
 ./1: 34.000000</p>
-  <h2>oOoOoOoOo the compiler</h2>
-  <p>
-    and finally, i have a compiler (<a href = "plc">Try It Online!</a>)
-  </p>
-  <p>
-    it's a simple tree walking / recursive descent compiler with no optimization
-  </p>
-  <p>
-    some optimizations that i could implement are:
-		<ul>
-			<li>deduplicating duplicated constants (very simple)</li>
-			<li>peephole optimization?</li>
-			<li>combining almost similar functions (probably very hard)</li>
-			<li>deleting variables after their last use and reusing their stack slots</li>
-		</ul>
-  </p>
-	<h2>reference</h2>
-	<p>this is a reference if you want to write stuff in parserlang</p>
-	<p>amount of whitespace (including newlines) is not significant, and there are no semicolons or other statement delimiters</p>
-	<p>there are only single line comments with <span class = "code">#</span></p>
-	<p>string literals are double quoted</p>
-	<p>there are a few escape sequences: <span class = "code">\\</span>, <span class = "code">\"</span>, <span class = "code">\n</span>, <span class = "code">\x##</span> (hex escape code)</p>
-	<h3>functions / generators</h3>
-	<p>all functions are like generators</p>
-	<p>there are two ways to call a function: direct (normal function call) and using the <span class = "code">gcall()</span> builtin</p>
-	<p>a direct call acts like a normal function call - it returns one value at a time - and it adds a backtracking marker so the rest of the code is run with each value yielded from the call</p>
-	<p>a <span class = "code">gcall()</span> call returns a generator / iterator instead</p>
-	<h3>statements</h3>
+<h2>oOoOoOoOo the compiler</h2>
+<p>
+	and finally, i have a compiler (<a href = "plc">Try It Online!</a>)
+</p>
+<p>
+	it's a simple tree walking / recursive descent compiler with no optimization
+</p>
+<p>
+	some optimizations that i could implement are:
 	<ul>
-		<li>variable definition and assignment</li>
-		<li>yield and return</li>
-		<li>control flow (block statement, if, for, while)</li>
-		<li>function definition</li>
+		<li>deduplicating duplicated constants (very simple)</li>
+		<li>peephole optimization?</li>
+		<li>combining almost similar functions (probably very hard)</li>
+		<li>deleting variables after their last use and reusing their stack slots</li>
 	</ul>
-	<h4>variable definition and assignment</h4>
-	<p>variables are declared and defined at the same time using the keyword <span class = "code">def</span>: <span class = "code">def &lt;variable&gt; = &lt;value&gt;</span></p>
-	<p>variable assignment is (as usual) <span class = "code">&lt;variable&gt; = &lt;value&gt;</span></p>
-	<h4>yield and return</h4>
-	<p>return may have a value or not</p>
-	<p>it yields a value if it has one and then ends the execution of the function</p>
-	<p>yield always has a value</p>
-	<p>it yields the value and does not end the function</p>
-	<h4>control flow</h4>
-	<p>block statement is just a list of statements enclosed by <span class = "code">{}</span></p>
-	<p>if statement is <span class = "code">if &lt;condition&gt; then &lt;body (statement or block)&gt;</span></p>
-	<p>the condition does not need parentheses</p>
-	<p>there is no else or else if statement... :/</p>
-	<p>for statement is <span class = "code">for &lt;variable&gt; in &lt;expression (iterable)&gt; do &lt;body (statement or block)&gt;</span></p>
-	<p>while statement is <span class = "code">while &lt;condition&gt; do &lt;body (statement or block)&gt;</span></p>
-	<h4>function definition</h4>
-	<p>a function definition is <span class = "code">fn &lt;name&gt;(&lt;argument names&gt;) &lt;body (always a block)&gt;</span></p>
-	<p>fun fact: i may have decided on no parentheses in <span class = "code">if</span> and <span class = "code">while</span> and defining functions with <span class = "code">fn</span> before i got into rust</p>
-	<h3>scopes</h3>
-	<p>all variables are confined to their scope, which starts at the definition and ends at the surrounding brackets (except in cases like <span class = "code">if condition then def var = 3</span>, where <span class = "code">var</span>'s scope ends after the if statement (this is useless (why would you do this))</p>
-	<p>function definitions are also scoped like variables, but they are "hoisted" <a href = "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions#function_hoisting">like in javascript</a></p>
-	<h3>builtins</h3>
-	<p>there are a few builtin functions right now</p>
-	<ul>
-		<li>add - sum the arguments - this was added as a test and may be removed</li>
-		<li>concat - concatenate one or more arrays</li>
-		<li>each - return each value of a generator as if it was a function yielding values</li>
-		<li>gcall - call a function as a generator - <span class = "code">gcall(&gt;func&gt;, &gt;arguments with commas between&gt;)</span></li>
-		<li>bind - return a function which has the last argument constant - like <a href = "https://docs.python.org/3/library/functools.html#functools.partial"><span class = "code">functools.partial()</span> in python</a></li>
-		<li>len - find the length of a string or array</li>
-		<li>strmid - <span class = "code">strmid(s, i) == s[i:]</span></li>
-		<li>strleft - <span class = "code">strleft(s, i) == s[:i]</span></li>
-		<li>ord - similar to python - returns the ASCII value of the first character</li>
-		<li>chr - similar to python - returns a one character string from the character code</li>
-		<li>print - print (debug dump) a single value - expression statements aren't supported yet so just use something like <span class = "code">def a = print("stuff")</span></li>
-	</ul>
-</body>
-</html>
+</p>
+<h2>reference</h2>
+<p>this is a reference if you want to write stuff in parserlang</p>
+<p>amount of whitespace (including newlines) is not significant, and there are no semicolons or other statement delimiters</p>
+<p>there are only single line comments with <span class = "code">#</span></p>
+<p>string literals are double quoted</p>
+<p>there are a few escape sequences: <span class = "code">\\</span>, <span class = "code">\"</span>, <span class = "code">\n</span>, <span class = "code">\x##</span> (hex escape code)</p>
+<h3>functions / generators</h3>
+<p>all functions are like generators</p>
+<p>there are two ways to call a function: direct (normal function call) and using the <span class = "code">gcall()</span> builtin</p>
+<p>a direct call acts like a normal function call - it returns one value at a time - and it adds a backtracking marker so the rest of the code is run with each value yielded from the call</p>
+<p>a <span class = "code">gcall()</span> call returns a generator / iterator instead</p>
+<h3>statements</h3>
+<ul>
+	<li>variable definition and assignment</li>
+	<li>yield and return</li>
+	<li>control flow (block statement, if, for, while)</li>
+	<li>function definition</li>
+</ul>
+<h4>variable definition and assignment</h4>
+<p>variables are declared and defined at the same time using the keyword <span class = "code">def</span>: <span class = "code">def &lt;variable&gt; = &lt;value&gt;</span></p>
+<p>variable assignment is (as usual) <span class = "code">&lt;variable&gt; = &lt;value&gt;</span></p>
+<h4>yield and return</h4>
+<p>return may have a value or not</p>
+<p>it yields a value if it has one and then ends the execution of the function</p>
+<p>yield always has a value</p>
+<p>it yields the value and does not end the function</p>
+<h4>control flow</h4>
+<p>block statement is just a list of statements enclosed by <span class = "code">{}</span></p>
+<p>if statement is <span class = "code">if &lt;condition&gt; then &lt;body (statement or block)&gt;</span></p>
+<p>the condition does not need parentheses</p>
+<p>there is no else or else if statement... :/</p>
+<p>for statement is <span class = "code">for &lt;variable&gt; in &lt;expression (iterable)&gt; do &lt;body (statement or block)&gt;</span></p>
+<p>while statement is <span class = "code">while &lt;condition&gt; do &lt;body (statement or block)&gt;</span></p>
+<h4>function definition</h4>
+<p>a function definition is <span class = "code">fn &lt;name&gt;(&lt;argument names&gt;) &lt;body (always a block)&gt;</span></p>
+<p>fun fact: i may have decided on no parentheses in <span class = "code">if</span> and <span class = "code">while</span> and defining functions with <span class = "code">fn</span> before i got into rust</p>
+<h3>scopes</h3>
+<p>all variables are confined to their scope, which starts at the definition and ends at the surrounding brackets (except in cases like <span class = "code">if condition then def var = 3</span>, where <span class = "code">var</span>'s scope ends after the if statement (this is useless (why would you do this))</p>
+<p>function definitions are also scoped like variables, but they are hoisted to the top of their scope <a href = "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions#function_hoisting">like in javascript</a></p>
+<h3>builtins</h3>
+<p>there are a few builtin functions right now</p>
+<ul>
+	<li>add - sum the arguments - this was added as a test and may be removed</li>
+	<li>concat - concatenate one or more arrays</li>
+	<li>each - return each value of a generator as if it was a function yielding values</li>
+	<li>gcall - call a function as a generator - <span class = "code">gcall(&gt;func&gt;, &gt;arguments with commas between&gt;)</span></li>
+	<li>bind - return a function which has the last argument constant - like <a href = "https://docs.python.org/3/library/functools.html#functools.partial"><span class = "code">functools.partial()</span> in python</a></li>
+	<li>len - find the length of a string or array</li>
+	<li>strmid - <span class = "code">strmid(s, i) == s[i:]</span></li>
+	<li>strleft - <span class = "code">strleft(s, i) == s[:i]</span></li>
+	<li>ord - similar to python - returns the ASCII value of the first character</li>
+	<li>chr - similar to python - returns a one character string from the character code</li>
+	<li>print - print (debug dump) a single value - expression statements aren't supported yet so just use something like <span class = "code">def a = print("stuff")</span></li>
+</ul>
+###/content###
