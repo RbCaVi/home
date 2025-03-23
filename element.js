@@ -25,6 +25,10 @@ function element(type, attrs = {}, ...parts) {
     e.type = attrs.type;
   }
 
+  if ("src" in attrs) {
+    e.src = attrs.src;
+  }
+
   for (const part of parts) {
     e.append(part);
   }
