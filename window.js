@@ -32,6 +32,8 @@ function makeDraggable(draggable, update) {
   
   draggable.addEventListener('mousedown', startDrag);
   draggable.addEventListener('touchdown', startDrag);
+  
+  return draggable;
 }
 
 const windowlayers = new Map();
@@ -50,8 +52,6 @@ function spawnWindow(args = {}) {
   // close
   // and also closed (whether the window has been closed)
   // and root (the root element of the window, which you should put stuff in)
-  const container = document.createElement('div');
-  container.classList.add('window');
 
   const win = {closed: false};
 
@@ -101,95 +101,44 @@ function spawnWindow(args = {}) {
     windowlayers.set(win.root, windowtop);
   };
 
-  
   // close closed
   win.close = () => {
     win.closed = true;
     container.remove();
   };
 
-  // when a window is touched, bring it to the front
-  container.addEventListener('mousedown', win.bringtofront);
-
-  // the window bar
-  const bar = document.createElement('div');
-  bar.classList.add('windowbar');
-
-  // title
-  const wtitle = document.createElement('span');
-  wtitle.classList.add('windowtitle');
-  bar.append(wtitle);
-
   // settitle
   win.settitle = (newtitle) => {
     wtitle.textContent = newtitle;
   };
-
-  // close button
-  const close = document.createElement('div');
-  close.classList.add('windowclose');
-  close.addEventListener('click', win.close);
-  bar.append(close);
-
-  //const full = document.createElement('div');
-  //full.classList.add('windowfull');
-  //bar.append(full);
-
-  //const minimize = document.createElement('div');
-  //minimize.classList.add('windowminimize');
-  //bar.append(minimize);
-
-  makeDraggable(bar, (dx, dy) => {win.setx(container.offsetLeft + dx); win.sety(container.offsetTop + dy);});
-  container.append(bar);
+  
+  // title
+  const wtitle = element('span', {class_: 'windowtitle'});
 
   // root
-  win.root = document.createElement('div');
-  win.root.classList.add('windowcontent');
-  container.append(win.root);
-  win.bringtofront();
+  win.root = element('div', {class_: 'windowcontent'});
 
-  // eight resize handles for each corner and edge
-  const resizeleft = document.createElement('div');
-  resizeleft.classList.add('windowresizeleft');
-  makeDraggable(resizeleft, (dx, dy) => {win.moveleft(dx);});
-  container.append(resizeleft);
+  const container = element('div', {class_: 'window', events: {mousedown: win.bringtofront}},
+    // the window bar
+    makeDraggable(element('div', {class_: 'windowbar'}, 
+      wtitle, // title bar
+      element('div', {class_: 'windowclose', events: {click: win.close}}), // close button
+    ), (dx, dy) => {win.setx(container.offsetLeft + dx); win.sety(container.offsetTop + dy);}),
+    win.root,
+    // eight resize handles for each corner and edge
+    makeDraggable(element('div', {classes: ['windowresizeleft']}), (dx, dy) => {win.moveleft(dx);}),
+    makeDraggable(element('div', {classes: ['windowresizeright']}), (dx, dy) => {win.moveright(dx);}),
+    makeDraggable(element('div', {classes: ['windowresizetop']}), (dx, dy) => {win.movetop(dy);}),
+    makeDraggable(element('div', {classes: ['windowresizebottom']}), (dx, dy) => {win.movebottom(dy);}),
+    makeDraggable(element('div', {classes: ['windowresizebottom', 'windowresizeleft']}), (dx, dy) => {win.movebottom(dy); win.moveleft(dx);}),
+    makeDraggable(element('div', {classes: ['windowresizetop', 'windowresizeright']}), (dx, dy) => {win.movetop(dy); win.moveright(dx);}),
+    makeDraggable(element('div', {classes: ['windowresizetop', 'windowresizeleft']}), (dx, dy) => {win.movetop(dy); win.moveleft(dx);}),
+    makeDraggable(element('div', {classes: ['windowresizebottom', 'windowresizeright']}), (dx, dy) => {win.movebottom(dy); win.moveright(dx);}),
+  );
 
-  const resizeright = document.createElement('div');
-  resizeright.classList.add('windowresizeright');
-  makeDraggable(resizeright, (dx, dy) => {win.moveright(dx);});
-  container.append(resizeright);
-
-  const resizetop = document.createElement('div');
-  resizetop.classList.add('windowresizetop');
-  makeDraggable(resizetop, (dx, dy) => {win.movetop(dy);});
-  container.append(resizetop);
-
-  const resizebottom = document.createElement('div');
-  resizebottom.classList.add('windowresizebottom');
-  makeDraggable(resizebottom, (dx, dy) => {win.movebottom(dy);});
-  container.append(resizebottom);
-
-  const resizebottomleft = document.createElement('div');
-  resizebottomleft.classList.add('windowresizebottom', 'windowresizeleft');
-  makeDraggable(resizebottomleft, (dx, dy) => {win.movebottom(dy); win.moveleft(dx);});
-  container.append(resizebottomleft);
-
-  const resizetopright = document.createElement('div');
-  resizetopright.classList.add('windowresizetop', 'windowresizeright');
-  makeDraggable(resizetopright, (dx, dy) => {win.movetop(dy); win.moveright(dx);});
-  container.append(resizetopright);
-
-  const resizetopleft = document.createElement('div');
-  resizetopleft.classList.add('windowresizetop', 'windowresizeleft');
-  makeDraggable(resizetopleft, (dx, dy) => {win.movetop(dy); win.moveleft(dx);});
-  container.append(resizetopleft);
-
-  const resizebottomright = document.createElement('div');
-  resizebottomright.classList.add('windowresizebottom', 'windowresizeright');
-  makeDraggable(resizebottomright, (dx, dy) => {win.movebottom(dy); win.moveright(dx);});
-  container.append(resizebottomright);
 
   console.log("creating window", x, y, w, h, title);
+  win.bringtofront();
   win.move({x, y});
   win.resize({w, h});
   win.settitle(title);
