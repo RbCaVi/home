@@ -201,16 +201,24 @@
   }
 
   commands.eval = function(env, code) {
-    const print = env.print;
     eval(code);
   }
 
   commands.addCommand = function(env, args) {
     const [name, code] = splitone(args);
     commands[name] = (env, args) => {
-      const print = env.print;
       eval(code);
     }
+  }
+
+  commands.help = function(env, code) {
+		env.print("hi :)");
+		env.print("we have a few commands here");
+		env.print("echo <stuff> - the usual");
+		env.print("eval <code> - evaluate javascript code");
+		env.print("addCommand <name> <code> - add a command that evaluates javascript code when it is used");
+		env.print("eval and addCommand give the evaluated code an `env` variable that can be used to do things in the current terminal window");
+		env.print("addCommand also gives the code the arguments it was run as a command with");
   }
   
   function termWindow(win) {
@@ -229,7 +237,7 @@
       try {
         await runCommand(command);
       } catch (e) {
-        print(e);
+        env.print(e);
       }
       input.style.display = '';
     });
@@ -240,7 +248,11 @@
     async function runCommand(command) {
       outputcontainer.append(element("div", {}, "> ", command));
       const [cmdname, args] = splitone(command);
-      return commands[cmdname].bind(env)(env, args);
+			if (cmdname in commands) {
+				return commands[cmdname](env, args);
+			} else {
+        env.print(`\`${cmdname}\` is not a recognized command. try \`help\``);
+			}
     }
 
     win.root.append(container);
