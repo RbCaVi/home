@@ -63,7 +63,7 @@ document.getElementById('fileinput').addEventListener('change', async function(e
 })
 
 async function runp(path) {
-  document.getElementById('source').value = await (await fetch(path + '.pls')).text();
+  document.getElementById('source').value = await (await fetch('pls/' + path + '.pls')).text();
   const data = dump(prgm(document.getElementById('source').value));
   run(data);
 }
