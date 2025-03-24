@@ -68,7 +68,7 @@ var UTF8ToString = (ptr, maxBytesToRead) => {
 };
 
 
-initialize = () => fetch('pl_exec_run.wasm').then(response => WebAssembly.instantiateStreaming(response, {
+initialize = () => fetch('plc-assets/pl_exec_run.wasm').then(response => WebAssembly.instantiateStreaming(response, {
   'env': {
     __assert_fail: (condition, filename, line, func) => {
       abort(`Assertion failed: ${UTF8ToString(condition)}, at: ` + [filename ? UTF8ToString(filename) : 'unknown filename', line, func ? UTF8ToString(func) : 'unknown function']);
