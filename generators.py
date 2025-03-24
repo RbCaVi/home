@@ -88,7 +88,7 @@ def templatechain(path):
     return [parse(readfile(path)), parse(readfile('template.html'))]
 
 def readfile(file):
-    with open(file) as f:
+    with open(file, encoding = 'ansi') as f:
         return f.read()
 
 def generate(path):
@@ -99,7 +99,7 @@ def generate(path):
     return bits['main'][0]
 
 def generatedfiles():
-    files = ['plc.html', 'generated.html', "secrets.json", "changelog.html", 'raypath.html', 'parserlang.html', 'links.html', 'factorio.html']
+    files = ['plc.html', 'generated.html', "secrets.json", "changelog.html", 'raypath.html', 'parserlang.html', 'links.html', 'factorio.html', 'copypastes.html']
     keys = '123456789'
     for l1 in keys:
         for l2 in keys:
