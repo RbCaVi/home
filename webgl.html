@@ -366,7 +366,7 @@ function loadmodels(models) {
     // models is a list of names
     return Promise.all(
         models.map(
-            name => fetch(`${name}.obj`)
+            name => fetch(`webgl-assets/${name}.obj`)
                 .then(res => res.text())
                 .then(data => [name, parseobj(data)])
         )
@@ -781,11 +781,11 @@ function main(models, image, vertSource, fragSource) {
 
 const modelsload = loadmodels(["cube", "cylinder", "world"]);
 
-const vertload = fetch("shader.vert").then(res => res.text());
+const vertload = fetch("webgl-assets/shader.vert").then(res => res.text());
 
-const fragload = fetch("shader.frag").then(res => res.text());
+const fragload = fetch("webgl-assets/shader.frag").then(res => res.text());
 
-const imload = loadImage("texturemap.png");
+const imload = loadImage("webgl-assets/texturemap.png");
 
 Promise.all([modelsload, imload, vertload, fragload]).then(([models, image, vertSource, fragSource]) => main(models, image, vertSource, fragSource));
 </script>
