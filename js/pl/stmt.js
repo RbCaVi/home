@@ -89,7 +89,7 @@ forstmt = transform(concatstrip(strs('for'),sym,strs('in'),expr,strs('do'),block
 })
 
 whilestmt = transform(concatstrip(strs('while'),expr,strs('do'),blockstmt))(function(data) {
-	[, cond, , [, ...stmts]] = data
+	const [, cond, , [, ...stmts]] = data
 	return ['WHILE', cond, ["BLOCK", ...stmts]];
 })
 
