@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<script type="text/javascript" src="element.js"></script>
-	<script type="text/javascript" src="window.js"></script>
+	<script type="text/javascript" src="js/element.js"></script>
+	<script type="text/javascript" src="js/window.js"></script>
 	<link rel="stylesheet" href="cheese.css">
 	<link rel="stylesheet" href="window.css">
 	<title>winux</title>
@@ -63,7 +63,7 @@
   }
 
   async function buttonWindow(win) {
-    await loadScript("collect.js", "collect");
+    await loadScript("js/collect.js", "collect");
     
     let bread1, cheese, bread2;
 
@@ -85,10 +85,10 @@
   }
 
   async function chatWindow(win) {
-    await loadScript("hash.js", "hash");
-    await loadScript("db.js", "db_call");
-    await loadScript("auth.js", "login");
-    await loadScript("message.js", "sendmessage");
+    await loadScript("js/hash.js", "hash");
+    await loadScript("js/db.js", "db_call");
+    await loadScript("js/auth.js", "login");
+    await loadScript("js/message.js", "sendmessage");
 
     let logincontainer, usernameinput, passwordinput, resettokeninput, indicator;
     let loggedincontainer, messageinput, sendbutton;
