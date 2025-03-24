@@ -17,16 +17,16 @@ parserlang online compiler ("POC" for no reason at all)
 <input type="file" id = "fileinput">
 <br>
 <p>try one of these (examples)</p>
-<button onclick="runp('print')">print empty string 5 times in a row</button>
-<!-- button onclick="runp('test')">syntax sampler</button -->
-<button onclick="runp('strcmp')">string equality</button>
-<button onclick="runp('str')">strings</button>
-<!-- button onclick="runp('parsers1')">idk parsers or something</button -->
-<!-- button onclick="runp('fib')">fibonaci</button -->
-<button onclick="runp('each2')">implicit generator showcase</button>
-<!-- button onclick="runp('each')">uhhh....</button -->
-<button onclick="runp('builtin')">we do a little builtins</button>
-<button onclick="runp('bind')">the bind builtin</button>
+<button onclick="load('print')">print empty string 5 times in a row</button>
+<button onclick="load('test')">syntax sampler</button>
+<button onclick="load('strcmp')">string equality</button>
+<button onclick="load('str')">strings</button>
+<!-- button onclick="load('parsers1')">idk parsers or something</button -->
+<!-- button onclick="load('fib')">fibonaci</button -->
+<button onclick="load('each2')">implicit generator showcase</button>
+<!-- button onclick="load('each')">uhhh....</button -->
+<button onclick="load('builtin')">we do a little builtins</button>
+<button onclick="load('bind')">the bind builtin</button>
 <br>
 
 <div class = "column-container">
@@ -62,10 +62,8 @@ document.getElementById('fileinput').addEventListener('change', async function(e
   }
 })
 
-async function runp(path) {
+async function load(path) {
   document.getElementById('source').value = await (await fetch('pls/' + path + '.pls')).text();
-  const data = dump(prgm(document.getElementById('source').value));
-  run(data);
 }
 
 async function runs(path) {
