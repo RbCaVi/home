@@ -43,7 +43,8 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
     
     def try_send(self, path):
         path = path.replace('\\', '/')
-        del sys.modules['generators']
+        if 'generators' in sys.modules:
+            del sys.modules['generators']
         import generators
         generators.base = "%s:%s" % (hostname, serverPort)
         try:
