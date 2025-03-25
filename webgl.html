@@ -1,19 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="cheese.css">
-	<title>internet picture communication</title>
-    <script src = "js/gl-matrix.js"></script> <!-- i didn't want to do this... (i downloaded this off the internet) -->
-</head>
-<body>
-  <a href="./">BACK HOME</a>
-  <h1>webgl thing</h1>
-  <canvas id = "canvas" width = 800 height = 600></canvas>
-  <!-- canvas id = "canvas2" width = 800 height = 600></canvas -->
-</body>
-<script>
+###pagetitle###internet picture communication###/pagetitle###
+
+###script###js/gl-matrix.js###/script###
+
+###title###webgl thing###/title###
+
+###content###
+<canvas id = "canvas" width = 800 height = 600></canvas>
+<!-- canvas id = "canvas2" width = 800 height = 600></canvas -->
+###/content###
+
+###pagescript###
 function toPromise(x) {
     return new Promise(res => res(x));
 }
@@ -788,5 +784,4 @@ const fragload = fetch("webgl-assets/shader.frag").then(res => res.text());
 const imload = loadImage("webgl-assets/texturemap.png");
 
 Promise.all([modelsload, imload, vertload, fragload]).then(([models, image, vertSource, fragSource]) => main(models, image, vertSource, fragSource));
-</script>
-</html>
+###/pagescript###
