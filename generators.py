@@ -22,7 +22,6 @@ def parse(s):
         part,s = parseone(s)
         parts.append(part)
     out = {k:[v for k2,v in parts if k == k2] for k in set(k for k,v in parts)}
-    out['base'] = [base]
     return out
 
 def replacep(s, parts):
@@ -43,10 +42,11 @@ def replacep(s, parts):
 def replace(s, parts):
     while True:
         #print("A", s)
-        i = s.rfind("###foreach#")
-        if i != -1:
-            before = s[:i]
-            s = s[i + len("###foreach#"):]
+        i1 = s.rfind("###foreach#")
+        i2 = s.rfind("###if#")
+        if i1 != -1:
+            before = s[:i1]
+            s = s[i1 + len("###foreach#"):]
             name,s = s.split("###", maxsplit = 1)
             #print(s)
             j = s.index("###/foreach###")
@@ -59,6 +59,19 @@ def replace(s, parts):
                 for name,x in zip(names,xs):
                     parts2[name] = [x]
                 middle2 += replacep(middle, parts2)
+            s = before + middle2 + after
+        elif i2 != -1:
+            before = s[:i2]
+            s = s[i2 + len("###if#"):]
+            name,s = s.split("###", maxsplit = 1)
+            #print(s)
+            j = s.index("###/if###")
+            middle = s[:j]
+            after = s[j + len("###/if###"):]
+            if name in parts:
+                middle = replacep(middle, parts)
+            else:
+                middle = ''
             s = before + middle2 + after
         else:
             break
@@ -75,7 +88,7 @@ def parsefile(file):
     return parse(readfile(file))
 
 def rendertemplates(templates):
-    bits = {}
+    bits = {'base': [base]}
     for template in templates:
         bits.update({k:[replace(c, bits) for c in v] for k,v in template.items()})
     return bits['main'][0]
