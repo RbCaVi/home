@@ -56,7 +56,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 print("generated", path)
                 data = generators.getgenerator(path)(path) # i'm <age> and this is aeh
                 if type(data) == str:
-                    data = bytes(data, 'cp1252')
+                    data = bytes(data, 'utf-8', errors = 'surrogateescape')
                 self.send_data(data, getmimetype(path), code = code)
                 return True
         except Exception as e:
