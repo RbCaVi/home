@@ -114,7 +114,7 @@ def generatekeypad(path):
     return rendertemplates(templates)
 
 def generatechangelog(path):
-    return rendertemplates([parsefile('changelog.html'), parsefile('changelogtemplate.html'), parsefile('template.html')])
+    return rendertemplates([parsefile('changelogdata.html'), parsefile('changelog.html'), parsefile('template.html')])
 
 def generatedfiles():
     files = [
