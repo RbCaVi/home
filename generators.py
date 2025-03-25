@@ -113,6 +113,9 @@ def generatekeypad(path):
         templates = [{"current": [f"code: {''.join(keys)}"]}, parsefile('keysuccess.html' if success else 'keyfail.html'), parsefile('template.html')]
     return rendertemplates(templates)
 
+def generatechangelog(path):
+    return rendertemplates([parsefile('changelog.html'), parsefile('changelogtemplate.html'), parsefile('template.html')])
+
 def generatedfiles():
     files = [
         # different
