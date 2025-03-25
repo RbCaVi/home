@@ -114,7 +114,8 @@ def generatedfiles():
         'links.html',
         'factorio.html',
         'copypastes.html',
-        'webgl.html'
+        'webgl.html',
+        '404.html',
     ]
     
     # the keypad 

@@ -37,11 +37,11 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
-    def send_path(self, path, mimetype, code = 200):
+    def send_path(self, path, code = 200):
         with open(path, 'rb') as f:
-            self.send_data(f.read(), mimetype, code)
+            self.send_data(f.read(), getmimetype(path), code)
     
-    def try_send(self, path):
+    def try_send(self, path, code = 200):
         path = path.replace('\\', '/')
         if 'generators' in sys.modules:
             del sys.modules['generators']
@@ -57,7 +57,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 data = generators.getgenerator(path)(path) # i'm <age> and this is aeh
                 if type(data) == str:
                     data = bytes(data, 'ansi')
-                self.send_data(data, getmimetype(path))
+                self.send_data(data, getmimetype(path), code = code)
                 return True
         except Exception as e:
             print("error", path)
@@ -66,7 +66,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             return True
         if os.path.exists(path) and os.path.isfile(path):
             print("file at", path)
-            self.send_path(path, getmimetype(path))
+            self.send_path(path, code = code)
             return True
         else:
             print("not found", path)
@@ -78,7 +78,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
         if self.try_send(path): return
         if self.try_send(path + '.html'): return
         if self.try_send(os.path.join(path, 'index.html')): return
-        self.send_path('404.html', 'text/html', code = 404)
+        self.try_send('404.html', code = 404)
 
 if __name__ == "__main__":
     webServer = http.server.HTTPServer((hostname, serverPort), MyHandler)
