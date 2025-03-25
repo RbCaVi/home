@@ -65,41 +65,59 @@ def replace(s, parts):
     s = replacep(s, parts)
     return s
 
-def templatechain(path):
-    if path.startswith("keypad"):
-        keys = path[:-5].split('/')[1:]
-        if len(keys) < 4:
-            return [
-                {
-                    "current": [f"code: {''.join(keys)}"],
-                    "currentkeys": keys,
-                    "keys": [*'123456789'],
-                },
-                parse(readfile('keypad.html')),
-                parse(readfile('template.html')),
-            ]
-        else:
-            if ''.join(keys) in ['1111', '1234', '9999', '4321', '8324']:
-                return [{"current": [f"code: {''.join(keys)}"]}, parse(readfile('keysuccess.html')), parse(readfile('template.html'))]
-            else:
-                return [{"current": [f"code: {''.join(keys)}"]}, parse(readfile('keyfail.html')), parse(readfile('template.html'))]
-    if path == "changelog.html":
-        return [parse(readfile('changelogdata.html')), parse(readfile('changelog.html')), parse(readfile('template.html'))]
-    return [parse(readfile(path)), parse(readfile('template.html'))]
-
 def readfile(file):
+    # ansi so i don't run into utf 8 encoding errors
+    # (copypastes.html is the only reason for this (i think))
     with open(file, encoding = 'ansi') as f:
         return f.read()
 
-def generate(path):
-    templates = templatechain(path)
+def parsefile(file):
+    return parse(readfile(file))
+
+def rendertemplates(templates):
     bits = {}
     for template in templates:
         bits.update({k:[replace(c, bits) for c in v] for k,v in template.items()})
     return bits['main'][0]
 
+def generatesimple(path):
+    return rendertemplates([parsefile(path), parsefile('template.html')])
+
+def generatekeypad(path):
+    keys = path[:-5].split('/')[1:] # assume the path is "keypad/<key>/...<key>.html"
+    if len(keys) < 4:
+        templates = [
+            {
+                "current": [f"code: {''.join(keys)}"],
+                "currentkeys": keys,
+                "keys": [*'123456789'],
+            },
+            parsefile('keypad.html'),
+            parsefile('template.html'),
+        ]
+    else:
+        success = ''.join(keys) in ['1111', '1234', '9999', '4321', '8324']
+        templates = [{"current": [f"code: {''.join(keys)}"]}, parsefile('keysuccess.html' if success else 'keyfail.html'), parsefile('template.html')]
+    return rendertemplates(templates)
+
 def generatedfiles():
-    files = ['plc.html', 'generated.html', "secrets.json", "changelog.html", 'raypath.html', 'parserlang.html', 'links.html', 'factorio.html', 'copypastes.html', 'webgl.html']
+    files = [
+        # different
+        "secrets.json",
+        "changelog.html",
+        
+        # just simple template filling
+        'generated.html',
+        'plc.html',
+        'raypath.html',
+        'parserlang.html',
+        'links.html',
+        'factorio.html',
+        'copypastes.html',
+        'webgl.html'
+    ]
+    
+    # the keypad 
     keys = '123456789'
     for l1 in keys:
         for l2 in keys:
@@ -110,6 +128,7 @@ def generatedfiles():
             files.append(f'keypad/{l1}/{l2}.html')
         files.append(f'keypad/{l1}.html')
     files.append(f'keypad.html')
+    
     return files
 
 def hiddenfiles():
@@ -144,4 +163,8 @@ def generatesecrets(plain):
 def getgenerator(path):
     if path == "secrets.json":
         return generatesecrets("plainsecrets.json")
-    return generate
+    if path.startswith("keypad"):
+        return generatekeypad
+    if path == 'changelog.html':
+        return generatechangelog
+    return generatesimple
