@@ -79,9 +79,9 @@ def replace(s, parts):
     return s
 
 def readfile(file):
-    # ansi so i don't run into utf 8 encoding errors
+    # cp1252 so i don't run into utf 8 encoding errors
     # (copypastes.html is the only reason for this (i think))
-    with open(file, encoding = 'ansi') as f:
+    with open(file, encoding = 'cp1252') as f:
         return f.read()
 
 def parsefile(file):

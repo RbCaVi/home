@@ -6,7 +6,7 @@ generated = {}
 for path in generators.generatedfiles():
     data = generators.getgenerator(path)(path) # i'm <age> and this is aeh
     if type(data) == str:
-        data = bytes(data, 'utf-8')
+        data = bytes(data, 'cp1252')
     generated[path] = data
 
 for path in generators.hiddenfiles():
