@@ -64,15 +64,24 @@ def replace(s, parts):
             before = s[:i2]
             s = s[i2 + len("###if#"):]
             name,s = s.split("###", maxsplit = 1)
-            #print(s)
+            print(name)
             j = s.index("###/if###")
-            middle = s[:j]
+            k = s.index("###else###")
+            if k < j and k != -1:
+                middle = s[:k]
+            else:
+                middle = s[:j]
             after = s[j + len("###/if###"):]
             if name in parts:
                 middle = replacep(middle, parts)
             else:
-                middle = ''
-            s = before + middle2 + after
+                if k < j and k != -1:
+                    print("beanch 1", )
+                    middle = replacep(s[k + len("###else###"):j], parts)
+                else:
+                    print("beanch 2")
+                    middle = ''
+            s = before + middle + after
         else:
             break
     s = replacep(s, parts)
