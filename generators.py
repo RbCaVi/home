@@ -142,6 +142,7 @@ def generatedfiles():
         'webgl.html',
         '404.html',
         'desktop.html',
+        'chat.html',
     ]
     
     # the keypad 

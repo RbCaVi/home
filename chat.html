@@ -1,153 +1,147 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<script type="text/javascript" src="js/collect.js"></script>
-	<script type="text/javascript" src="js/hash.js"></script>
-	<script type="text/javascript" src="js/db.js"></script>
-	<script type="text/javascript" src="js/auth.js"></script>
-	<script type="text/javascript" src="js/message.js"></script>
-	<script type="text/javascript" src="js/element.js"></script>
-	<link rel="stylesheet" href="cheese.css">
-	<title>W chat</title>
-</head>
-<body>
-	<a href="./">BACK HOME</a>
-	<h1>chat box thing</h1>
-	<p>contact me on discord if you need a password reset or something</p>
-  <div id = "login" style = "border: 5px solid white; display: inline-block;">
-    <div>log in or sign up</div>
-    <div>username:<input type="text" id = "username"></div>
-    <div>password:<input type="text" id = "password"></div>
-    <button onclick = "doLogin()">login</button>
-    <button onclick = "doCreate()">sign up</button>
-    <br>
-    <span>reset token:</span><input type="text" id = "resettoken">
-    <button onclick = "do_reset_pass()">reset password</button>
-    <div id = "success"></div>
-  </div>
-	<br>
-	<div id = "loggedin" style = "display: none">
-    <input type = "text" id = "message"><button onclick = "sendMessage(document.querySelector('#message').value); document.querySelector('#message').value = '';" id = "send">send</button>
-    <br>
-    <button onclick = "logout()">log out</button>
-  </div>
-  <div id = "chat"></div>
-	<div id = "collectible-box">
-		<p>
-			it works across pages!!!!!.
-		</p>
-		<button id = "cheese-button" onclick = "collect.collect('cheese')">CLICK THIS BUTTON!</button>
-		<p class = "bread"></p>
-		<p id = "cheesed">no cheese</p>
-		<p class = "bread"></p>
-		<button id = "bread-button" onclick = "collect.collect('bread')">(click this too)</button>
-		<button id = "chat-collect-button" onclick = "collect.collect('chatvisited')">click this to show that you've been here</button>
-	</div>
-</body>
-<script type = "text/javascript">
-	collect.listen(document.querySelector('#cheesed'), function (e) {this.textContent = 'cheese';}, 'cheese');
+###script###js/collect.js###/script###
+###script###js/hash.js###/script###
+###script###js/db.js###/script###
+###script###js/auth.js###/script###
+###script###js/message.js###/script###
+###script###js/element.js###/script###
 
-	for (const p of document.querySelectorAll('.bread')) {
-		collect.listen(p, function (e) {this.textContent = 'bread';});
-	}
-</script>
-<script type = "text/javascript">
-	let chatid = +(new URLSearchParams(window.location.search).get("chat") ?? 2);
-	let token = '';
-	function refreshMessages() {
-		return seemessages(chatid).then(messages => {
-			const div = document.querySelector('#chat');
-			div.textContent = '';
-      
-      const squashedmessages = [];
-			for (const {timestamp, message, user} of messages) {
-        const {timestamp: stimestamp, to: sto, count: scount, message: smessage, user: suser} = squashedmessages.at(-1) || {};
-        if (smessage == message && suser == user) {
-          squashedmessages.at(-1).count++;
-          squashedmessages.at(-1).to = timestamp;
-        } else {
-          squashedmessages.push({timestamp, count: 1, message, user});
-        }
-			}
-      
-			for (const {timestamp, to, count, message, user} of squashedmessages) {
-				const messagecontainer = element('p', {class_: 'chat-message'}, element('span', {class_: 'chat-user', text: user}));
-        
-        if (count == 1) {
-          messagecontainer.append(' at ', element('span', {class_: 'chat-timestamp', text: timestamp}));
-        } else {
-          messagecontainer.append(
-						' ',
-						element('span', {class_: 'chat-count', text: count),
-						' times from ',
-						element('span', {class_: 'chat-from', text: timestamp),
-						' to ',
-						element('span', {class_: 'chat-to', text: to)
-					);
-        }
-        
-				messagecontainer.append(': ', element('span', {class_: 'chat-message', text: message}));
-				
-        div.append(messagecontainer);
-			}
-		});
-	}
-	setInterval(refreshMessages, 5000);
-	refreshMessages();
-  function resetSuccess() {
-			const success = document.querySelector('#success');
-			success.textContent = '';
-  }
-  function setSuccess(status) {
-			const success = document.querySelector('#success');
-			if (status) {
-				success.textContent = 'yes';
+###pagetitle###W chat###/pagetitle###
+
+###title###chat box thing###/title###
+
+###content###
+<p>contact me on discord if you need a password reset or something</p>
+<div id = "login" style = "border: 5px solid white; display: inline-block;">
+	<div>log in or sign up</div>
+	<div>username:<input type="text" id = "username"></div>
+	<div>password:<input type="text" id = "password"></div>
+	<button onclick = "doLogin()">login</button>
+	<button onclick = "doCreate()">sign up</button>
+	<br>
+	<span>reset token:</span><input type="text" id = "resettoken">
+	<button onclick = "do_reset_pass()">reset password</button>
+	<div id = "success"></div>
+</div>
+<br>
+<div id = "loggedin" style = "display: none">
+	<input type = "text" id = "message"><button onclick = "sendMessage(document.querySelector('#message').value); document.querySelector('#message').value = '';" id = "send">send</button>
+	<br>
+	<button onclick = "logout()">log out</button>
+</div>
+<div id = "chat"></div>
+<div id = "collectible-box">
+	<p>
+		it works across pages!!!!!.
+	</p>
+	<button id = "cheese-button" onclick = "collect.collect('cheese')">CLICK THIS BUTTON!</button>
+	<p class = "bread"></p>
+	<p id = "cheesed">no cheese</p>
+	<p class = "bread"></p>
+	<button id = "bread-button" onclick = "collect.collect('bread')">(click this too)</button>
+	<button id = "chat-collect-button" onclick = "collect.collect('chatvisited')">click this to show that you've been here</button>
+</div>
+###/content###
+###pagescript###
+collect.listen(document.querySelector('#cheesed'), function (e) {this.textContent = 'cheese';}, 'cheese');
+
+for (const p of document.querySelectorAll('.bread')) {
+	collect.listen(p, function (e) {this.textContent = 'bread';});
+}
+###/pagescript###
+###pagescript###
+let chatid = +(new URLSearchParams(window.location.search).get("chat") ?? 2);
+let token = '';
+function refreshMessages() {
+	return seemessages(chatid).then(messages => {
+		const div = document.querySelector('#chat');
+		div.textContent = '';
+		
+		const squashedmessages = [];
+		for (const {timestamp, message, user} of messages) {
+			const {timestamp: stimestamp, to: sto, count: scount, message: smessage, user: suser} = squashedmessages.at(-1) || {};
+			if (smessage == message && suser == user) {
+				squashedmessages.at(-1).count++;
+				squashedmessages.at(-1).to = timestamp;
 			} else {
-				success.textContent = 'failed';
+				squashedmessages.push({timestamp, count: 1, message, user});
 			}
-  }
-	async function sendMessage(message) {
-		await sendmessage(token, chatid, message);
-		await refreshMessages();
+		}
+		
+		for (const {timestamp, to, count, message, user} of squashedmessages) {
+			const messagecontainer = element('p', {class_: 'chat-message'}, element('span', {class_: 'chat-user', text: user}));
+			
+			if (count == 1) {
+				messagecontainer.append(' at ', element('span', {class_: 'chat-timestamp', text: timestamp}));
+			} else {
+				messagecontainer.append(
+					' ',
+					element('span', {class_: 'chat-count', text: count),
+					' times from ',
+					element('span', {class_: 'chat-from', text: timestamp),
+					' to ',
+					element('span', {class_: 'chat-to', text: to)
+				);
+			}
+			
+			messagecontainer.append(': ', element('span', {class_: 'chat-message', text: message}));
+			
+			div.append(messagecontainer);
+		}
+	});
+}
+setInterval(refreshMessages, 5000);
+refreshMessages();
+function resetSuccess() {
+		const success = document.querySelector('#success');
+		success.textContent = '';
+}
+function setSuccess(status) {
+		const success = document.querySelector('#success');
+		if (status) {
+			success.textContent = 'yes';
+		} else {
+			success.textContent = 'failed';
+		}
+}
+async function sendMessage(message) {
+	await sendmessage(token, chatid, message);
+	await refreshMessages();
+}
+async function doLogin() { // aaaa name collision
+		resetSuccess();
+		const username = document.querySelector('#username').value;
+		const password = document.querySelector('#password').value;
+		login(username, password).then(newtoken => setSuccess((token = newtoken) != null));
+		document.querySelector("#login").style.display = "none";
+		document.querySelector("#loggedin").style.display = "";
+}
+async function logout() {
+		resetSuccess();
+		token = '';
+		resetSuccess();
+		document.querySelector("#login").style.display = "";
+		document.querySelector("#loggedin").style.display = "none";
+}
+async function doCreate() { // aaaa name collision
+		resetSuccess();
+		const username = document.querySelector('#username').value;
+		const password = document.querySelector('#password').value;
+		makeaccount(username, password).then(status => setSuccess(status));
+}
+async function do_reset_pass() { // inconsistency
+		resetSuccess();
+		const username = document.querySelector('#username').value;
+		const password = document.querySelector('#password').value;
+		const resettoken = document.querySelector('#resettoken').value;
+		resetpass(resettoken, username, password).then(status => setSuccess(status));
+}
+function swapchat(id) {
+	chatid = id; // 2 for the original chat, 3 for a "testing" chat
+}
+document.querySelector("#message").addEventListener("keyup", event => {
+	if(event.key == "Enter") {
+		document.querySelector("#send").click();
+		event.preventDefault();
 	}
-	async function doLogin() { // aaaa name collision
-      resetSuccess();
-			const username = document.querySelector('#username').value;
-			const password = document.querySelector('#password').value;
-			login(username, password).then(newtoken => setSuccess((token = newtoken) != null));
-			document.querySelector("#login").style.display = "none";
-			document.querySelector("#loggedin").style.display = "";
-	}
-	async function logout() {
-      resetSuccess();
-      token = '';
-      resetSuccess();
-			document.querySelector("#login").style.display = "";
-			document.querySelector("#loggedin").style.display = "none";
-	}
-	async function doCreate() { // aaaa name collision
-      resetSuccess();
-			const username = document.querySelector('#username').value;
-			const password = document.querySelector('#password').value;
-			makeaccount(username, password).then(status => setSuccess(status));
-	}
-	async function do_reset_pass() { // inconsistency
-      resetSuccess();
-			const username = document.querySelector('#username').value;
-			const password = document.querySelector('#password').value;
-			const resettoken = document.querySelector('#resettoken').value;
-			resetpass(resettoken, username, password).then(status => setSuccess(status));
-	}
-	function swapchat(id) {
-		chatid = id; // 2 for the original chat, 3 for a "testing" chat
-	}
-  document.querySelector("#message").addEventListener("keyup", event => {
-    if(event.key == "Enter") {
-      document.querySelector("#send").click();
-      event.preventDefault();
-    }
-  });
-</script>
-</html>
+});
+###/pagescript###
