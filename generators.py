@@ -141,6 +141,7 @@ def generatedfiles():
         'copypastes.html',
         'webgl.html',
         '404.html',
+        'desktop.html',
     ]
     
     # the keypad 

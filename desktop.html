@@ -1,279 +1,274 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<script type="text/javascript" src="js/element.js"></script>
-	<script type="text/javascript" src="js/window.js"></script>
-	<link rel="stylesheet" href="cheese.css">
-	<link rel="stylesheet" href="window.css">
-	<title>winux</title>
-</head>
-<body>
-  <a href="./">BACK HOME</a>
-  <h1>trout</h1>
-  <p>warning: it doesn't work on mobile :(</p>
-  <div id = "windowcontainer"></div>
-  <button onclick = "spawnWindow();">nothing at all</button>
-  <button onclick = "spawnWindow({init: textytextWindow});">texty text</button>
-  <button onclick = "spawnWindow({init: expandingWindow});">E X P AN D</button>
-  <button onclick = "spawnWindow({init: buttonWindow});">more buttons to click</button>
-  <button onclick = "spawnWindow({init: chatWindow});">speak into the void</button>
-  <button onclick = "spawnWindow({init: termWindow});">echo (echo (echo) echo) echo</button>
-</body>
-<script>
-  async function loadScript(source, tester) {
-    if (window[tester] == undefined) {
-      const script = document.createElement("script");
-      script.setAttribute("src", source);
-      document.head.append(script);
-      await new Promise(resolve => {
-        const f = () => {
-          script.removeEventListener("load", f);
-          resolve();
-        };
-        script.addEventListener("load", f);
-      });
-    }
-  }
-  
-  function textytextWindow(win) {
-    win.root.append("textytext! (long text text) texttexttext");
-  }
+###pagetitle###winux###/pagetitle###
 
-  function expandingWindow(win) {
-    const frame = () => {
-      if (win.closed) return;
-      const w = win.getsize()[0];
-      if (w < 400) {
-        win.setw(w + 1);
-      }
-      requestAnimationFrame(frame);
-    };
-    requestAnimationFrame(frame);
-  }
+###script###js/element.js###/script###
+###script###js/window.js###/script###
+###style###window.css###/style###
 
-  function onPressEnter(input, func) {
-    input.addEventListener("keyup", event => {
-      if(event.key == "Enter") {
-        func();
-        event.preventDefault();
-      }
-    });
-  }
+###title###trout###/title###
 
-  async function buttonWindow(win) {
-    await loadScript("js/collect.js", "collect");
-    
-    let bread1, cheese, bread2;
+###content###
+<p>warning: it doesn't work on mobile :(</p>
+<div id = "windowcontainer"></div>
+<button onclick = "spawnWindow();">nothing at all</button>
+<button onclick = "spawnWindow({init: textytextWindow});">texty text</button>
+<button onclick = "spawnWindow({init: expandingWindow});">E X P AN D</button>
+<button onclick = "spawnWindow({init: buttonWindow});">more buttons to click</button>
+<button onclick = "spawnWindow({init: chatWindow});">speak into the void</button>
+<button onclick = "spawnWindow({init: termWindow});">echo (echo (echo) echo) echo</button>
+###/content###
 
-    win.root.append(
-      element('p', {}, "check it out (it's this again...)"),
-      element('button', {id: ['cheese-button'], events: {click: () => collect.collect("cheese")}}, "it's the cheese button."),
-      bread1 = element('p', {classes: ['bread']}),
-      cheese = element('p', {id: ['cheesed']}),
-      bread2 = element('p', {classes: ['bread']}),
-      element('button', {id: ['bread-button'], events: {click: () => collect.collect("bread")}}, "add bread"),
-      element('button', {events: {click: () => collect.collect("desktop-person")}}, "click this button (it appears nowhere else)")
-    );
+###pagescript###
+async function loadScript(source, tester) {
+	if (window[tester] == undefined) {
+		const script = document.createElement("script");
+		script.setAttribute("src", source);
+		document.head.append(script);
+		await new Promise(resolve => {
+			const f = () => {
+				script.removeEventListener("load", f);
+				resolve();
+			};
+			script.addEventListener("load", f);
+		});
+	}
+}
 
-    collect.listen(bread1, function (e) {this.textContent = 'bread';}, 'bread');
-    
-    collect.listen(cheese, function (e) {this.textContent = 'cheese';}, 'cheese');
-    
-    collect.listen(bread2, function (e) {this.textContent = 'bread';}, 'bread');
-  }
+function textytextWindow(win) {
+	win.root.append("textytext! (long text text) texttexttext");
+}
 
-  async function chatWindow(win) {
-    await loadScript("js/hash.js", "hash");
-    await loadScript("js/db.js", "db_call");
-    await loadScript("js/auth.js", "login");
-    await loadScript("js/message.js", "sendmessage");
+function expandingWindow(win) {
+	const frame = () => {
+		if (win.closed) return;
+		const w = win.getsize()[0];
+		if (w < 400) {
+			win.setw(w + 1);
+		}
+		requestAnimationFrame(frame);
+	};
+	requestAnimationFrame(frame);
+}
 
-    let logincontainer, usernameinput, passwordinput, resettokeninput, indicator;
-    let loggedincontainer, messageinput, sendbutton;
-    let chatidinput;
-    let messagebox;
-    
-    win.root.append(
-      logincontainer = element("div", {style: "border: 5px solid white; display: inline-block;"},
-        "log in or sign up", element("br"),
-        "username:", usernameinput = element("input", {type: "text"}),
-        element("br"),
-        "password:", passwordinput = element("input", {type: "text"}),
-        element("br"),
-        element("button", {events: {click: () => doLogin(usernameinput.value, passwordinput.value)}}, "login"),
-        element("button", {events: {click: () => createaccount(usernameinput.value, passwordinput.value)}}, "sign up"),
-        element("br"),
-        "reset token:", resettokeninput = element("input", {type: "text"}),
-        element("button", {events: {click: () => resetpassword(usernameinput.value, passwordinput.value, resettoken.value)}}, "reset password"),
-        indicator = element("div")
-      ),
-      loggedincontainer = element("div", {id: "loggedin", style: "display: none;"},
-        "I STOLE YOU'R PASS WORD AND USE RNAME!!!!!!!!!!", element("br"),
-        messageinput = element("input", {type: "text"}), sendbutton = element("button", {events: {click: () => sendMessage()}}, "send"),
-        element("button", {events: {click: () => logout()}}, "logout")
-      ),
-      chatidinput = element("input", {type: "text"}),
-      element("button", {events: {click: () => {chatid = +chatidinput.value; refreshMessages();}}}, "go to another chat"),
-      messagebox = element("div", {id: "chat"})
-    );
+function onPressEnter(input, func) {
+	input.addEventListener("keyup", event => {
+		if(event.key == "Enter") {
+			func();
+			event.preventDefault();
+		}
+	});
+}
 
-    let chatid = 2;
-    let token = '';
-    
-    function refreshMessages() {
-      return seemessages(chatid).then(messages => {
-        messagebox.textContent = '';
-        
-        const squashedmessages = [];
-        for (const {timestamp, message, user} of messages) {
-          const {timestamp: stimestamp, to: sto, count: scount, message: smessage, user: suser} = squashedmessages.at(-1) || {};
-          if (smessage == message && suser == user) {
-            squashedmessages.at(-1).count++;
-            squashedmessages.at(-1).to = timestamp;
-          } else {
-            squashedmessages.push({timestamp, count: 1, message, user});
-          }
-        }
-        
-        for (const {timestamp, to, count, message, user} of squashedmessages) {
-          let timestampparts;
-          
-          if (count == 1) {
-            timestampparts = [' at ', element("span", {classes: ['chat-timestamp']}, timestamp)];
-          } else {
-            timestampparts = [
-              ' ', 
-              element("span", {classes: ['chat-count']}, count), 
-              ' times from ', 
-              element("span", {classes: ['chat-from']}, timestamp), 
-              ' to ', 
-              element("span", {classes: ['chat-to']}, to)
-            ];
-          }
-          
-          messagebox.appendChild(element("p", {classes: ['chat-message']},
-            element("span", {classes: ['chat-user']}, user),
-            ...timestampparts,
-            ': ',
-            element("span", {classes: ['chat-message']}, message)
-          ));
-        }
-      });
-    }
-    setInterval(refreshMessages, 5000);
-    refreshMessages();
-    async function sendMessage() {
-      const message = messageinput.value;
-      messageinput.value = '';
-      await sendmessage(token, chatid, message);
-      await refreshMessages();
-    }
-    async function doLogin(username, password) {
-			if (token = await login(username, password)) {
-        logincontainer.style.display = "none";
-        loggedincontainer.style.display = "";
-      } else {
-        indicator.textContent = "failed";
-      }
-    }
-    async function logout() {
-      token = '';
-			logincontainer.style.display = "";
-			loggedincontainer.style.display = "none";
-    }
-    async function createaccount(username, password) {
-			await makeaccount(username, password);
-			await doLogin(username, password);
-    }
-    async function resetpassword(username, password, resettoken) {
-			await resetpass(resettoken, username, password);
-			await doLogin(username, password);
-    }
-    onPressEnter(messageinput, () => sendbutton.click());
-  }
+async function buttonWindow(win) {
+	await loadScript("js/collect.js", "collect");
+	
+	let bread1, cheese, bread2;
 
-  const commands = {};
+	win.root.append(
+		element('p', {}, "check it out (it's this again...)"),
+		element('button', {id: ['cheese-button'], events: {click: () => collect.collect("cheese")}}, "it's the cheese button."),
+		bread1 = element('p', {classes: ['bread']}),
+		cheese = element('p', {id: ['cheesed']}),
+		bread2 = element('p', {classes: ['bread']}),
+		element('button', {id: ['bread-button'], events: {click: () => collect.collect("bread")}}, "add bread"),
+		element('button', {events: {click: () => collect.collect("desktop-person")}}, "click this button (it appears nowhere else)")
+	);
 
-  commands.echo = function(env, str) {
-    env.print(str);
-  }
+	collect.listen(bread1, function (e) {this.textContent = 'bread';}, 'bread');
+	
+	collect.listen(cheese, function (e) {this.textContent = 'cheese';}, 'cheese');
+	
+	collect.listen(bread2, function (e) {this.textContent = 'bread';}, 'bread');
+}
 
-  commands.eval = function(env, code) {
-    eval(code);
-  }
+async function chatWindow(win) {
+	await loadScript("js/hash.js", "hash");
+	await loadScript("js/db.js", "db_call");
+	await loadScript("js/auth.js", "login");
+	await loadScript("js/message.js", "sendmessage");
 
-  commands.addCommand = function(env, args) {
-    const [name, code] = splitone(args);
-    commands[name] = (env, args) => {
-      eval(code);
-    }
-  }
+	let logincontainer, usernameinput, passwordinput, resettokeninput, indicator;
+	let loggedincontainer, messageinput, sendbutton;
+	let chatidinput;
+	let messagebox;
+	
+	win.root.append(
+		logincontainer = element("div", {style: "border: 5px solid white; display: inline-block;"},
+			"log in or sign up", element("br"),
+			"username:", usernameinput = element("input", {type: "text"}),
+			element("br"),
+			"password:", passwordinput = element("input", {type: "text"}),
+			element("br"),
+			element("button", {events: {click: () => doLogin(usernameinput.value, passwordinput.value)}}, "login"),
+			element("button", {events: {click: () => createaccount(usernameinput.value, passwordinput.value)}}, "sign up"),
+			element("br"),
+			"reset token:", resettokeninput = element("input", {type: "text"}),
+			element("button", {events: {click: () => resetpassword(usernameinput.value, passwordinput.value, resettoken.value)}}, "reset password"),
+			indicator = element("div")
+		),
+		loggedincontainer = element("div", {id: "loggedin", style: "display: none;"},
+			"I STOLE YOU'R PASS WORD AND USE RNAME!!!!!!!!!!", element("br"),
+			messageinput = element("input", {type: "text"}), sendbutton = element("button", {events: {click: () => sendMessage()}}, "send"),
+			element("button", {events: {click: () => logout()}}, "logout")
+		),
+		chatidinput = element("input", {type: "text"}),
+		element("button", {events: {click: () => {chatid = +chatidinput.value; refreshMessages();}}}, "go to another chat"),
+		messagebox = element("div", {id: "chat"})
+	);
 
-  commands.help = function(env, code) {
-		env.print("hi :)");
-		env.print("we have a few commands here");
-		env.print("echo <stuff> - the usual");
-		env.print("eval <code> - evaluate javascript code");
-		env.print("addCommand <name> <code> - add a command that evaluates javascript code when it is used");
-		env.print("eval and addCommand give the evaluated code an `env` variable that can be used to do things in the current terminal window");
-		env.print("addCommand also gives the code the arguments it was run as a command with");
-  }
-  
-  function termWindow(win) {
-    // do stuff
-    let input, outputcontainer;
-    const container = element("div", {style: "height: 100%; display: flex; flex-direction: column;"},
-      outputcontainer = element("div", {style: "overflow: auto;"}),
-      element("div", {style: "display: flex;"},
-        "> ", input = element("input", {type: "text", style: "width: 100%;"})
-      )
-    );
-    onPressEnter(input, async () => {
-      const command = input.value;
-      input.value = '';
-      input.style.display = 'none';
-      try {
-        await runCommand(command);
-      } catch (e) {
-        env.print(e);
-      }
-      input.style.display = '';
-    });
-    const env = {};
-    env.print = function (str) {
-      outputcontainer.append(element("div", {}, str));
-    }
-    async function runCommand(command) {
-      outputcontainer.append(element("div", {}, "> ", command));
-      const [cmdname, args] = splitone(command);
-			if (cmdname in commands) {
-				return commands[cmdname](env, args);
-			} else {
-        env.print(`\`${cmdname}\` is not a recognized command. try \`help\``);
+	let chatid = 2;
+	let token = '';
+	
+	function refreshMessages() {
+		return seemessages(chatid).then(messages => {
+			messagebox.textContent = '';
+			
+			const squashedmessages = [];
+			for (const {timestamp, message, user} of messages) {
+				const {timestamp: stimestamp, to: sto, count: scount, message: smessage, user: suser} = squashedmessages.at(-1) || {};
+				if (smessage == message && suser == user) {
+					squashedmessages.at(-1).count++;
+					squashedmessages.at(-1).to = timestamp;
+				} else {
+					squashedmessages.push({timestamp, count: 1, message, user});
+				}
 			}
-    }
+			
+			for (const {timestamp, to, count, message, user} of squashedmessages) {
+				let timestampparts;
+				
+				if (count == 1) {
+					timestampparts = [' at ', element("span", {classes: ['chat-timestamp']}, timestamp)];
+				} else {
+					timestampparts = [
+						' ', 
+						element("span", {classes: ['chat-count']}, count), 
+						' times from ', 
+						element("span", {classes: ['chat-from']}, timestamp), 
+						' to ', 
+						element("span", {classes: ['chat-to']}, to)
+					];
+				}
+				
+				messagebox.appendChild(element("p", {classes: ['chat-message']},
+					element("span", {classes: ['chat-user']}, user),
+					...timestampparts,
+					': ',
+					element("span", {classes: ['chat-message']}, message)
+				));
+			}
+		});
+	}
+	setInterval(refreshMessages, 5000);
+	refreshMessages();
+	async function sendMessage() {
+		const message = messageinput.value;
+		messageinput.value = '';
+		await sendmessage(token, chatid, message);
+		await refreshMessages();
+	}
+	async function doLogin(username, password) {
+		if (token = await login(username, password)) {
+			logincontainer.style.display = "none";
+			loggedincontainer.style.display = "";
+		} else {
+			indicator.textContent = "failed";
+		}
+	}
+	async function logout() {
+		token = '';
+		logincontainer.style.display = "";
+		loggedincontainer.style.display = "none";
+	}
+	async function createaccount(username, password) {
+		await makeaccount(username, password);
+		await doLogin(username, password);
+	}
+	async function resetpassword(username, password, resettoken) {
+		await resetpass(resettoken, username, password);
+		await doLogin(username, password);
+	}
+	onPressEnter(messageinput, () => sendbutton.click());
+}
 
-    win.root.append(container);
-  }
+const commands = {};
 
-  function splitone(str) {
-    str = str + ' ';
-    const i = str.indexOf(' ');
-    const str1 = str.slice(0, i);
-    const str2 = str.slice(i + 1);
-    return [str1, str2.substring(0, str2.length - 1)];
-  }
+commands.echo = function(env, str) {
+	env.print(str);
+}
 
-  spawnWindow();
-  spawnWindow();
-  spawnWindow();
-  spawnWindow();
-  spawnWindow({init: textytextWindow});
-  spawnWindow({init: expandingWindow});
-  spawnWindow({init: buttonWindow});
-  spawnWindow({init: chatWindow});
-  spawnWindow({init: termWindow});
-</script>
-</html>
+commands.eval = function(env, code) {
+	eval(code);
+}
+
+commands.addCommand = function(env, args) {
+	const [name, code] = splitone(args);
+	commands[name] = (env, args) => {
+		eval(code);
+	}
+}
+
+commands.help = function(env, code) {
+	env.print("hi :)");
+	env.print("we have a few commands here");
+	env.print("echo <stuff> - the usual");
+	env.print("eval <code> - evaluate javascript code");
+	env.print("addCommand <name> <code> - add a command that evaluates javascript code when it is used");
+	env.print("eval and addCommand give the evaluated code an `env` variable that can be used to do things in the current terminal window");
+	env.print("addCommand also gives the code the arguments it was run as a command with");
+}
+
+function termWindow(win) {
+	// do stuff
+	let input, outputcontainer;
+	const container = element("div", {style: "height: 100%; display: flex; flex-direction: column;"},
+		outputcontainer = element("div", {style: "overflow: auto;"}),
+		element("div", {style: "display: flex;"},
+			"> ", input = element("input", {type: "text", style: "width: 100%;"})
+		)
+	);
+	onPressEnter(input, async () => {
+		const command = input.value;
+		input.value = '';
+		input.style.display = 'none';
+		try {
+			await runCommand(command);
+		} catch (e) {
+			env.print(e);
+		}
+		input.style.display = '';
+	});
+	const env = {};
+	env.print = function (str) {
+		outputcontainer.append(element("div", {}, str));
+	}
+	async function runCommand(command) {
+		outputcontainer.append(element("div", {}, "> ", command));
+		const [cmdname, args] = splitone(command);
+		if (cmdname in commands) {
+			return commands[cmdname](env, args);
+		} else {
+			env.print(`\`${cmdname}\` is not a recognized command. try \`help\``);
+		}
+	}
+
+	win.root.append(container);
+}
+
+function splitone(str) {
+	str = str + ' ';
+	const i = str.indexOf(' ');
+	const str1 = str.slice(0, i);
+	const str2 = str.slice(i + 1);
+	return [str1, str2.substring(0, str2.length - 1)];
+}
+
+spawnWindow();
+spawnWindow();
+spawnWindow();
+spawnWindow();
+spawnWindow({init: textytextWindow});
+spawnWindow({init: expandingWindow});
+spawnWindow({init: buttonWindow});
+spawnWindow({init: chatWindow});
+spawnWindow({init: termWindow});
+###/pagescript###
