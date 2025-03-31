@@ -75,7 +75,7 @@ getStr = function(s) {
 getSym = function(s) {
   // not a variable
   var m;
-  if ((m = /[a-zA-Z][a-zA-Z0-9]*/y.exec(s)) != null) {
+  if ((m = /[_a-zA-Z][_a-zA-Z0-9]*/y.exec(s)) != null) {
     return [m[0],s.slice(m[0].length)];
   }
   return [null, s];
