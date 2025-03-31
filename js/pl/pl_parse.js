@@ -54,7 +54,7 @@ types = Object.fromEntries(Object.entries([
   'SETSTMT',
   'FOR',
   'WHILE',
-]).map(([i, typ]) => [typ, i]))
+]).map(([i, typ]) => [typ, +i]))
 
 typenames = [
 	'BLOCK',
