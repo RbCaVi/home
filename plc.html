@@ -44,8 +44,8 @@ parserlang online compiler ("POC" for no reason at all)
 ###/content###
 
 ###pagescript###
-document.getElementById('source').value = ''; // clear browser cache
 document.getElementById('output').value = ''; // clear browser cache
+
 var print = function(text) {
   console.log(text);
   document.getElementById('output').value += text + "\n";
