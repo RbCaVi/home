@@ -23,6 +23,7 @@ fn array3(a, b, c) {
 	return [a, b, c]
 }
 
+# the closure arguments are in reverse order (sorry)
 def g = bind(bind(array3, 1), 2)
 def _ = print(g(3))
 
@@ -32,9 +33,9 @@ fn fib(n) {
 		if n == 0 then return ab[0]
 		def a = ab[0]
 		def b = ab[1]
-		return [b, a + b]
+		return iterfib([b, a + b], n - 1)
 	}
 	return iterfib([0, 1], n)
 }
 
-def _ = print(g(6)) # should be 8
+def _ = print(fib(6)) # should be 8
