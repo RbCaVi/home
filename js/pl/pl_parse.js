@@ -37,24 +37,24 @@ opnames = [
   "[",
 ]
 
-types = Object.fromEntries([
-	'BLOCK',
-	'DEFFUNC',
-	'IF',
-	'DEF',
-	'RETURN',
-	'RETURNV',
-	'SIG',
-	'EXPR',
-	'INT',
-	'FLOAT',
-	'STR',
-	'SYM',
-	'YIELD',
-	'SETSTMT',
-	'FOR',
-	'WHILE',
-].entries().map(([i, typ]) => [typ, i]))
+types = Object.fromEntries(Object.entries([
+  'BLOCK',
+  'DEFFUNC',
+  'IF',
+  'DEF',
+  'RETURN',
+  'RETURNV',
+  'SIG',
+  'EXPR',
+  'INT',
+  'FLOAT',
+  'STR',
+  'SYM',
+  'YIELD',
+  'SETSTMT',
+  'FOR',
+  'WHILE',
+]).map(([i, typ]) => [typ, i]))
 
 typenames = [
 	'BLOCK',
