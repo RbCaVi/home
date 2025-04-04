@@ -16,15 +16,22 @@ parserlang online compiler ("POC" for no reason at all)
 <p>upload a .plp file from parserlang here</p>
 <input type="file" id = "fileinput">
 <br>
+<p>crunchy ahh "tutorial"</p>
+<button onclick="load('tutorial/basics')">basics</button>
+<button onclick="load('tutorial/string')">string</button>
+<button onclick="load('tutorial/array')">array</button>
+<button onclick="load('tutorial/control')">control</button>
+<button onclick="load('tutorial/function')">function</button>
+<button onclick="load('tutorial/generator')">generator</button>
 <p>try one of these (examples)</p>
 <button onclick="load('print')">print empty string 5 times in a row</button>
 <button onclick="load('test')">syntax sampler</button>
 <button onclick="load('strcmp')">string equality</button>
 <button onclick="load('str')">strings</button>
-<!-- button onclick="load('parsers1')">idk parsers or something</button -->
-<!-- button onclick="load('fib')">fibonaci</button -->
+<button onclick="load('parsers1')">idk parsers or something</button>
+<button onclick="load('fib')">fibonaci</button>
 <button onclick="load('each2')">implicit generator showcase</button>
-<!-- button onclick="load('each')">uhhh....</button -->
+<button onclick="load('each')">uhhh....</button>
 <button onclick="load('builtin')">we do a little builtins</button>
 <button onclick="load('bind')">the bind builtin</button>
 <br>
@@ -44,8 +51,8 @@ parserlang online compiler ("POC" for no reason at all)
 ###/content###
 
 ###pagescript###
-document.getElementById('source').value = ''; // clear browser cache
 document.getElementById('output').value = ''; // clear browser cache
+
 var print = function(text) {
   console.log(text);
   document.getElementById('output').value += text + "\n";

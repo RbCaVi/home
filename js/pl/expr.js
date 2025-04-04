@@ -75,7 +75,7 @@ getStr = function(s) {
 getSym = function(s) {
   // not a variable
   var m;
-  if ((m = /[a-zA-Z][a-zA-Z0-9]*/y.exec(s)) != null) {
+  if ((m = /[_a-zA-Z][_a-zA-Z0-9]*/y.exec(s)) != null) {
     return [m[0],s.slice(m[0].length)];
   }
   return [null, s];
@@ -208,8 +208,8 @@ addToken = function(token, lastType, values, ops, parens) {
       if (op[0] == DOT) {
         op = [OP, '.'];
       }
-      v1 = values.pop();
       v2 = values.pop();
+      v1 = values.pop();
       values.push(apply(op, v1, v2));
     }
     if ([CALL,IDX,LBR].includes(ops.at(-1)[0])) {
@@ -228,8 +228,8 @@ addToken = function(token, lastType, values, ops, parens) {
       if (op[0] == DOT) {
         op = [OP, '.'];
       }
-      v1 = values.pop();
       v2 = values.pop();
+      v1 = values.pop();
       values.push(apply(op, v1, v2));
     }
     ops.push(token) // push this operator
@@ -244,8 +244,8 @@ addToken = function(token, lastType, values, ops, parens) {
       if (op[0] == DOT) {
         op = [OP, '.'];
       }
-      v1 = values.pop();
       v2 = values.pop();
+      v1 = values.pop();
       values.push(apply(op, v1, v2));
     }
     arg = values.pop();
@@ -280,8 +280,8 @@ evaluate = function(expr) {
       if (op[0] == DOT) {
         op = [OP, '.'];
       }
-      v1 = values.pop();
       v2 = values.pop();
+      v1 = values.pop();
       values.push(apply(op, v1, v2));
     } else {
       return [null, expr];
