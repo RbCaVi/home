@@ -83,7 +83,7 @@ async function buttonWindow(win) {
 async function chatWindow(win) {
 	await loadScript("js/hash.js", "hash");
 	await loadScript("js/db.js", "db_call");
-	await loadScript("js/auth.js", "login");
+	await loadScript("js/auth.js", "auth");
 	await loadScript("js/message.js", "sendmessage");
 
 	let logincontainer, usernameinput, passwordinput, resettokeninput, indicator;
@@ -98,7 +98,7 @@ async function chatWindow(win) {
 			element("br"),
 			"password:", passwordinput = element("input", {type: "text"}),
 			element("br"),
-			element("button", {events: {click: () => doLogin(usernameinput.value, passwordinput.value)}}, "login"),
+			element("button", {events: {click: () => login(usernameinput.value, passwordinput.value)}}, "login"),
 			element("button", {events: {click: () => createaccount(usernameinput.value, passwordinput.value)}}, "sign up"),
 			element("br"),
 			"reset token:", resettokeninput = element("input", {type: "text"}),
@@ -166,8 +166,8 @@ async function chatWindow(win) {
 		await sendmessage(token, chatid, message);
 		await refreshMessages();
 	}
-	async function doLogin(username, password) {
-		if (token = await login(username, password)) {
+	async function login(username, password) {
+		if (token = await auth.login(username, password)) {
 			logincontainer.style.display = "none";
 			loggedincontainer.style.display = "";
 		} else {
@@ -180,12 +180,12 @@ async function chatWindow(win) {
 		loggedincontainer.style.display = "none";
 	}
 	async function createaccount(username, password) {
-		await makeaccount(username, password);
-		await doLogin(username, password);
+		await auth.makeaccount(username, password);
+		await login(username, password);
 	}
 	async function resetpassword(username, password, resettoken) {
-		await resetpass(resettoken, username, password);
-		await doLogin(username, password);
+		await auth.resetpass(resettoken, username, password);
+		await login(username, password);
 	}
 	onPressEnter(messageinput, () => sendbutton.click());
 }

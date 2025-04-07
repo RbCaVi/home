@@ -15,11 +15,11 @@
 	<div>log in or sign up</div>
 	<div>username:<input type="text" id = "username"></div>
 	<div>password:<input type="text" id = "password"></div>
-	<button onclick = "doLogin()">login</button>
-	<button onclick = "doCreate()">sign up</button>
+	<button onclick = "login()">login</button>
+	<button onclick = "createaccount()">sign up</button>
 	<br>
 	<span>reset token:</span><input type="text" id = "resettoken">
-	<button onclick = "do_reset_pass()">reset password</button>
+	<button onclick = "resetpass()">reset password</button>
 	<div id = "success"></div>
 </div>
 <br>
@@ -107,11 +107,11 @@ async function sendMessage(message) {
 	await sendmessage(token, chatid, message);
 	await refreshMessages();
 }
-async function doLogin() { // aaaa name collision
+async function login() {
 		resetSuccess();
 		const username = document.querySelector('#username').value;
 		const password = document.querySelector('#password').value;
-		login(username, password).then(newtoken => setSuccess((token = newtoken) != null));
+		await auth.login(username, password).then(newtoken => setSuccess((token = newtoken) != null));
 		document.querySelector("#login").style.display = "none";
 		document.querySelector("#loggedin").style.display = "";
 }
@@ -122,18 +122,18 @@ async function logout() {
 		document.querySelector("#login").style.display = "";
 		document.querySelector("#loggedin").style.display = "none";
 }
-async function doCreate() { // aaaa name collision
+async function createaccount() {
 		resetSuccess();
 		const username = document.querySelector('#username').value;
 		const password = document.querySelector('#password').value;
-		makeaccount(username, password).then(status => setSuccess(status));
+		await auth.makeaccount(username, password).then(status => setSuccess(status));
 }
-async function do_reset_pass() { // inconsistency
+async function resetpass() {
 		resetSuccess();
 		const username = document.querySelector('#username').value;
 		const password = document.querySelector('#password').value;
 		const resettoken = document.querySelector('#resettoken').value;
-		resetpass(resettoken, username, password).then(status => setSuccess(status));
+		await auth.resetpass(resettoken, username, password).then(status => setSuccess(status));
 }
 function swapchat(id) {
 	chatid = id; // 2 for the original chat, 3 for a "testing" chat
