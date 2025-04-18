@@ -26,6 +26,7 @@ opids = {
   [[">=", 2]]: 13,
   [["<=", 2]]: 14,
   [["!=", 2]]: 15,
+  [["!", 1]]: 16,
 }
 
 opnames = [
@@ -45,6 +46,7 @@ opnames = [
   ">=",
   "<=",
   "!=",
+  "!",
 ]
 
 types = Object.fromEntries(Object.entries([
