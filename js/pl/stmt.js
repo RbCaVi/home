@@ -70,13 +70,10 @@ func = transform(concatstrip(strs('fn'),funcsig,blockstmt))(function(data) {
 	return ["DEFFUNC", name, [SIG, ...args], ["BLOCK", ...stmts]];
 })
 
-exprstmt = transform(concatstrip(alternate(strs('return'),strs('yield'),strs('')),expr))(function(data) {
+exprstmt = transform(concatstrip(alternate(strs('yield'),strs('')),expr))(function(data) {
 	const [[, typ], e] = data;
 	if (typ == '') {
 		return ["EXPRSTMT", e];
-	}
-	if (typ == 'return') {
-		return ["RETURNV", e];
 	}
 	if (typ == 'yield') {
 		return ["YIELD", e];
@@ -97,6 +94,11 @@ returnstmt = transform(concatstrip(strs('return')))(function(data) {
 	return ['RETURN'];
 })
 
-stmt = transform(alternate(func,ifstmt,forstmt,whilestmt,declare,setstmt,setop,block,exprstmt,returnstmt))(function(data) {
+returnvstmt = transform(concatstrip(strs('return'),expr))(function(data) {
+	const [, e] = data;
+	return ["RETURNV", e];
+})
+
+stmt = transform(alternate(func,ifstmt,forstmt,whilestmt,declare,setstmt,setop,block,returnvstmt,returnstmt,exprstmt))(function(data) {
 	return data[1];
 })
