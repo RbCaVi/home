@@ -96,3 +96,10 @@ optional = function(p) {
 		yield [null, s];
 	}
 }
+
+assertnonempty = function*(s) {
+	if (s.trim() == '') {
+		throw new Error("ran out :(", {cause: s})
+	}
+	yield [undefined, s];
+}

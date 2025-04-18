@@ -14,7 +14,7 @@ stmts = transform(star(stmtwrap))(function(data) {
 	return ["BLOCK", ...data];
 })
 
-block = transform(concatstrip(strs('{'), stmts, strs('}')))(function(data) {
+block = transform(concatstrip(strs('{'), stmts, assertnonempty, strs('}')))(function(data) {
 	return data[1];
 })
 
