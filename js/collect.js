@@ -73,19 +73,13 @@ window.collect = (() => {
 		}
 	}
 
-	collect.has = function(item) {
-		return collect_items.map(([i, s]) => i).includes(item);
-	}
-
   // please don't update this directly
   // use the other methods instead (please)
-	collect.data = function(item) {
-		return collect_items;
-	}
+	collect.data = () => collect_items;
   
-	collect.items = function(item) {
-		return collect_items.map(([item, key]) => item);
-	}
+	collect.items = () => collect_items.map(([item, key]) => item);
+
+	collect.has = item => collect.items().includes(item);
 
 	collect.get_secret = function(item) {
 		const items = collect_items.filter(([i, s]) => i == item);
@@ -116,9 +110,7 @@ window.collect = (() => {
 		}
 	}
 
-	window.addEventListener('collect-get', function(e) {
-		console.log(e.data, 'collected');
-	});
+	window.addEventListener('collect-get', e => console.log(e.data, 'collected'));
 
 	window.addEventListener('collect-get', function(e) {
 		const things = document.querySelectorAll('[oncollect]');
