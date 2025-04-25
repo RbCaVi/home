@@ -2,7 +2,7 @@
 ###script###js/hash.js###/script###
 ###script###js/db.js###/script###
 ###script###js/auth.js###/script###
-###script###js/message.js###/script###
+###script###js/chat.js###/script###
 ###script###js/element.js###/script###
 
 ###pagetitle###W chat###/pagetitle###
@@ -52,7 +52,7 @@ for (const p of document.querySelectorAll('.bread')) {
 let chatid = +(new URLSearchParams(window.location.search).get("chat") ?? 2);
 let token = '';
 function refreshMessages() {
-	return seemessages(chatid).then(messages => {
+	return chat.get(chatid).then(messages => {
 		const div = document.querySelector('#chat');
 		div.textContent = '';
 		
@@ -104,7 +104,7 @@ function setSuccess(status) {
 		}
 }
 async function sendMessage(message) {
-	await sendmessage(token, chatid, message);
+	await chat.send(token, chatid, message);
 	await refreshMessages();
 }
 async function login() {
