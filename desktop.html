@@ -1,20 +1,20 @@
 ###pagetitle###winux###/pagetitle###
 
 ###script###js/element.js###/script###
-###script###js/window.js###/script###
-###style###window.css###/style###
+###script###js/desktop.js###/script###
+###style###desktop.css###/style###
 
 ###title###trout###/title###
 
 ###content###
 <p>warning: it doesn't work on mobile :(</p>
 <div id = "windowcontainer"></div>
-<button onclick = "spawnWindow();">nothing at all</button>
-<button onclick = "spawnWindow({init: textytextWindow});">texty text</button>
-<button onclick = "spawnWindow({init: expandingWindow});">E X P AN D</button>
-<button onclick = "spawnWindow({init: buttonWindow});">more buttons to click</button>
-<button onclick = "spawnWindow({init: chatWindow});">speak into the void</button>
-<button onclick = "spawnWindow({init: termWindow});">echo (echo (echo) echo) echo</button>
+<button onclick = "desktop.spawn();">nothing at all</button>
+<button onclick = "desktop.spawn({init: textytextWindow});">texty text</button>
+<button onclick = "desktop.spawn({init: expandingWindow});">E X P AN D</button>
+<button onclick = "desktop.spawn({init: buttonWindow});">more buttons to click</button>
+<button onclick = "desktop.spawn({init: chatWindow});">speak into the void</button>
+<button onclick = "desktop.spawn({init: termWindow});">echo (echo (echo) echo) echo</button>
 ###/content###
 
 ###pagescript###
@@ -262,13 +262,13 @@ function splitone(str) {
 	return [str1, str2.substring(0, str2.length - 1)];
 }
 
-spawnWindow();
-spawnWindow();
-spawnWindow();
-spawnWindow();
-spawnWindow({init: textytextWindow});
-spawnWindow({init: expandingWindow});
-spawnWindow({init: buttonWindow});
-spawnWindow({init: chatWindow});
-spawnWindow({init: termWindow});
+desktop.spawn();
+desktop.spawn();
+desktop.spawn();
+desktop.spawn();
+desktop.spawn({init: textytextWindow});
+desktop.spawn({init: expandingWindow});
+desktop.spawn({init: buttonWindow});
+desktop.spawn({init: chatWindow});
+desktop.spawn({init: termWindow});
 ###/pagescript###
