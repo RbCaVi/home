@@ -1,14 +1,10 @@
 window.secrets = (() => {
   let secrets;
 
-  async function init() {
-    secrets = await ((await fetch('./secrets.json')).json());
-  }
-
-  const secretpromise = (() => secrets = await ((await fetch('./secrets.json')).json()));
+  const secretpromise = (async () => secrets = await ((await fetch('./secrets.json')).json()));
 
   return {
-    get: (item, key) => {
+    get: async (item, key) => {
       if (secrets == undefined) {
         await secretpromise;
       }

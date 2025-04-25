@@ -38,4 +38,4 @@ window.hash = (() => {
       return h2.toString(16) + h1.toString(16);
     },
   }
-}
+})();
