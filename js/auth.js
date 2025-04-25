@@ -1,5 +1,5 @@
 window.auth = (() => {
-  let hashcreds = (user, pass) => ({username: user, passhash: oldhash(user + oldhash(pass))}) // "use the username as a salt"
+  let hashcreds = (user, pass) => ({username: user, passhash: hash.oldhash(user + hash.oldhash(pass))}) // "use the username as a salt"
   
   return {
     makeaccount: (user, pass) => db.call('create_user', hashcreds(user, pass)),

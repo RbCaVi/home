@@ -55,7 +55,7 @@ window.crypt = (() => {
       message = [0, 0, 0, 0, 0, 0, 0, 0].concat(message);
       longkey = []
       for (let i = 0; i < (message.length + 8) / 8; i++) {
-        longkey = longkey.concat(hashtonumbers(hash(key, i)));
+        longkey = longkey.concat(hashtonumbers(hash.hash(key, i)));
       }
       for (let i = 0; i < message.length; i++) {
         message[i] ^= longkey[i];
@@ -69,7 +69,7 @@ window.crypt = (() => {
       }
       longkey = []
       for (let i = 0; i < (message.length + 8) / 8; i++) {
-        longkey = longkey.concat(hashtonumbers(hash(key, i)));
+        longkey = longkey.concat(hashtonumbers(hash.hash(key, i)));
       }
       for (let i = 0; i < message.length; i++) {
         message[i] ^= longkey[i];
@@ -81,6 +81,6 @@ window.crypt = (() => {
     },
     encrypt: (message, key) => crypt.encryptdata(strtoutf8(message), key),
     decrypt: (encoded, key) => decodeURIComponent(crypt.decryptdata(encoded, key).map(x => '%' + ashex(x)).join('')),
-    verify: (encoded, key) => encoded.slice(0, 16) == hash(key),
+    verify: (encoded, key) => encoded.slice(0, 16) == hash.hash(key),
   };
 })();
