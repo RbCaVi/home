@@ -13,10 +13,10 @@ async function secrets_get(item, key) {
 	const [type, encrypted] = secrets[item];
 	switch (type) {
 	case 'text':
-		return decrypt(encrypted, key);
+		return crypt.decrypt(encrypted, key);
 		break;
 	case 'data':
-		return decryptdata(encrypted, key);
+		return crypt.decryptdata(encrypted, key);
 		break;
 	default:
 		throw '???';
