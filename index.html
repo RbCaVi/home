@@ -156,6 +156,11 @@ i don't usually write like this
 	</div>
 </body>
 <script type = "text/javascript">
+	// eat this
+	function datatourl(data) {
+		return URL.createObjectURL(new Blob([Int8Array.from(data).buffer]));
+	}
+
 	collect.listen(document.querySelector('#cheesed'), function (e) {this.textContent = 'cheese';}, 'cheese');
   
 	for (const p of document.querySelectorAll('.bread')) {
@@ -164,7 +169,7 @@ i don't usually write like this
   
 	collect.listen(document.querySelector('#me-img'), async function (e) {
     try {
-      this.src = datatourl(await secrets_get('me', e.secret));
+      this.src = datatourl(await secrets.get('me', e.secret));
       document.querySelector('#me-text').innerHTML = await secrets_get('me-flavor', e.secret);
       document.querySelector('#me').style.display = 'block';
     } catch (e) {}
