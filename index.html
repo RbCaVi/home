@@ -13,7 +13,7 @@
 	<link rel="stylesheet" href="cheese.css">
 	<title>HI!!!!!!!! (im R)</title>
 	<script type="text/javascript">
-		db_call('inc_counter', {cid: 1}).then((data) => {
+		db.call('inc_counter', {cid: 1}).then((data) => {
 			console.log(data);
 			document.querySelector('#counter').textContent = data;
 		});
@@ -192,14 +192,14 @@ i don't usually write like this
 		const name = document.querySelector("#guestbook-name").value;
 		const message = document.querySelector("#guestbook-message").value;
 
-		await db_insert('guestbook', {name, message});
+		await db.insert('guestbook', {name, message});
 		await refreshGuestbook();
 	}
 
 	async function refreshGuestbook() {
 		document.querySelector("#guestbook").textContent = '';
 
-		for (const {name, message} of await db_select('guestbook', {select: "name,message", order: "created_at.desc"})) {
+		for (const {name, message} of await db.select('guestbook', {select: "name,message", order: "created_at.desc"})) {
 			const container = document.createElement('div');
 			container.classList.add("guestbook-entry");
 

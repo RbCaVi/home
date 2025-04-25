@@ -1,9 +1,9 @@
 function sendmessage(token, chatid, message) {
-  return db_call('send_message', {token, chatid, message});
+  return db.call('send_message', {token, chatid, message});
 }
 
 async function seemessages(chatid) {
-  return (await db_select(
+  return (await db.select(
     'textmessages',
     {chat: `eq.${chatid}`, select: "created_at,content,users(username)", order: "created_at.desc"}
   )).map(({created_at, content, users: {username}}) => {
