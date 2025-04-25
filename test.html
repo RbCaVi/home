@@ -1,0 +1,43 @@
+###pagetitle###test###/pagetitle###
+
+###script###js/redirectlog.js###/script###
+###script###js/auth.js###/script###
+###script###js/db.js###/script###
+###script###js/element.js###/script###
+###script###js/gl-matrix.js###/script###
+###script###js/hash.js###/script###
+###script###js/account.js###/script###
+###script###js/crypt.js###/script###
+###script###js/collect.js###/script###
+###script###js/message.js###/script###
+###script###js/parsedialogue.js###/script###
+###script###js/secrets.js###/script###
+###script###js/userscripts.js###/script###
+###script###js/window.js###/script###
+###script###js/pl/parsers.js###/script###
+###script###js/pl/expr.js###/script###
+###script###js/pl/stmt.js###/script###
+###script###js/pl/pl_parse.js###/script###
+###script###js/pl/pl_exec_run.js###/script###
+
+###title###test###/title###
+
+###content###
+<p>this page is for people who want to mess around with JS</p>
+<p>or me when i want to test a new script</p>
+<p>so i guess... open the console (usually f12 or right click -> inspect)</p>
+<p>or use this here handy textbox</p>
+<textarea id = "script" rows = 20></textarea>
+<button onclick = "eval(document.getElementById('script').value)">run</button>
+<textarea id = "output" rows = 20></textarea>
+###/content###
+
+###pagescript###
+document.getElementById('output').value = ''; // clear browser cache
+
+redirectlog.setlog(function(...arguments) {
+  redirectlog.log(...arguments);
+  document.getElementById('output').value += arguments + "\n";
+  document.getElementById('output').scrollTop = document.getElementById('output').scrollHeight;
+});
+###/pagescript###
