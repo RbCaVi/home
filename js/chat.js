@@ -4,10 +4,10 @@ window.chat = (() => {
     get: chatid => db.select(
       'textmessages',
       {chat: `eq.${chatid}`, select: "created_at,content,users(username)", order: "created_at.desc"}
-    ).map(({created_at, content, users: {username}}) => ({
+    ).then(l => l.map(({created_at, content, users: {username}}) => ({
       timestamp: created_at,
       message: content,
       user: username,
-    })),
+    }))),
   }
 })();

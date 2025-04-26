@@ -1,7 +1,7 @@
 window.secrets = (() => {
   let secrets;
 
-  const secretpromise = (async () => secrets = await ((await fetch('./secrets.json')).json()));
+  const secretpromise = fetch('./secrets.json').then(res => res.json()).then(res => secrets = res);
 
   return {
     get: async (item, key) => {
