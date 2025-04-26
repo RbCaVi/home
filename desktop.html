@@ -262,13 +262,15 @@ function splitone(str) {
 	return [str1, str2.substring(0, str2.length - 1)];
 }
 
-desktop.spawn();
-desktop.spawn();
-desktop.spawn();
-desktop.spawn();
-desktop.spawn({init: textytextWindow});
-desktop.spawn({init: expandingWindow});
-desktop.spawn({init: buttonWindow});
-desktop.spawn({init: chatWindow});
-desktop.spawn({init: termWindow});
+let manager = desktop.manager(document.querySelector("#windowcontainer"));
+
+manager.spawn();
+manager.spawn();
+manager.spawn();
+manager.spawn();
+manager.spawn({init: textytextWindow});
+manager.spawn({init: expandingWindow});
+manager.spawn({init: buttonWindow});
+manager.spawn({init: chatWindow});
+manager.spawn({init: termWindow});
 ###/pagescript###
