@@ -49,10 +49,17 @@
 <a href = "keypad">keypad</a>
 <a href = "copypastes">copypastes</a>
 
+<p>guess i'll just debug in here</p>
+<p>this look good to you?</p>
 <pre>
 ###call#renderjs("chat.json")###
-###call#renderhtml("chat.json").replace('<', '&lt;')###
+###call#renderhtml("chat.json").replace('\x3c', '&lt;')###
 </pre>
+
+###call#renderhtml("chat.json")###
+
+<div id = "testing"></div>
+
 ###/content###
 
 ###pagescript###
@@ -63,4 +70,8 @@ redirectlog.setlog(function(...arguments) {
   document.getElementById('output').value += arguments + "\n";
   document.getElementById('output').scrollTop = document.getElementById('output').scrollHeight;
 });
+###/pagescript###
+
+###pagescript###
+document.querySelector("#testing").append(###call#renderjs("chat.json")###);
 ###/pagescript###

@@ -33,6 +33,5 @@
   },
   {"type": "input", "name": "chatidinput", "attrs": {"type": "text"}},
   {"type": "button", "events": {"click": "moveChat()"}, "content": "go to another chat"},
-  {"type": "input", "name": "chatidinput", "attrs": {"type": "text"}},
   {"type": "div", "name": "chat"}
 ]
