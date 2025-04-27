@@ -28,6 +28,10 @@ def renderhtml(f):
         return renderelements.renderelementshtml(e)
     return renderelements.renderelementhtml(e)
 
+def include(f):
+    with open(f) as f:
+        return f.read()
+
 def escape(s):
     return f"{s}".replace("<", "&lt;")
 
