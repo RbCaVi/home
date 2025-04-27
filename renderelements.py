@@ -15,6 +15,8 @@ def renderelementjs(element):
   else:
     content = ''
   args = ''
+  if 'style' in element:
+    args += f'style:{repr(element["style"])},'
   if 'attrs' in element:
     for k,v in element['attrs'].items():
       args += f'[{repr(k)}]:{repr(v)},'
@@ -50,6 +52,8 @@ def renderelementhtml(element):
   else:
     content = ''
   args = ''
+  if 'style' in element:
+    args += f'style={repr(element["style"])} '
   if 'attrs' in element:
     for k,v in element['attrs'].items():
       args += f'{k}={repr(v)} '
@@ -57,7 +61,7 @@ def renderelementhtml(element):
     for k,v in element['events'].items():
       args += f'on{k}={repr(v)} '
   if 'name' in element:
-    args += f'id={repr(element["name"])}), '
+    args += f'id={repr(element["name"])} '
   if element['type'] in voidelements:
     return f'<{element["type"]} {args} />'
   return f'<{element["type"]} {args}>{content}</{element["type"]}>'

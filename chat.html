@@ -11,24 +11,7 @@
 
 ###content###
 <p>contact me on discord if you need a password reset or something</p>
-<div id = "login" style = "border: 5px solid white; display: inline-block;">
-	<div>log in or sign up</div>
-	<div>username:<input type="text" id = "username"></div>
-	<div>password:<input type="text" id = "password"></div>
-	<button onclick = "login()">login</button>
-	<button onclick = "createaccount()">sign up</button>
-	<br>
-	<span>reset token:</span><input type="text" id = "resettoken">
-	<button onclick = "resetpass()">reset password</button>
-	<div id = "success"></div>
-</div>
-<br>
-<div id = "loggedin" style = "display: none">
-	<input type = "text" id = "message"><button onclick = "sendMessage(document.querySelector('#message').value); document.querySelector('#message').value = '';" id = "send">send</button>
-	<br>
-	<button onclick = "logout()">log out</button>
-</div>
-<div id = "chat"></div>
+###call#renderhtml("chat.json")###
 <div id = "collectible-box">
 	<p>
 		it works across pages!!!!!.
@@ -53,7 +36,7 @@ let chatid = +(new URLSearchParams(window.location.search).get("chat") ?? 2);
 let token = '';
 function refreshMessages() {
 	return chat.get(chatid).then(messages => {
-		const div = document.querySelector('#chat');
+		const div = document.querySelector('#messagebox');
 		div.textContent = '';
 		
 		const squashedmessages = [];
@@ -103,45 +86,43 @@ function setSuccess(status) {
 			success.textContent = 'failed';
 		}
 }
-async function sendMessage(message) {
+async function sendmessage() {
+	const message = document.querySelector('#messageinput').value;
 	await chat.send(token, chatid, message);
 	await refreshMessages();
 }
+function getvalues() {
+		return {
+				username: document.querySelector('#usernameinput').value,
+				password: document.querySelector('#passwordinput').value,
+				resettoken: document.querySelector('#resettokeninput').value,
+		};
+}
 async function login() {
 		resetSuccess();
-		const username = document.querySelector('#username').value;
-		const password = document.querySelector('#password').value;
+		const {username, password} = getvalues();
 		await auth.login(username, password).then(newtoken => setSuccess((token = newtoken) != null));
-		document.querySelector("#login").style.display = "none";
-		document.querySelector("#loggedin").style.display = "";
+		document.querySelector("#logincontainer").style.display = "none";
+		document.querySelector("#loggedincontainer").style.display = "";
 }
 async function logout() {
 		resetSuccess();
 		token = '';
 		resetSuccess();
-		document.querySelector("#login").style.display = "";
-		document.querySelector("#loggedin").style.display = "none";
+		document.querySelector("#logincontainer").style.display = "";
+		document.querySelector("#loggedincontainer").style.display = "none";
 }
 async function createaccount() {
 		resetSuccess();
-		const username = document.querySelector('#username').value;
-		const password = document.querySelector('#password').value;
+		const {username, password} = getvalues();
 		await auth.makeaccount(username, password).then(status => setSuccess(status));
 }
 async function resetpass() {
 		resetSuccess();
-		const username = document.querySelector('#username').value;
-		const password = document.querySelector('#password').value;
-		const resettoken = document.querySelector('#resettoken').value;
+		const {username, password, resettoken} = getvalues();
 		await auth.resetpass(resettoken, username, password).then(status => setSuccess(status));
 }
-function swapchat(id) {
+function movechat(id) {
 	chatid = id; // 2 for the original chat, 3 for a "testing" chat
 }
-document.querySelector("#message").addEventListener("keyup", event => {
-	if(event.key == "Enter") {
-		document.querySelector("#send").click();
-		event.preventDefault();
-	}
-});
 ###/pagescript###

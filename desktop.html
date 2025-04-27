@@ -92,27 +92,7 @@ async function chatWindow(win) {
 	let messagebox;
 	
 	win.root.append(
-		logincontainer = element("div", {style: "border: 5px solid white; display: inline-block;"},
-			"log in or sign up", element("br"),
-			"username:", usernameinput = element("input", {type: "text"}),
-			element("br"),
-			"password:", passwordinput = element("input", {type: "text"}),
-			element("br"),
-			element("button", {events: {click: () => login(usernameinput.value, passwordinput.value)}}, "login"),
-			element("button", {events: {click: () => createaccount(usernameinput.value, passwordinput.value)}}, "sign up"),
-			element("br"),
-			"reset token:", resettokeninput = element("input", {type: "text"}),
-			element("button", {events: {click: () => resetpassword(usernameinput.value, passwordinput.value, resettokeninput.value)}}, "reset password"),
-			indicator = element("div")
-		),
-		loggedincontainer = element("div", {id: "loggedin", style: "display: none;"},
-			"I STOLE YOU'R PASS WORD AND USE RNAME!!!!!!!!!!", element("br"),
-			messageinput = element("input", {type: "text"}), sendbutton = element("button", {events: {click: () => sendMessage()}}, "send"),
-			element("button", {events: {click: () => logout()}}, "logout")
-		),
-		chatidinput = element("input", {type: "text"}),
-		element("button", {events: {click: () => {chatid = +chatidinput.value; refreshMessages();}}}, "go to another chat"),
-		messagebox = element("div", {id: "chat"})
+		###call#renderjs("chat.json")###
 	);
 
 	let chatid = 2;
@@ -160,13 +140,21 @@ async function chatWindow(win) {
 	}
 	setInterval(refreshMessages, 5000);
 	refreshMessages();
-	async function sendMessage() {
+	async function sendmessage() {
 		const message = messageinput.value;
 		messageinput.value = '';
 		await chat.send(token, chatid, message);
 		await refreshMessages();
 	}
-	async function login(username, password) {
+	function getvalues() {
+			return {
+					username: usernameinput.value,
+					password: passwordinput.value,
+					resettoken: resettokeninput.value,
+			};
+	}
+	async function login() {
+		const {username, password} = getvalues();
 		if (token = await auth.login(username, password)) {
 			logincontainer.style.display = "none";
 			loggedincontainer.style.display = "";
@@ -179,11 +167,13 @@ async function chatWindow(win) {
 		logincontainer.style.display = "";
 		loggedincontainer.style.display = "none";
 	}
-	async function createaccount(username, password) {
+	async function createaccount() {
+		const {username, password} = getvalues();
 		await auth.makeaccount(username, password);
 		await login(username, password);
 	}
-	async function resetpassword(username, password, resettoken) {
+	async function resetpassword() {
+		const {username, password, resettoken} = getvalues();
 		await auth.resetpass(resettoken, username, password);
 		await login(username, password);
 	}

@@ -7,12 +7,12 @@
       "log in or sign up", {"type": "br"},
       "username:", {"type": "input", "name": "usernameinput", "attrs": {"type": "text"}}, {"type": "br"},
       "password:", {"type": "input", "name": "passwordinput", "attrs": {"type": "text"}}, {"type": "br"},
-      {"type": "button", "events": {"click": "login()"}, "content": "sign up"},
+      {"type": "button", "events": {"click": "login()"}, "content": "login"},
       {"type": "button", "events": {"click": "createaccount()"}, "content": "sign up"},
       {"type": "br"},
       "reset token:", {"type": "input", "name": "resettokeninput", "attrs": {"type": "text"}},
       {"type": "button", "events": {"click": "resetpassword()"}, "content": "reset password"},
-      {"type": "div", "name": "indicator"}
+      {"type": "div", "name": "success"}
     ]
   },
   {
@@ -25,13 +25,18 @@
         "type": "mod",
         "mod": "onPressEnter",
         "element": {"type": "input", "name": "messageinput", "attrs": {"type": "text"}},
-        "code": "sendMessage()"
+        "code": "sendmessage()"
       }, {"type": "br"},
-      {"type": "button", "name": "sendbutton", "events": {"click": "sendMessage()"}, "content": "send"},
+      {"type": "button", "events": {"click": "sendmessage()"}, "content": "send"},
       {"type": "button", "events": {"click": "logout()"}, "content": "logout"}
     ]
   },
-  {"type": "input", "name": "chatidinput", "attrs": {"type": "text"}},
-  {"type": "button", "events": {"click": "moveChat()"}, "content": "go to another chat"},
-  {"type": "div", "name": "chat"}
+  {
+    "type": "div",
+    "contents": [
+      {"type": "input", "name": "chatidinput", "attrs": {"type": "text"}},
+      {"type": "button", "events": {"click": "movechat()"}, "content": "go to another chat"}
+    ]
+  },
+  {"type": "div", "name": "messagebox"}
 ]
