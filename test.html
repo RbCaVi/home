@@ -50,16 +50,21 @@
 <a href = "copypastes">copypastes</a>
 
 <p>guess i'll just debug in here</p>
-<p>this look good to you?</p>
+<p>i'll show random things maybe? idk</p>
+<br>
+<p>like this</p>
+<p>system that can render as both html and js (wow)</p>
+<p>and it's mine (i made it (so it's mine))</p>
 <pre>
 ###call#renderjs("chat.json")###
+</pre>
+<pre>
 ###call#renderhtml("chat.json").replace('\x3c', '&lt;')###
 </pre>
 
 ###call#renderhtml("chat.json")###
 
 <div id = "testing"></div>
-
 ###/content###
 
 ###pagescript###
@@ -73,5 +78,6 @@ redirectlog.setlog(function(...arguments) {
 ###/pagescript###
 
 ###pagescript###
-document.querySelector("#testing").append(###call#renderjs("chat.json")###);
+// generated from chat.json (https://github.com/RbCaVi/home/tree/main/chat.json)
+document.querySelector("#testing").append(###call#renderjs("chat.json")###); // nothing :)
 ###/pagescript###
