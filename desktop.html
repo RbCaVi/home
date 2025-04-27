@@ -102,7 +102,7 @@ async function chatWindow(win) {
 			element("button", {events: {click: () => createaccount(usernameinput.value, passwordinput.value)}}, "sign up"),
 			element("br"),
 			"reset token:", resettokeninput = element("input", {type: "text"}),
-			element("button", {events: {click: () => resetpassword(usernameinput.value, passwordinput.value, resettoken.value)}}, "reset password"),
+			element("button", {events: {click: () => resetpassword(usernameinput.value, passwordinput.value, resettokeninput.value)}}, "reset password"),
 			indicator = element("div")
 		),
 		loggedincontainer = element("div", {id: "loggedin", style: "display: none;"},
