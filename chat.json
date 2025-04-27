@@ -1,0 +1,38 @@
+[
+  {
+    "type": "div",
+    "name": "logincontainer",
+    "style": "border: 5px solid white; display: inline-block;",
+    "contents": [
+      "log in or sign up", {"type": "br"},
+      "username:", {"type": "input", "name": "usernameinput", "attrs": {"type": "text"}}, {"type": "br"},
+      "password:", {"type": "input", "name": "passwordinput", "attrs": {"type": "text"}}, {"type": "br"},
+      {"type": "button", "events": {"click": "login()"}, "content": "sign up"},
+      {"type": "button", "events": {"click": "createaccount()"}, "content": "sign up"},
+      {"type": "br"},
+      "reset token:", {"type": "input", "name": "resettokeninput", "attrs": {"type": "text"}},
+      {"type": "button", "events": {"click": "resetpassword()"}, "content": "reset password"},
+      {"type": "div", "name": "indicator"}
+    ]
+  },
+  {
+    "type": "div",
+    "name": "loggedincontainer",
+    "style": "display: none;",
+    "contents": [
+      "I STOLE YOU'R PASS WORD AND USE RNAME!!!!!!!!!!", {"type": "br"},
+      {
+        "type": "mod",
+        "mod": "onPressEnter",
+        "element": {"type": "input", "name": "messageinput", "attrs": {"type": "text"}},
+        "code": "sendMessage()"
+      }, {"type": "br"},
+      {"type": "button", "name": "sendbutton", "events": {"click": "sendMessage()"}, "content": "send"},
+      {"type": "button", "events": {"click": "logout()"}, "content": "logout"}
+    ]
+  },
+  {"type": "input", "name": "chatidinput", "attrs": {"type": "text"}},
+  {"type": "button", "events": {"click": "moveChat()"}, "content": "go to another chat"},
+  {"type": "input", "name": "chatidinput", "attrs": {"type": "text"}},
+  {"type": "div", "name": "chat"}
+]

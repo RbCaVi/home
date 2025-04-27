@@ -1,9 +1,32 @@
 import os
 import sys
+import json
+
+def delmodule(mod):
+    if mod in sys.modules:
+        del sys.modules[mod]
+
+delmodule('renderelements')
+
+import renderelements
 
 print("reloaded")
 
 base = "rbcavi.github.io/home"
+
+def renderjs(f):
+    with open(f) as f:
+        e = json.load(f)
+    if isinstance(e, list):
+        return renderelements.renderelementsjs(e)
+    return renderelements.renderelementjs(e)
+
+def renderhtml(f):
+    with open(f) as f:
+        e = json.load(f)
+    if isinstance(e, list):
+        return renderelements.renderelementshtml(e)
+    return renderelements.renderelementhtml(e)
 
 def escape(s):
     return f"{s}".replace("<", "&lt;")
@@ -175,10 +198,6 @@ def hiddenfiles():
         "changelogdata.html",
     ]
     return files
-
-def delmodule(mod):
-    if mod in sys.modules:
-        del sys.modules[mod]
 
 def generatesecrets(plain):
     def generatesecrets(path):
