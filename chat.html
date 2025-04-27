@@ -122,7 +122,7 @@ async function resetpass() {
 		const {username, password, resettoken} = getvalues();
 		await auth.resetpass(resettoken, username, password).then(status => setSuccess(status));
 }
-function movechat(id) {
-	chatid = id; // 2 for the original chat, 3 for a "testing" chat
+function movechat() {
+	if (!isNaN(document.querySelector('#chatidinput').value)) chatid = +document.querySelector('#chatidinput').value; // 2 for the original chat, 3 for a "testing" chat
 }
 ###/pagescript###

@@ -177,6 +177,10 @@ async function chatWindow(win) {
 		await auth.resetpass(resettoken, username, password);
 		await login(username, password);
 	}
+	function movechat() {
+		if (!isNaN(chatidinput.value)) chatid = +chatidinput.value;
+		refreshMessages();
+	}
 	onPressEnter(messageinput, () => sendbutton.click());
 }
 
