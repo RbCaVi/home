@@ -83,5 +83,10 @@ redirectlog.setlog(function(...arguments) {
 {
 	###call#rendervars("chat.json")###
 	document.querySelector("#testing").append(###call#renderjs("chat.json")###);
+	###call#include("pagescripts/chat.js")###
 }
+###/pagescript###
+
+###pagescript###
+###call#include("pagescripts/chat.js")###
 ###/pagescript###

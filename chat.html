@@ -24,6 +24,7 @@
 	<button id = "chat-collect-button" onclick = "collect.collect('chatvisited')">click this to show that you've been here</button>
 </div>
 ###/content###
+
 ###pagescript###
 collect.listen(document.querySelector('#cheesed'), function (e) {this.textContent = 'cheese';}, 'cheese');
 
@@ -31,98 +32,9 @@ for (const p of document.querySelectorAll('.bread')) {
 	collect.listen(p, function (e) {this.textContent = 'bread';});
 }
 ###/pagescript###
+
 ###pagescript###
-let chatid = +(new URLSearchParams(window.location.search).get("chat") ?? 2);
-let token = '';
-function refreshMessages() {
-	return chat.get(chatid).then(messages => {
-		const div = document.querySelector('#messagebox');
-		div.textContent = '';
-		
-		const squashedmessages = [];
-		for (const {timestamp, message, user} of messages) {
-			const {timestamp: stimestamp, to: sto, count: scount, message: smessage, user: suser} = squashedmessages.at(-1) || {};
-			if (smessage == message && suser == user) {
-				squashedmessages.at(-1).count++;
-				squashedmessages.at(-1).to = timestamp;
-			} else {
-				squashedmessages.push({timestamp, count: 1, message, user});
-			}
-		}
-		
-		for (const {timestamp, to, count, message, user} of squashedmessages) {
-			const messagecontainer = element('p', {class_: 'chat-message'}, element('span', {class_: 'chat-user', text: user}));
-			
-			if (count == 1) {
-				messagecontainer.append(' at ', element('span', {class_: 'chat-timestamp', text: timestamp}));
-			} else {
-				messagecontainer.append(
-					' ',
-					element('span', {class_: 'chat-count', text: count}),
-					' times from ',
-					element('span', {class_: 'chat-from', text: timestamp}),
-					' to ',
-					element('span', {class_: 'chat-to', text: to})
-				);
-			}
-			
-			messagecontainer.append(': ', element('span', {class_: 'chat-message', text: message}));
-			
-			div.append(messagecontainer);
-		}
-	});
-}
-setInterval(refreshMessages, 5000);
-refreshMessages();
-function resetSuccess() {
-		const success = document.querySelector('#success');
-		success.textContent = '';
-}
-function setSuccess(status) {
-		const success = document.querySelector('#success');
-		if (status) {
-			success.textContent = 'yes';
-		} else {
-			success.textContent = 'failed';
-		}
-}
-async function sendmessage() {
-	const message = document.querySelector('#messageinput').value;
-	await chat.send(token, chatid, message);
-	await refreshMessages();
-}
-function getvalues() {
-		return {
-				username: document.querySelector('#usernameinput').value,
-				password: document.querySelector('#passwordinput').value,
-				resettoken: document.querySelector('#resettokeninput').value,
-		};
-}
-async function login() {
-		resetSuccess();
-		const {username, password} = getvalues();
-		await auth.login(username, password).then(newtoken => setSuccess((token = newtoken) != null));
-		document.querySelector("#logincontainer").style.display = "none";
-		document.querySelector("#loggedincontainer").style.display = "";
-}
-async function logout() {
-		resetSuccess();
-		token = '';
-		resetSuccess();
-		document.querySelector("#logincontainer").style.display = "";
-		document.querySelector("#loggedincontainer").style.display = "none";
-}
-async function createaccount() {
-		resetSuccess();
-		const {username, password} = getvalues();
-		await auth.makeaccount(username, password).then(status => setSuccess(status));
-}
-async function resetpass() {
-		resetSuccess();
-		const {username, password, resettoken} = getvalues();
-		await auth.resetpass(resettoken, username, password).then(status => setSuccess(status));
-}
-function movechat() {
-	if (!isNaN(document.querySelector('#chatidinput').value)) chatid = +document.querySelector('#chatidinput').value; // 2 for the original chat, 3 for a "testing" chat
-}
+###call#include("pagescripts/chat.js")###
+
+chatid = +(new URLSearchParams(window.location.search).get("chat") ?? 2);
 ###/pagescript###
