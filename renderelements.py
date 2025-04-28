@@ -74,6 +74,10 @@ def renderelementshtml(elements):
 def rendervariablejs(element):
   if isinstance(element, str):
     return ''
+  if element['type'] == 'mod':
+    if element['mod'] == 'onPressEnter':
+        return rendervariablejs(element['element'])
+    raise Error('can"t')
   if 'contents' in element:
     content = rendervariablesjs(element['contents'])
   elif 'content' in element:
@@ -92,6 +96,10 @@ def rendervariablesjs(elements):
 def rendervariablehtml(element):
   if isinstance(element, str):
     return ''
+  if element['type'] == 'mod':
+    if element['mod'] == 'onPressEnter':
+        return rendervariablehtml(element['element'])
+    raise Error('can"t')
   if 'contents' in element:
     content = rendervariableshtml(element['contents'])
   elif 'content' in element:
