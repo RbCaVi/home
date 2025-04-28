@@ -70,3 +70,39 @@ def renderelementhtml(element):
 
 def renderelementshtml(elements):
   return '\n'.join(renderelementhtml(element) for element in elements)
+
+def rendervariablejs(element):
+  if isinstance(element, str):
+    return ''
+  if 'contents' in element:
+    content = rendervariablesjs(element['contents'])
+  elif 'content' in element:
+    content = rendervariablejs(element['content'])
+  else:
+      content = ''
+  if 'name' in element:
+    var = f'let {element["name"]};'
+  else:
+    var = ''
+  return f'{var}\n{content}'.strip()
+
+def rendervariablesjs(elements):
+  return '\n'.join(filter(lambda e: e != '', (rendervariablejs(element) for element in elements)))
+
+def rendervariablehtml(element):
+  if isinstance(element, str):
+    return ''
+  if 'contents' in element:
+    content = rendervariableshtml(element['contents'])
+  elif 'content' in element:
+    content = rendervariablehtml(element['content'])
+  else:
+      content = ''
+  if 'name' in element:
+    var = f'let {element["name"]} = document.querySelector("#{element["name"]}");'
+  else:
+    var = ''
+  return f'{var}\n{content}'.strip()
+
+def rendervariableshtml(elements):
+  return '\n'.join(filter(lambda e: e != '', (rendervariablehtml(element) for element in elements)))

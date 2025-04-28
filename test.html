@@ -56,6 +56,7 @@
 <p>system that can render as both html and js (wow)</p>
 <p>and it's mine (i made it (so it's mine))</p>
 <pre>
+###call#rendervars("chat.json")###
 ###call#renderjs("chat.json")###
 </pre>
 <pre>
@@ -79,5 +80,8 @@ redirectlog.setlog(function(...arguments) {
 
 ###pagescript###
 // generated from chat.json (https://github.com/RbCaVi/home/tree/main/chat.json)
-document.querySelector("#testing").append(###call#renderjs("chat.json")###); // nothing :)
+{
+	###call#rendervars("chat.json")###
+	document.querySelector("#testing").append(###call#renderjs("chat.json")###);
+}
 ###/pagescript###

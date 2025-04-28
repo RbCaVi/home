@@ -25,8 +25,15 @@ def renderhtml(f):
     with open(f) as f:
         e = json.load(f)
     if isinstance(e, list):
-        return renderelements.renderelementshtml(e)
-    return renderelements.renderelementhtml(e)
+        return renderelements.renderelementshtml(e) + '\n<script>\n' + renderelements.rendervariableshtml(e) + '\n</script>'
+    return renderelements.renderelementhtml(e) + '\n<script>\n' + renderelements.rendervariablehtml(e) + '\n</script>'
+
+def rendervars(f):
+    with open(f) as f:
+        e = json.load(f)
+    if isinstance(e, list):
+        return renderelements.rendervariablesjs(e)
+    return renderelements.rendervariablejs(e)
 
 def include(f):
     with open(f) as f:
