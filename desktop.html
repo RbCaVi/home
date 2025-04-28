@@ -85,11 +85,8 @@ async function chatWindow(win) {
 	await loadScript("js/db.js", "db");
 	await loadScript("js/auth.js", "auth");
 	await loadScript("js/chat.js", "chat");
-
-	let logincontainer, usernameinput, passwordinput, resettokeninput, indicator;
-	let loggedincontainer, messageinput, sendbutton;
-	let chatidinput;
-	let messagebox;
+	
+	###call#rendervars("chat.json")###
 	
 	win.root.append(
 		###call#renderjs("chat.json")###
