@@ -5,16 +5,27 @@ window.db = (() => {
     apikey,
     "Content-Type": "application/json",
   };
+  
+  const resphandler = data => async res => {
+    if (!res.ok) {
+      throw new Error("bad database request :(", {cause: [data, await res.json()]});
+    }
+    try {
+      return await res.json();
+    } catch (e) {
+      return null;
+    }
+  }
 
   return {
     call: (func, data) => fetch(`${url}/rpc/${func}`, {
       method: "POST",
       body: JSON.stringify(data),
       headers,
-    }).then(res => res.json()).catch(() => null),
+    }).then(resphandler(data)),
     select: (table, params) => fetch(`${url}/${table}?${new URLSearchParams(params).toString()}`, {
       headers,
-    }).then(res => res.json()),
+    }).then(resphandler(params)),
     insert: (table, data) => fetch(`${url}/${table}`, {
       method: 'POST',
       body: JSON.stringify(data),
