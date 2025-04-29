@@ -159,6 +159,13 @@ def generatekeypad(path):
 def generatechangelog(path):
     return rendertemplates([parsefile('changelogdata.html'), parsefile('changelog.html'), parsefile('template.html')])
 
+redirects = {
+    'pl_exec_run.html': 'plc',
+}
+
+def generateredirect(path):
+    return rendertemplates([{'to': [redirects[path]]}, parsefile('redirect.html'), parsefile('template.html')])
+
 def generatedfiles():
     files = [
         # different
@@ -178,6 +185,9 @@ def generatedfiles():
         'desktop.html',
         'chat.html',
         'test.html',
+        
+        # redirects
+        *redirects,
     ]
     
     # the keypad 
@@ -207,6 +217,7 @@ def hiddenfiles():
         "keyfail.html",
         "keysuccess.html",
         "changelogdata.html",
+        "redirect.html",
     ]
     return files
 
@@ -226,4 +237,6 @@ def getgenerator(path):
         return generatekeypad
     if path == 'changelog.html':
         return generatechangelog
+    if path in redirects:
+        return generateredirect
     return generatesimple
