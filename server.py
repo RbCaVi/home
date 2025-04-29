@@ -61,8 +61,8 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 return True
         except Exception as e:
             print("error", path)
-            traceback.print_exc(e)
-            self.send_data(b"<html><head></head><body>oops" + bytes(str(e), 'utf-8') + "</body></html>", 'text/html', code = 404)
+            traceback.print_exc()
+            self.send_data(b"<html><head></head><body>oops " + bytes(str(e), 'utf-8') + b"<pre>" + bytes(traceback.format_exc(), 'utf-8') + b"</pre></body></html>", 'text/html', code = 404)
             return True
         if os.path.exists(path) and os.path.isfile(path):
             print("file at", path)
