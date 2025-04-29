@@ -186,6 +186,10 @@ def generatedfiles():
         'chat.html',
         'test.html',
         
+        'blog.html',
+        
+        *['blog/' + f + '.html' for f in blogposts],
+        
         # redirects
         *redirects,
     ]
@@ -230,9 +234,25 @@ def generatesecrets(plain):
         return encrypt.encryptsecrets(readfile(plain))
     return generatesecrets
 
+blogposts = [
+    'blog1',
+]
+
+def generatebloghome(path):
+    return rendertemplates([{
+        "post": blogposts,
+    }, parsefile(path), parsefile('template.html')])
+
+def generateblog(path):
+    return rendertemplates([parsefile(path), parsefile('blog/template.html'), parsefile('template.html')])
+
 def getgenerator(path):
     if path == "secrets.json":
         return generatesecrets("plainsecrets.json")
+    if path == "blog.html":
+        return generatebloghome
+    if path.startswith("blog/"):
+        return generateblog
     if path.startswith("keypad"):
         return generatekeypad
     if path == 'changelog.html':
