@@ -1,28 +1,24 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<script type="text/javascript" src="js/dialogue.js"></script>
-	<script type="text/javascript" src="js/element.js"></script>
-	<link rel="stylesheet" href="cheese.css">
-	<title>talking demo</title>
-</head>
-<body>
-	<a href="./">BACK HOME</a>
-	<div id = "characters" style = "width: 400px; height: 300px; border: 1px solid white;"></div>
-	<div id = "dialogue" style = "width: 400px; height: 100px; white-space: break-spaces; border: 1px solid white;"></div>
- <button id = "nextbutton" style = "display: none;">next</button>
-</body>
-<script>
+###pagetitle###talking demo###/pagetitle###
+
+###script###js/element.js###/script###
+###script###js/dialogue.js###/script###
+###style###desktop.css###/style###
+
+###content###
+<div id = "characters" style = "width: 400px; height: 300px; border: 1px solid white;"></div>
+<div id = "dialogue" style = "width: 400px; height: 100px; white-space: break-spaces; border: 1px solid white;"></div>
+<button id = "nextbutton" style = "display: none;">next</button>
+###/content###
+
+###pagescript###
 fetch('dialogue-assets/dialogue.txt').then(
- r => r.text()
+	r => r.text()
 ).then(
- d => window.text = d
-).then(
- d => window.dialogue = dialogue.parse(d)
-).then(
- () => converse('greeting', 1)
+	d => {
+		window.text = d;
+		window.dialogue = dialogue.parse(d);
+		converse('greeting', 1);
+	}
 );
 
 let skip = false;
@@ -32,197 +28,196 @@ let nextbutton = document.querySelector('#nextbutton');
 document.querySelector('#dialogue').addEventListener('click', () => {skip = true;})
 
 async function converse(key, speed = 1) {
- const segment = window.dialogue[key];
- nextbutton.removeEventListener('click', nextbutton.f);
- await render(segment.screens[0], speed);
- for (const screen of segment.screens.slice(1)) {
-  await showNextButton();
-  await render(screen, speed);
- }
- if ('next' in segment) {
-  await showNextButton();
-  await converse(segment.next, speed);
- }
+	const segment = window.dialogue[key];
+	nextbutton.removeEventListener('click', nextbutton.f);
+	await render(segment.screens[0], speed);
+	for (const screen of segment.screens.slice(1)) {
+		await showNextButton();
+		await render(screen, speed);
+	}
+	if ('next' in segment) {
+		await showNextButton();
+		await converse(segment.next, speed);
+	}
 }
 
 async function showNextButton() {
- nextbutton.style.display = 'inline-block';
- return new Promise(res => {
-  const f = () => {
-   nextbutton.removeEventListener('click', f);
-   nextbutton.style.display = 'none';
-   res();
-  };
-  nextbutton.f = f;
-  nextbutton.addEventListener('click', f);
- });
+	nextbutton.style.display = 'inline-block';
+	return new Promise(res => {
+		const f = () => {
+			nextbutton.removeEventListener('click', f);
+			nextbutton.style.display = 'none';
+			res();
+		};
+		nextbutton.f = f;
+		nextbutton.addEventListener('click', f);
+	});
 }
 
 async function render(screen, speed) {
- skip = false;
- const {characters, content} = screen;
- document.querySelector('#dialogue').textContent = '';
- await setCharacters(characters);
- await say(content, document.querySelector('#dialogue'), speed, {offset: 0});
+	skip = false;
+	const {characters, content} = screen;
+	document.querySelector('#dialogue').textContent = '';
+	await setCharacters(characters);
+	await say(content, document.querySelector('#dialogue'), speed, {offset: 0});
 }
 
 function wait(n) {
- if (n <= 0 || isNaN(n)) {
-  return;
- }
- if (skip) {
-  return;
- }
- return new Promise(res => setTimeout(res, n));
+	if (n <= 0 || isNaN(n)) {
+		return;
+	}
+	if (skip) {
+		return;
+	}
+	return new Promise(res => setTimeout(res, n));
 }
 
 async function say(content, container, speed, anim) {
- const a = function(c) {
-  container.append(c);
+	const a = function(c) {
+		container.append(c);
 	return c;
- };
- if (typeof content == 'string') {
-  for (const c of content) {
-   if (anim.anim != undefined) {
-	  container.append(element('span', {style: {display: 'inline-block', 'animation-delay': anim.offset + 's'}, class_: anim.anim}, c));
-    anim.offset -= 0.1;
-   } else {
-    container.append(c);
-   }
-   await wait(20 * speed);
-  }
- } else if (typeof content == 'object' && !Array.isArray(content)) {
-  switch (content.type) {
-  case '_': {
-   await wait(+content.content * speed);
-   break;
-  } case '$': {
-   await setCharacters(content.content.split(' ').filter(s => s.length > 0));
-   break;
-  } case '%': {
-   await say(content.content, container, speed * +content.modifier, anim);
-   break;
-  } case '[': {
-   const [style] = content.content[0].split(' ', 1);
-   const text = [content.content[0].slice(content.content[0].indexOf(' ') + 1), ...content.content.slice(1)];
-   let savedanim;
+	};
+	if (typeof content == 'string') {
+		for (const c of content) {
+			if (anim.anim != undefined) {
+				container.append(element('span', {style: {display: 'inline-block', 'animation-delay': anim.offset + 's'}, class_: anim.anim}, c));
+				anim.offset -= 0.1;
+			} else {
+				container.append(c);
+			}
+			await wait(20 * speed);
+		}
+	} else if (typeof content == 'object' && !Array.isArray(content)) {
+		switch (content.type) {
+		case '_': {
+			await wait(+content.content * speed);
+			break;
+		} case '$': {
+			await setCharacters(content.content.split(' ').filter(s => s.length > 0));
+			break;
+		} case '%': {
+			await say(content.content, container, speed * +content.modifier, anim);
+			break;
+		} case '[': {
+			const [style] = content.content[0].split(' ', 1);
+			const text = [content.content[0].slice(content.content[0].indexOf(' ') + 1), ...content.content.slice(1)];
+			let savedanim;
 	 const classes = [];
-   if (style.startsWith('~')) {
-    savedanim = anim.anim;
-    anim.anim = style.slice(1);
-   } else {
-    classes.push(style);
-   }
+			if (style.startsWith('~')) {
+				savedanim = anim.anim;
+				anim.anim = style.slice(1);
+			} else {
+				classes.push(style);
+			}
 	 const c = element('span', {classes});
-   container.append(c);
-   await say(text, c, speed, anim);
-   if (style.startsWith('~')) {
-    anim.anim = savedanim;
-   }
-   break;
-  } case '@': {
-   await say(content.content, a(element('a', {href: content.modifier, target: "_blank", rel: "noopener noreferrer"})), speed, anim);
-   break;
-  } case '<': {
+			container.append(c);
+			await say(text, c, speed, anim);
+			if (style.startsWith('~')) {
+				anim.anim = savedanim;
+			}
+			break;
+		} case '@': {
+			await say(content.content, a(element('a', {href: content.modifier, target: "_blank", rel: "noopener noreferrer"})), speed, anim);
+			break;
+		} case '<': {
 	 const parts = content.content;
-   if (parts[0] == '' && typeof parts[1] == 'object' && parts[1].type == '<') {
-    const options = element('div');
-    let i;
-    for (i = 0; i < parts.length; i++) {
+			if (parts[0] == '' && typeof parts[1] == 'object' && parts[1].type == '<') {
+				const options = element('div');
+				let i;
+				for (i = 0; i < parts.length; i++) {
 		 const part = parts[i];
-     if (typeof part == 'string' && part.trim() == '') {
-      continue;
-     }
-     if (!Array.isArray(part) && part.type == '<') {
-		  const first = part.content[0].trim();
-      const [target] = first.split(' ', 1);
-      const text = [first.slice(first.indexOf(' ') + 1), ...part.content.slice(1)];
-      const c = element('div', {events: {click: e => {e.stopPropagation(); converse(target, speed)}}});
-      options.append(c);
-      say(text, c, 0, anim);
-      continue;
-     }
-     break;
-    }
-    await say([parts[i].trim(), ...parts.slice(i + 1)], a(element('span', {class_: 'choice-2'}, options)), speed, anim);
-   } else {
-	  const first = content.content[0].trim();
-    const [target] = first.split(' ', 1);
-    const text = [first.slice(first.indexOf(' ') + 1), ...content.content.slice(1)];
-    await say(text, a(element('span', {class_: 'choice-1', events: {click: e => {e.stopPropagation(); converse(target, speed)}}})), speed, anim);
-   }
-   break;
-  } default:
-   throw new Error('yuor fualt!!!!');
-  }
- } else {
-  for (const part of content) {
-   await say(part, container, speed, anim);
-  }
- }
+					if (typeof part == 'string' && part.trim() == '') {
+						continue;
+					}
+					if (!Array.isArray(part) && part.type == '<') {
+			const first = part.content[0].trim();
+						const [target] = first.split(' ', 1);
+						const text = [first.slice(first.indexOf(' ') + 1), ...part.content.slice(1)];
+						const c = element('div', {events: {click: e => {e.stopPropagation(); converse(target, speed)}}});
+						options.append(c);
+						say(text, c, 0, anim);
+						continue;
+					}
+					break;
+				}
+				await say([parts[i].trim(), ...parts.slice(i + 1)], a(element('span', {class_: 'choice-2'}, options)), speed, anim);
+			} else {
+		const first = content.content[0].trim();
+				const [target] = first.split(' ', 1);
+				const text = [first.slice(first.indexOf(' ') + 1), ...content.content.slice(1)];
+				await say(text, a(element('span', {class_: 'choice-1', events: {click: e => {e.stopPropagation(); converse(target, speed)}}})), speed, anim);
+			}
+			break;
+		} default:
+			throw new Error('yuor fualt!!!!');
+		}
+	} else {
+		for (const part of content) {
+			await say(part, container, speed, anim);
+		}
+	}
 }
 
 const modifiers = ['flipped', 'out'];
 
 const urls = {
- r_normal: 'dialogue-assets/r_normal.gif',
- r_excited: 'dialogue-assets/r_excited.gif',
- r_question: 'dialogue-assets/r_question.gif',
- r_xd: 'dialogue-assets/r_normal.gif',
- r_wave: 'dialogue-assets/r_normal.gif',
- r_question: 'dialogue-assets/r_confused.gif',
- r_confused: 'dialogue-assets/r_confused.gif',
- r_stress: 'dialogue-assets/r_stress.gif',
- cube: 'dialogue-assets/cube.png',
+	r_normal: 'dialogue-assets/r_normal.gif',
+	r_excited: 'dialogue-assets/r_excited.gif',
+	r_question: 'dialogue-assets/r_question.gif',
+	r_xd: 'dialogue-assets/r_normal.gif',
+	r_wave: 'dialogue-assets/r_normal.gif',
+	r_question: 'dialogue-assets/r_confused.gif',
+	r_confused: 'dialogue-assets/r_confused.gif',
+	r_stress: 'dialogue-assets/r_stress.gif',
+	cube: 'dialogue-assets/cube.png',
 };
 
 async function setCharacters(characters) {
- document.querySelector('#characters').textContent = '';
- for (let c of characters) {
-  let speaking = false;
-  if (c.startsWith('*')) {
-   speaking = true;
-   c = c.slice(1);
-  }
-  const ms = [];
-  for (const m of modifiers) {
-   if (c.startsWith(m + '-')) {
-    ms.push(m);
-    c = c.slice(m.length + 1);
-   }
-  }
+	document.querySelector('#characters').textContent = '';
+	for (let c of characters) {
+		let speaking = false;
+		if (c.startsWith('*')) {
+			speaking = true;
+			c = c.slice(1);
+		}
+		const ms = [];
+		for (const m of modifiers) {
+			if (c.startsWith(m + '-')) {
+				ms.push(m);
+				c = c.slice(m.length + 1);
+			}
+		}
 	const classes = [];
-  if (ms.includes('flipped')) {
-   classes.push('flipped');
-  }
+		if (ms.includes('flipped')) {
+			classes.push('flipped');
+		}
 	let img;
-  document.querySelector('#characters').append(element('div', {classes},
+		document.querySelector('#characters').append(element('div', {classes},
 		img = element('img', {src: urls[c]})
 	));
-  if (!speaking) {
-   stopAnim(img);
-  }
-  console.log(c);
- }
+		if (!speaking) {
+			stopAnim(img);
+		}
+		console.log(c);
+	}
 }
 
 // https://dev.to/grahamthedev/stopping-gif-animations-on-dev-to-for-those-who-prefer-reduced-motion-59pg
 var stopAnim = function (img) {
- var coverImage = function () {
-  var canvas = element('canvas', {width: img.width, height: img.height, style: {position: 'absolute', top: "0"}});
-  canvas.getContext('2d').drawImage(img, 0, 0);
-  var parent = img.parentNode;
-  parent.style.position = "relative";
-  parent.style.display = "block";
-  parent.insertBefore(canvas, img);
-  img.style.opacity = 0.01;
- };
+	var coverImage = function () {
+		var canvas = element('canvas', {width: img.width, height: img.height, style: {position: 'absolute', top: "0"}});
+		canvas.getContext('2d').drawImage(img, 0, 0);
+		var parent = img.parentNode;
+		parent.style.position = "relative";
+		parent.style.display = "block";
+		parent.insertBefore(canvas, img);
+		img.style.opacity = 0.01;
+	};
 
- if (img.complete) {
-  coverImage();
- } else {
-  img.addEventListener('load', coverImage, true);
- }
+	if (img.complete) {
+		coverImage();
+	} else {
+		img.addEventListener('load', coverImage, true);
+	}
 }
-</script>
-</html>
+###/pagescript###

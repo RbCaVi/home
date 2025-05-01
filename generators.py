@@ -185,6 +185,7 @@ def generatedfiles():
         'desktop.html',
         'chat.html',
         'test.html',
+        'dialogue.html',
         
         'blog.html',
         
