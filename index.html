@@ -1,128 +1,126 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<script type="text/javascript" src="js/collect.js"></script>
-	<script type="text/javascript" src="js/hash.js"></script>
-	<script type="text/javascript" src="js/db.js"></script>
-	<script type="text/javascript" src="js/crypt.js"></script>
-	<script type="text/javascript" src="js/secrets.js"></script>
-	<link rel="stylesheet" href="cheese.css">
-	<title>HI!!!!!!!! (im R)</title>
-	<script type="text/javascript">
-		db.call('inc_counter', {cid: 1}).then((data) => {
-			console.log(data);
-			document.querySelector('#counter').textContent = data;
-		});
-	</script>
-</head>
-<body>
-	<div class="image-container">
-		<img src="grabbyhand.png"><br>
-		<span>Fig. 1. - an image i drew in 5 minutes with paint (it's&nbsp;"my&nbsp;symbol")</span>
+###script###js/collect.js"###/script###
+###script###js/hash.js"###/script###
+###script###js/db.js"###/script###
+###script###js/crypt.js"###/script###
+###script###js/secrets.js"###/script###
+
+###pagetitle###HI!!!!!!!! (im R)###/pagetitle###
+
+###head###
+<script type="text/javascript">
+	db.call('inc_counter', {cid: 1}).then((data) => {
+		console.log(data);
+		document.querySelector('#counter').textContent = data;
+	});
+</script>
+###/head###
+
+###content###
+<div class="image-container">
+	<img src="grabbyhand.png"><br>
+	<span>Fig. 1. - an image i drew in 5 minutes with paint (it's&nbsp;"my&nbsp;symbol")</span>
+</div>
+<h1>MY page!!!!!!!</h1>
+<p>your visitor number <span id = "counter">uhhh... idk</span></p>
+<p>
+	it seems this user likes to keep an air of mystery about them...
+</p>
+<div>
+	status
+	<ul>
+		<li>im going to colege!!! (no longer shall i suffer)</li>
+		<li>still a <span style = "color: #ff05fb; font-weight: bold;">minor</span>, (but <span style = "color: #ff953b; font-weight: bold;">NOT FOR LONG</span>)</li>
+		<li>certified driver</li>
+		<li>professional bracket typer</li>
+		<li>chronic reader (recovered...)</li>
+		<li>first time contributee!</li>
+		<li>googlehead</li>
+	</ul>
+</div>
+<blockquote>
+	"This is the whitest presentation I have ever seen."
+	- one of my teachers
+</blockquote>
+<p>
+	uhhhhhhhhhhhh yeah...... there's stuff somewhere, but it's not here yet. :( i might have some "collectibles" here eventually :)
+</p>
+<p>
+	i have a discord though, it's rbcavi. (and an alt, find it for imaginary points)<br>
+	i also have a <a href = "https://discord.gg/qE5cf3w6cD" class = "discord-colored">discord server</a>. (i'm trying to make software)
+</p>
+<div>
+	<a href="chat">W chat</a> (i wrote it from "scratch")
+	<br>
+	challenge: log into the test user without a password - you have:
+	<ul>
+		<li>full select privileges on all tables in the database</li>
+		<li>a table called functions that has function names and definitions</li>
+		<li>yes i'm using you for free security testing</li>
+	</ul>
+</div>
+<div>
+	check out some various things on this website
+	<ul>
+		program type things (i made them all by myself)
+		<li><a href="dialogue">"dialogue" engine</a> (also written "from scratch")</li>
+		<li><a href="webgl">i used webgl!</a> so amazing...</li>
+		<li><a href="desktop">draggy squares.</a></li>
+		<li><a href="keypad">enter a code!</a></li>
+		<li><a href="plc">enter code!</a> (program code)</li>
+	</ul>
+	<ul>
+		other stuff
+		<li><a href="changelog">i made changes since nov 18 2024</a></li>
+		<li><a href="factorio">i played factorio once</a> - it was fun</li>
+		<li><a href="copypastes">check out these things i found</a> (they're copypasta type things)</li>
+		<li><a href="links">LINKS!</a> (h u p e r links)</li>
+		<li><a href="blog">"blog"</a> it has ONE post (only one)</li>
+	</ul>
+</div>
+<div>
+	Here's my other pages (i have no style).
+	<ul>
+		<li><a href = "https://rbcavi.github.io">GitHub "home page" (do not go there)</a></li>
+		<li><a href = "https://rbcavi.carrd.co">"Carrd" site (has some info i'll put here eventually (go there))</a></li>
+	</ul>
+</div>
+<div style = "display: inline-block;">
+	<h2>"guestbook"</h2>
+	<div style = "position: relative;">
+		<div id = "guestbook"></div>
+		<button onclick = "refreshGuestbook()" id = "guestbook-refresh">refresh</button>
 	</div>
-	<h1>MY page!!!!!!!</h1>
-	<p>your visitor number <span id = "counter">uhhh... idk</span></p>
+	<div style = "text-align: bottom;">
+		Name: <input type = "text" id = "guestbook-name"><br>
+		Message: <textarea id = "guestbook-message"></textarea><br>
+		<button onclick = "sendGuestbook()">send</button>
+	</div>
+</div>
+<div id = "collectible-box">
 	<p>
-		it seems this user likes to keep an air of mystery about them...
+		check it out! persistent thing (collectible).
 	</p>
-	<div>
-		status
-		<ul>
-			<li>im going to colege!!! (no longer shall i suffer)</li>
-			<li>still a <span style = "color: #ff05fb; font-weight: bold;">minor</span>, (but <span style = "color: #ff953b; font-weight: bold;">NOT FOR LONG</span>)</li>
-			<li>certified driver</li>
-			<li>professional bracket typer</li>
-			<li>chronic reader (recovered...)</li>
-			<li>first time contributee!</li>
-			<li>googlehead</li>
-		</ul>
+	<button id = "cheese-button" onclick = "collect.collect('cheese')">CLICK THIS BUTTON!</button>
+	<p class = "bread"></p>
+	<p id = "cheesed">no cheese</p>
+	<p class = "bread"></p>
+	<button id = "bread-button" onclick = "collect.collect('bread')">(click this too)</button>
+	<br>
+	<span>key:</span><input type="text" id = "me-key">
+	<button onclick = "collect.collect('me', document.querySelector('#me-key').value)">submit</button>
+	<div id = "me" style = "display: none;">
+		<img id = "me-img"><br>
+		<span id = "me-text"></span> 
+		<!-- the password is my true name -->
 	</div>
-	<blockquote>
-		"This is the whitest presentation I have ever seen."
-		- one of my teachers
-	</blockquote>
-	<p>
-		uhhhhhhhhhhhh yeah...... there's stuff somewhere, but it's not here yet. :( i might have some "collectibles" here eventually :)
-	</p>
-	<p>
-		i have a discord though, it's rbcavi. (and an alt, find it for imaginary points)<br>
-		i also have a <a href = "https://discord.gg/qE5cf3w6cD" class = "discord-colored">discord server</a>. (i'm trying to make software)
-	</p>
-	<div>
-		<a href="chat">W chat</a> (i wrote it from "scratch")
-		<br>
-		challenge: log into the test user without a password - you have:
-		<ul>
-			<li>full select privileges on all tables in the database</li>
-			<li>a table called functions that has function names and definitions</li>
-			<li>yes i'm using you for free security testing</li>
-		</ul>
-	</div>
-	<div>
-		check out some various things on this website
-		<ul>
-			program type things (i made them all by myself)
-			<li><a href="dialogue">"dialogue" engine</a> (also written "from scratch")</li>
-			<li><a href="webgl">i used webgl!</a> so amazing...</li>
-			<li><a href="desktop">draggy squares.</a></li>
-			<li><a href="keypad">enter a code!</a></li>
-			<li><a href="plc">enter code!</a> (program code)</li>
-		</ul>
-		<ul>
-			other stuff
-			<li><a href="changelog">i made changes since nov 18 2024</a></li>
-			<li><a href="factorio">i played factorio once</a> - it was fun</li>
-			<li><a href="copypastes">check out these things i found</a> (they're copypasta type things)</li>
-			<li><a href="links">LINKS!</a> (h u p e r links)</li>
-			<li><a href="blog">"blog"</a> it has ONE post (only one)</li>
-		</ul>
-	</div>
-	<div>
-		Here's my other pages (i have no style).
-		<ul>
-			<li><a href = "https://rbcavi.github.io">GitHub "home page" (do not go there)</a></li>
-			<li><a href = "https://rbcavi.carrd.co">"Carrd" site (has some info i'll put here eventually (go there))</a></li>
-		</ul>
-	</div>
-	<div style = "display: inline-block;">
-		<h2>"guestbook"</h2>
-		<div style = "position: relative;">
-			<div id = "guestbook"></div>
-			<button onclick = "refreshGuestbook()" id = "guestbook-refresh">refresh</button>
-		</div>
-  	<div style = "text-align: bottom;">
-  		Name: <input type = "text" id = "guestbook-name"><br>
-  		Message: <textarea id = "guestbook-message"></textarea><br>
-  		<button onclick = "sendGuestbook()">send</button>
-  	</div>
-	</div>
-	<div id = "collectible-box">
-		<p>
-			check it out! persistent thing (collectible).
-		</p>
-		<button id = "cheese-button" onclick = "collect.collect('cheese')">CLICK THIS BUTTON!</button>
-		<p class = "bread"></p>
-		<p id = "cheesed">no cheese</p>
-		<p class = "bread"></p>
-		<button id = "bread-button" onclick = "collect.collect('bread')">(click this too)</button>
-		<br>
-		<span>key:</span><input type="text" id = "me-key">
-		<button onclick = "collect.collect('me', document.querySelector('#me-key').value)">submit</button>
-		<div id = "me" style = "display: none;">
-			<img id = "me-img"><br>
-			<span id = "me-text"></span> 
-			<!-- the password is my true name -->
-		</div>
-		<button id = "reset-button" onclick = "collect.reset()">RESET (DO NOT PRESS OR YOUR COLLECTIBLES WILL BE RESET) (need to reload to see changes)</button>
-	</div>
-	<div id = "collected">
-    <p>You have collected:</p>
-    <ul>
-    </ul>
-	</div>
-	<!--
+	<button id = "reset-button" onclick = "collect.reset()">RESET (DO NOT PRESS OR YOUR COLLECTIBLES WILL BE RESET) (need to reload to see changes)</button>
+</div>
+<div id = "collected">
+  <p>You have collected:</p>
+  <ul>
+  </ul>
+</div>
+<!--
 When I started computers, I thought uhhhh……. I forgor (I was like 8).
 I like computers. How do you like that?
 Customizability is fun.
@@ -139,40 +137,42 @@ subcapitalized
 i wrote this while high on no sleep
 so uh
 i don't usually write like this
-	-->
-	<div>
-		imagine, if you will:
-		<br>
-		a game inside a game (my game)
-		<br>
-		with transferrable collectibles
-	</div>
-	<div>
-		<h1>programming</h1>
-		i did a programming since like 10 (scratch and maybe some other block based things? (idk)).
-		i learned python next (tutel + hello world i guess).
-		i actually don't know how / what order i learned programming in, but i definitely got better.
-	</div>
-</body>
-<script type = "text/javascript">
-	// eat this
-	function datatourl(data) {
-		return URL.createObjectURL(new Blob([Int8Array.from(data).buffer]));
-	}
+-->
+<div>
+	imagine, if you will:
+	<br>
+	a game inside a game (my game)
+	<br>
+	with transferrable collectibles
+</div>
+<div>
+	<h1>programming</h1>
+	i did a programming since like 10 (scratch and maybe some other block based things? (idk)).
+	i learned python next (tutel + hello world i guess).
+	i actually don't know how / what order i learned programming in, but i definitely got better.
+</div>
+###/content###
 
-	collect.listen(document.querySelector('#cheesed'), function (e) {this.textContent = 'cheese';}, 'cheese');
-  
-	for (const p of document.querySelectorAll('.bread')) {
-		collect.listen(p, function (e) {this.textContent = 'bread';}, 'bread');
-	}
-  
-	collect.listen(document.querySelector('#me-img'), async function (e) {
-		this.src = datatourl(await secrets.get('me', e.secret));
-		document.querySelector('#me-text').innerHTML = await secrets.get('me-flavor', e.secret);
-		document.querySelector('#me').style.display = 'block';
-	}, 'me');
-</script>
-<script type = "text/javascript">
+###pagescript###
+// eat this
+function datatourl(data) {
+	return URL.createObjectURL(new Blob([Int8Array.from(data).buffer]));
+}
+
+collect.listen(document.querySelector('#cheesed'), function (e) {this.textContent = 'cheese';}, 'cheese');
+
+for (const p of document.querySelectorAll('.bread')) {
+	collect.listen(p, function (e) {this.textContent = 'bread';}, 'bread');
+}
+
+collect.listen(document.querySelector('#me-img'), async function (e) {
+	this.src = datatourl(await secrets.get('me', e.secret));
+	document.querySelector('#me-text').innerHTML = await secrets.get('me-flavor', e.secret);
+	document.querySelector('#me').style.display = 'block';
+}, 'me');
+###/pagescript###
+
+###pagescript###
 	const list = document.querySelector('#collected ul');
   
 	collect.listen(list, function() {
@@ -187,9 +187,9 @@ i don't usually write like this
         list.append(litem);
       }
     }
-  });
-</script>
-<script type = "text/javascript">
+###/pagescript###
+
+###pagescript###
 	async function sendGuestbook() {
 		const name = document.querySelector("#guestbook-name").value;
 		const message = document.querySelector("#guestbook-message").value;
@@ -220,5 +220,4 @@ i don't usually write like this
 	}
 
 	refreshGuestbook();
-</script>
-</html>
+###/pagescript###
