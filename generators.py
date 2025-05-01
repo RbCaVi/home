@@ -238,6 +238,7 @@ def generatesecrets(plain):
 
 blogposts = [
     'blog1',
+    'blog2',
 ]
 
 def generatebloghome(path):
