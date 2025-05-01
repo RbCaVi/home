@@ -42,6 +42,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             self.send_data(f.read(), getmimetype(path), code)
     
     def try_send(self, path, code = 200):
+        path = torelpath(path)
         path = path.replace('\\', '/')
         if 'generators' in sys.modules:
             del sys.modules['generators']
@@ -73,7 +74,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             return False
 
     def do_GET(self):
-        path = torelpath(self.path.split('?', maxsplit = 1)[0])
+        path = self.path.split('?', maxsplit = 1)[0]
         # these should emulate the github rules
         if self.try_send(path): return
         if self.try_send(path + '.html'): return
