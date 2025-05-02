@@ -4,10 +4,6 @@
 <head>
 	<base href = "//###base###/">
 	<meta charset="utf-8">
-	###if#head###
-		###head###
-	###else###
-	###/if###
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="cheese.css">
 	###foreach#script###
@@ -16,6 +12,10 @@
 	###foreach#style###
 	<link rel="stylesheet" href="###style###">
 	###/foreach###
+	###if#head###
+		###head###
+	###else###
+	###/if###
 	<title>###pagetitle###</title>
 </head>
 <body>
