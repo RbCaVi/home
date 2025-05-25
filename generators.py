@@ -176,7 +176,6 @@ def generatedfiles():
         'generated.html',
         'plc.html',
         'raypath.html',
-        'parserlang.html',
         'links.html',
         'factorio.html',
         'copypastes.html',
@@ -187,9 +186,13 @@ def generatedfiles():
         'test.html',
         'dialogue.html',
         'index.html',
+
+        'parserlang.html',
+        'parserlang/history.html',
+        'parserlang/reference.html',
         
+        # the "blog"
         'blog.html',
-        
         *['blog/' + f + '.html' for f in blogposts],
         
         # redirects

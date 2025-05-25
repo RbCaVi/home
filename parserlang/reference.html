@@ -1,0 +1,68 @@
+###pagetitle###
+parserlang: reference
+###/pagetitle###
+
+###title###
+reference
+###/title###
+
+###backlink###
+<a href = "parserlang">back to parserlang</a>
+###/backlink###
+
+###content###
+<h2>reference</h2>
+<p>this is a reference if you want to write stuff in parserlang</p>
+<p>amount of whitespace (including newlines) is not significant, and there are no semicolons or other statement delimiters</p>
+<p>there are only single line comments with <span class = "code">#</span></p>
+<p>string literals are double quoted</p>
+<p>there are a few escape sequences: <span class = "code">\\</span>, <span class = "code">\"</span>, <span class = "code">\n</span>, <span class = "code">\x##</span> (hex escape code)</p>
+<h3>functions / generators</h3>
+<p>all functions are like generators</p>
+<p>there are two ways to call a function: direct (normal function call) and using the <span class = "code">gcall()</span> builtin</p>
+<p>a direct call acts like a normal function call - it returns one value at a time - and it adds a backtracking marker so the rest of the code is run with each value yielded from the call</p>
+<p>a <span class = "code">gcall()</span> call returns a generator / iterator instead</p>
+<h3>statements</h3>
+<ul>
+	<li>variable definition and assignment</li>
+	<li>yield and return</li>
+	<li>control flow (block statement, if, for, while)</li>
+	<li>function definition</li>
+</ul>
+<h4>variable definition and assignment</h4>
+<p>variables are declared and defined at the same time using the keyword <span class = "code">def</span>: <span class = "code">def &lt;variable&gt; = &lt;value&gt;</span></p>
+<p>variable assignment is (as usual) <span class = "code">&lt;variable&gt; = &lt;value&gt;</span></p>
+<h4>yield and return</h4>
+<p>return may have a value or not</p>
+<p>it yields a value if it has one and then ends the execution of the function</p>
+<p>yield always has a value</p>
+<p>it yields the value and does not end the function</p>
+<h4>control flow</h4>
+<p>block statement is just a list of statements enclosed by <span class = "code">{}</span></p>
+<p>if statement is <span class = "code">if &lt;condition&gt; then &lt;body (statement or block)&gt;</span></p>
+<p>the condition does not need parentheses</p>
+<p>there is no else or else if statement... :/</p>
+<p>for statement is <span class = "code">for &lt;variable&gt; in &lt;expression (iterable)&gt; do &lt;body (statement or block)&gt;</span></p>
+<p>while statement is <span class = "code">while &lt;condition&gt; do &lt;body (statement or block)&gt;</span></p>
+<h4>function definition</h4>
+<p>a function definition is <span class = "code">fn &lt;name&gt;(&lt;argument names&gt;) &lt;body (always a block)&gt;</span></p>
+<p>fun fact: i may have decided on no parentheses in <span class = "code">if</span> and <span class = "code">while</span> and defining functions with <span class = "code">fn</span> before i got into rust</p>
+<h3>scopes</h3>
+<p>all variables are confined to their scope, which starts at the definition and ends at the surrounding brackets (except in cases like <span class = "code">if condition then def var = 3</span>, where <span class = "code">var</span>'s scope ends after the if statement (this is useless (why would you do this))</p>
+<p>function definitions are also scoped like variables, but they are hoisted to the top of their scope <a href = "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions#function_hoisting">like in javascript</a></p>
+<h3>builtins</h3>
+<p>there are a few builtin functions right now</p>
+<ul>
+	<li>add - sum the arguments - this was added as a test and may be removed</li>
+	<li>concat - concatenate one or more arrays</li>
+	<li>each - return each value of a generator as if it was a function yielding values</li>
+	<li>gcall - call a function as a generator - <span class = "code">gcall(&gt;func&gt;, &gt;arguments with commas between&gt;)</span></li>
+	<li>bind - return a function which has the last argument constant - like <a href = "https://docs.python.org/3/library/functools.html#functools.partial"><span class = "code">functools.partial()</span> in python</a></li>
+	<li>len - find the length of a string or array</li>
+	<li>strmid - <span class = "code">strmid(s, i) == s[i:]</span></li>
+	<li>strleft - <span class = "code">strleft(s, i) == s[:i]</span></li>
+	<li>ord - similar to python - returns the ASCII value of the first character</li>
+	<li>chr - similar to python - returns a one character string from the character code</li>
+	<li>print - print (debug dump) a single value - expression statements aren't supported yet so just use something like <span class = "code">def a = print("stuff")</span></li>
+</ul>
+###/content###

@@ -1,0 +1,77 @@
+###pagetitle###
+parserlang: the before times
+###/pagetitle###
+
+###title###
+parserlang "history"
+###/title###
+
+###backlink###
+<a href = "parserlang">back to parserlang</a>
+###/backlink###
+
+###content###
+<h2>things you probably already know:</h2>
+<ul>
+	<li>parserlang is a programming language</li>
+	<li>i made it to write parsers</li>
+</ul>
+<p>anyway, on to the things you may not know</p>
+<h2>things you may not know: pv</h2>
+<p>
+	because i made it to write parsers, one of the features i have planned is simple backtracking
+</p>
+<p>
+	like when you're (i was) writing a recursive descent parser with parser combinators, the concat combinator is hard to write in a non recursive way (you have to write your own stack)
+</p>
+<p>
+	so that's one feature i planned
+</p>
+<p>
+	then to have backtracking in a "sane" way, the values have to be immutable
+</p>
+<p>
+	at some point i thought "oh jq does basically the same thing right?" and copied the entire jv (jq value) implementation and called it pv
+</p>
+<p>
+	(and quickly found out how much the different jv kinds (types) reference internal details)
+</p>
+<p>
+	so i just copied (most of) the header files and some of the implementation for the more complex kinds
+</p>
+<p>
+	but now i'm mostly done with rewriting jv in a way that i like
+</p>
+<p>
+	so it has immutable values like jv and 9 kinds: null, bool, int, double, string, array, object, iterator, function (i split number into int and double, and added iterator and function)
+</p>
+<p>
+	it also has some functions with single or double dispatch - equal, hash, to_string
+</p>
+<h2>pl</h2>
+<p>
+	now on top of pv i made pl, which is a based stack vm (like lua)
+</p>
+<p>
+	it's not too unusual (i think) - there are a couple of opcode sections:
+</p>
+<ul>
+	<li>stack manipulation - dup swap pop</li>
+	<li>empty constructors - null bool int double array object</li>
+	<li>push global constant</li>
+	<li>various array and object functions - set get len etc.</li>
+	<li>number operators - <code>+</code> <code>-</code> <code>*</code> <code>/</code> etc.</li>
+	<li>call (of course)</li>
+	<li>jumps - conditional and unconditional</li>
+	<li>iterator constructors - from array or object - or call function as generator</li>
+	<li>iteration - normal and backtracking</li>
+	<li>three return opcodes - return, yield, and end generator</li>
+</ul>
+<p>
+	i currently have functional iteration and function calls - both as normal function and as generator
+</p>
+<p>
+	right now, though, i'm Rewriting (🦀 🦀🦀) It In Rust 🚀🚀 (🚀 (🦀)) TM R C frfr (🦀🚀🚀🚀🚀)<br>
+	it's on <a href = "https://github.com/RbCaVi/plrs">github</a>
+</p>
+###/content###
