@@ -6,6 +6,8 @@ import os
 import sys
 import traceback
 
+sys.path.append('server') # so you can run it inside or outside this directory
+
 import generators
 
 hostname = "localhost"
