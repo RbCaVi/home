@@ -20,6 +20,8 @@
 ###script###parserlang/js/pl_parse.js###/script###
 ###script###parserlang/js/pl_exec_run.js###/script###
 
+###style###accordion.css###/style###
+
 ###title###test###/title###
 
 ###content###
@@ -51,7 +53,9 @@
 
 <p>guess i'll just debug in here</p>
 <p>i'll show random things maybe? idk</p>
-<br>
+<div class = "accordion"><button></button>
+	<p>accordion :)</p>
+</div>
 <p>like this</p>
 <p>system that can render as both html and js (wow)</p>
 <p>and it's mine (i made it (so it's mine))</p>
@@ -89,4 +93,12 @@ redirectlog.setlog(function(...arguments) {
 
 ###pagescript###
 ###call#include("pagescripts/chat.js")###
+###/pagescript###
+
+###pagescript###
+for (const a of document.querySelectorAll(".accordion")) {
+  a.children[0].addEventListener("click", function accordionclick(argument) {
+    a.classList.toggle("active");
+  })
+}
 ###/pagescript###
