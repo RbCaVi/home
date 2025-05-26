@@ -6,11 +6,11 @@ pl but ONLINE!!!!!
 parserlang online compiler ("POC" for no reason at all)
 ###/title###
 
-###script###js/pl/parsers.js###/script###
-###script###js/pl/expr.js###/script###
-###script###js/pl/stmt.js###/script###
-###script###js/pl/pl_parse.js###/script###
-###script###js/pl/pl_exec_run.js###/script###
+###script###parserlang/js/parsers.js###/script###
+###script###parserlang/js/expr.js###/script###
+###script###parserlang/js/stmt.js###/script###
+###script###parserlang/js/pl_parse.js###/script###
+###script###parserlang/js/pl_exec_run.js###/script###
 
 ###backlink###
 <a href = "parserlang">back to parserlang</a>
@@ -75,7 +75,7 @@ document.getElementById('fileinput').addEventListener('change', async function(e
 })
 
 async function load(path) {
-  document.getElementById('source').value = await (await fetch('plc-assets/' + path + '.pls')).text();
+  document.getElementById('source').value = await (await fetch('parserlang/assets/' + path + '.pls')).text();
 }
 
 async function runs(path) {
