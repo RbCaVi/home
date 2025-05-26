@@ -2,7 +2,7 @@
 # https://pythonbasics.org/webserver/
 import http.server
 import time
-import os
+import posixpath
 import sys
 import traceback
 
@@ -14,7 +14,7 @@ hostname = "localhost"
 serverPort = 7999
 
 def torelpath(path):
-    return os.path.normpath(os.path.join('.', './' + os.path.normpath(os.path.join('/', path))))
+    return posixpath.normpath(posixpath.join('.', './' + posixpath.normpath(posixpath.join('/', path))))
 
 mimetypes = {
     '.html': 'text/html',
@@ -27,7 +27,7 @@ mimetypes = {
 }
 
 def getmimetype(path):
-    ext = os.path.splitext(path)[1]
+    ext = posixpath.splitext(path)[1]
     if ext in mimetypes:
         return mimetypes[ext]
     print(f"unknown extension {ext} ({path})")
@@ -46,16 +46,17 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
     
     def try_send(self, path, code = 200):
         path = torelpath(path)
-        path = path.replace('\\', '/')
+        staticpath = posixpath.join('static', path)
+        if posixpath.exists(staticpath) and posixpath.isfile(staticpath):
+            print("file at", staticpath)
+            self.send_path(staticpath, code = code)
+            return True
         if 'generators' in sys.modules:
             del sys.modules['generators']
         import generators
         generators.base = "%s:%s" % (hostname, serverPort)
         try:
             print("trying", path)
-            if path in generators.hiddenfiles():
-                print("hidden", path)
-                return False
             if path in generators.generatedfiles():
                 print("generated", path)
                 data = generators.getgenerator(path)(path) # i'm <age> and this is aeh
@@ -68,10 +69,6 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             traceback.print_exc()
             self.send_data(b"<html><head></head><body>oops " + bytes(str(e), 'utf-8') + b"<pre>" + bytes(traceback.format_exc(), 'utf-8') + b"</pre></body></html>", 'text/html', code = 404)
             return True
-        if os.path.exists(path) and os.path.isfile(path):
-            print("file at", path)
-            self.send_path(path, code = code)
-            return True
         else:
             print("not found", path)
             return False
@@ -81,7 +78,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
         # these should emulate the github rules
         if self.try_send(path): return
         if self.try_send(path + '.html'): return
-        if self.try_send(os.path.join(path, 'index.html')): return
+        if self.try_send(posixpath.join(path, 'index.html')): return
         self.try_send('404.html', code = 404)
 
 if __name__ == "__main__":

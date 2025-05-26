@@ -137,7 +137,7 @@ def rendertemplates(templates):
     return bits['main'][0]
 
 def generatesimple(path):
-    return rendertemplates([parsefile(path), parsefile('template.html')])
+    return rendertemplates([parsefile(os.path.join('src', path)), parsefile('src/template.html')])
 
 def generatekeypad(path):
     keys = path[:-5].split('/')[1:] # assume the path is "keypad/<key>/...<key>.html"
@@ -148,16 +148,16 @@ def generatekeypad(path):
                 "currentkeys": keys,
                 "keys": [*'123456789'],
             },
-            parsefile('keypad.html'),
-            parsefile('template.html'),
+            parsefile('src/keypad.html'),
+            parsefile('src/template.html'),
         ]
     else:
         success = ''.join(keys) in ['1111', '1234', '9999', '4321', '8324']
-        templates = [{"current": [f"code: {''.join(keys)}"]}, parsefile('keysuccess.html' if success else 'keyfail.html'), parsefile('template.html')]
+        templates = [{"current": [f"code: {''.join(keys)}"]}, parsefile('src/keysuccess.html' if success else 'keyfail.html'), parsefile('src/template.html')]
     return rendertemplates(templates)
 
 def generatechangelog(path):
-    return rendertemplates([parsefile('changelogdata.html'), parsefile('changelog.html'), parsefile('template.html')])
+    return rendertemplates([parsefile('src/changelogdata.html'), parsefile('src/changelog.html'), parsefile('src/template.html')])
 
 redirects = {
     'pl_exec_run.html': 'parserlang/online.html',
@@ -165,7 +165,7 @@ redirects = {
 }
 
 def generateredirect(path):
-    return rendertemplates([{'to': [redirects[path]]}, parsefile('redirect.html'), parsefile('template.html')])
+    return rendertemplates([{'to': [redirects[path]]}, parsefile('src/redirect.html'), parsefile('src/template.html')])
 
 def generatedfiles():
     files = [
@@ -215,23 +215,6 @@ def generatedfiles():
     
     return files
 
-def hiddenfiles():
-    files = [
-        'template.html',
-        "plainsecrets.json",
-        "not-me.png",
-        "server.py",
-        "regen.py",
-        "generators.py",
-        "hash.py",
-        "crypt.py",
-        "keyfail.html",
-        "keysuccess.html",
-        "changelogdata.html",
-        "redirect.html",
-    ]
-    return files
-
 def generatesecrets(plain):
     def generatesecrets(path):
         delmodule('encrypt')
@@ -249,14 +232,14 @@ blogposts = [
 def generatebloghome(path):
     return rendertemplates([{
         "post": blogposts,
-    }, parsefile(path), parsefile('template.html')])
+    }, parsefile(os.path.join('src', path)), parsefile('src/template.html')])
 
 def generateblog(path):
-    return rendertemplates([parsefile(path), parsefile('blog/template.html'), parsefile('template.html')])
+    return rendertemplates([parsefile(os.path.join('src', path)), parsefile('src/blog/template.html'), parsefile('src/template.html')])
 
 def getgenerator(path):
     if path == "secrets.json":
-        return generatesecrets("plainsecrets.json")
+        return generatesecrets("src/plainsecrets.json")
     if path == "blog.html":
         return generatebloghome
     if path.startswith("blog/"):
