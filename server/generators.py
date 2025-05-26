@@ -63,7 +63,7 @@ def replacep(s, parts):
     while "###" in s:
         before,name,s = s.split('###', maxsplit = 2)
         a += before
-        print("name:", name)
+        #print("name:", name)
         if name in parts:
             #print(parts)
             a += parts[name][0]
@@ -98,7 +98,7 @@ def replace(s, parts):
             before = s[:i2]
             s = s[i2 + len("###if#"):]
             name,s = s.split("###", maxsplit = 1)
-            print(name)
+            #print(name)
             j = s.index("###/if###")
             k = s.index("###else###")
             if k < j and k != -1:
@@ -110,10 +110,10 @@ def replace(s, parts):
                 middle = replacep(middle, parts)
             else:
                 if k < j and k != -1:
-                    print("beanch 1", )
+                    #print("beanch 1", )
                     middle = replacep(s[k + len("###else###"):j], parts)
                 else:
-                    print("beanch 2")
+                    #print("beanch 2")
                     middle = ''
             s = before + middle + after
         else:
