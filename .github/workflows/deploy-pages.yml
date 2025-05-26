@@ -31,6 +31,8 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Generate files
         run: python -m server.renderstatic
+      - name: Show files
+        run: find
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
