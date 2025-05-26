@@ -1,0 +1,89 @@
+###head###
+<style type="text/css">
+	.name {
+		font-weight: bold;
+	}
+</style>
+###/head###
+
+###pagetitle###
+my gaming rig
+###/pagetitle###
+
+###title###
+my computer
+###/title###
+
+###content###
+<p>
+	i have a computer /j /s /hj /pos /alrbro<br>
+	more seriously, i do in fact have a computer
+</p>
+<p>the computer in question:</p>
+<img src="laptop.gif">
+<h2>operating system</h2>
+<p>
+	it used to be windows<br>
+	but at some point i installed (dual boot) linux on it<br>
+	and not just ANY linux<br>
+	i installed CENTOS 7<br>
+	oldest of old (this is exaggerating of course but)<br>
+	it is the cause of like 70% of my computer issues<br>
+	and of the other 30%, 25% don't exist<br>
+	so i have (had) windows on disk 1, centos 7 on disk 2<br>
+	then i installed ubuntu on disk 1 (tripal boot)<br>
+	and shortly afterward, disk 1 just completely died :(<br>
+	so now i'm stuck with centos 7 on a (n almost) full hard drive
+</p>
+<p>
+	i survive fine with it<br>
+	except when i don"t<br>
+</p>
+<p>
+	and 99% of the aforementioned issues caused by centos 7 relate to old or non installed libraries and programs<br>
+	examples:<br>
+	<ul>
+		<li>
+			<span class = "name">glibc</span> - my version is like 2.18 - factorio demo (i think 1.1.92 or so) requires something newer<br>
+			now i have 2.37 as well and in $LD_LIBRARY_PATH<br>
+			and i can't replace my system libc because "literally" every program on my computer will crash<br>
+			so instead i have a script that uses patchelf to make some executables see the new libc<br>
+			and even that doesn't work sometimes (steam and snap snaps)
+		</li>
+		<li>
+			<span class = "name">gcc/binutils</span> - 4.8.5/2.27 - now 12.2.0/2.40 - is this notable????? and it's in $PATH as gcc (unlike python3.12)<br>
+			i did this to compile newer programs (what did you think)<br>
+			and i think gcc dragged binutils along with it (by this i mean old binutils doesn't work with new gcc)
+		</li>
+		<li>
+			<span class = "name">make</span> - 3.82 -> 4.4.1 - make - make...... - make!<br>
+			i still have issues here because i didn't replace old gcc, i just covered over it with $PATH<br>
+			so any sudo make that tries to compile something will do it using a like 3 year old version of gcc<br>
+			so annoying
+		</li>
+		<li>
+			<span class = "name">python</span> - i have python 3.6 - but APPARENTLY that's not ENOUGH for some people >:( /j? (i do not actually mean this (no hard feeligns or somthing))<br>
+			so i got python 3.12<br>
+			and i didn't replace system python for some reason (maybe some compatibility idk anymore)<br>
+			so i usually use system python 3.6 for everything and only use 3.12 for things that don't work on 3.6<br>
+			like <a href = "https://github.com/yt-dlp/yt-dlp">yt-dlp</a> for some reason<br>
+			and <a href = "https://github.com/microsoft/onnxruntime">onnx runtime</a> (which itself i had to build from source)<br>
+			and <a href = "https://github.com/ManimCommunity/manim">manim (?)</a>
+		</li>
+		<li>
+			<a href = "https://github.com/microsoft/onnxruntime">onnx runtime</a> - me when i try to set up face tracking - but onnx runtime won't install on my computer because..... idk maybe it couldn't find libraries to compile with<br>
+			so i downloaded the source and compiled it on my computer<br>
+			and had to set $LD_LIBRARY_PATH or something to get it to actually run
+		</li>
+		<li>
+			<a href = "https://github.com/ManimCommunity/manim">manim</a> - actually pango and cairo and harfbuzz and............<br>
+			yeah i have no idea how to work this<br>
+			all i know is i can't import manim because some symbol is missing from libpango
+		</li>
+	</ul>
+</p>
+<p>
+	if you're wondering,<br>
+	i did make this page just to complain/rant/something about how my computer doesn't quite work
+</p>
+###/content###

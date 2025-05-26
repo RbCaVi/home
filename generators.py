@@ -186,6 +186,7 @@ def generatedfiles():
         'test.html',
         'dialogue.html',
         'index.html',
+        'computer.html',
 
         'parserlang.html',
         'parserlang/history.html',

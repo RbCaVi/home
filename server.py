@@ -19,6 +19,7 @@ mimetypes = {
     '.js': 'text/javascript',
     '.css': 'text/css',
     '.png': 'image/png',
+    '.gif': 'image/gif',
     '.json': 'application/json',
     '.wasm': 'application/wasm',
 }
