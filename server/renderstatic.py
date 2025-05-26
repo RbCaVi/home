@@ -1,8 +1,9 @@
-import generators
 import os
 import sys
 
 sys.path.append('server') # so you can run it inside or outside this directory
+
+import generators
 
 generated = {}
 
