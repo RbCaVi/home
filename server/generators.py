@@ -160,7 +160,8 @@ def generatechangelog(path):
     return rendertemplates([parsefile('changelogdata.html'), parsefile('changelog.html'), parsefile('template.html')])
 
 redirects = {
-    'pl_exec_run.html': 'plc',
+    'pl_exec_run.html': 'parserlang/online.html',
+    'plc.html': 'parserlang/online.html',
 }
 
 def generateredirect(path):
@@ -174,7 +175,6 @@ def generatedfiles():
         
         # just simple template filling
         'generated.html',
-        'plc.html',
         'raypath.html',
         'links.html',
         'factorio.html',
@@ -191,6 +191,7 @@ def generatedfiles():
         'parserlang.html',
         'parserlang/history.html',
         'parserlang/reference.html',
+        'parserlang/online.html',
         
         # the "blog"
         'blog.html',
