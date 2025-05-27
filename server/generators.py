@@ -104,6 +104,8 @@ def parsesectiontree(section):
             out.append(parsesectiontreeswhile(section,
                 lambda section: not section[0].startswith('###/if###')
             ))
+        else:
+            out.append('')
         section.pop(0) # pop ###/if###
         return out
     if start.startswith('###foreach#'):
@@ -147,8 +149,7 @@ def rendertrees(trees, env):
                 if name in env:
                     out += rendertrees(tree[2], env)
                 else:
-                    if len(tree) > 3:
-                        out += rendertrees(tree[3], env)
+                    out += rendertrees(tree[3], env)
             elif tree[0] == '###foreach###':
                 names = tree[1]
                 subtree = tree[2]
