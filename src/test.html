@@ -59,24 +59,26 @@
 <p>like this</p>
 <p>system that can render as both html and js (wow)</p>
 <p>and it's mine (i made it (so it's mine))</p>
-<p>as javascript</p>
 ###accordion###
-<pre>
+  <p>as javascript</p>
+  ###accordion###
+    <pre>
 ###call#rendervars("chat.json")###
 ###call#renderjs("chat.json")###
-</pre>
-###/accordion###
-<p>or as html</p>
-###accordion###
-<pre>
+    </pre>
+  ###/accordion###
+  <p>or as html</p>
+  ###accordion###
+    <pre>
 ###call#renderhtml("chat.json").replace('\x3c', '&lt;')###
-</pre>
-###/accordion###
-<p>it looks right (they're disabled though)</p>
-###accordion###
-###call#renderhtml("chat.json")###
+    </pre>
+  ###/accordion###
+  <p>it looks right too :)</p>
+  ###accordion###
+    ###call#renderhtml("chat.json")###
 
-<div id = "testing"></div>
+    <div id = "testing"></div>
+  ###/accordion###
 ###/accordion###
 ###/content###
 
