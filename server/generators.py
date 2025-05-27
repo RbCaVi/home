@@ -42,6 +42,83 @@ def include(f):
 def escape(s):
     return f"{s}".replace("<", "&lt;")
 
+def parse2(s):
+    return parseparts(lex(s))
+
+def lex(s):
+    parts = s.split('###')
+    assert len(parts) % 2 == 1, parts # there are an even number of ###
+    return [part if i % 2 == 0 else '###' + part + '###' for i,part in enumerate(parts)]
+
+def parseparts(parts):
+    # parts is alternating text and tags, but i'm ignoring that fact
+    # and just checking both cases every iteration
+    sections = []
+    while len(parts) != 0:
+        part = parts.pop(0)
+        if part.strip() == '':
+            continue
+        elif part.startswith('###'):
+            name = part.split('###')[1]
+            section = []
+            while True:
+                if len(parts) == 0:
+                    print(name, 'unclosed')
+                part = parts.pop(0)
+                if part == f'###/{name}###':
+                    break
+                section.append(part)
+            sections.append((name, parsesectiontrees(section)))
+        else:
+            print("ignored text outside paired ### tags:", part)
+    return {k:[v for k2,v in sections if k == k2] for k in set(k for k,v in sections)}
+
+# these three modify section by popping elements
+# section should be empty after parsesectiontrees(section)
+
+def parsesectiontreeswhile(section, cond):
+    # stop when cond is false
+    trees = []
+    while cond(section):
+        tree = parsesectiontree(section)
+        trees.append(tree)
+    return trees
+
+def parsesectiontrees(section):
+    return parsesectiontreeswhile(section, lambda section: len(section) != 0)
+
+def parsesectiontree(section):
+    start = section.pop(0)
+    if not start.startswith('###'):
+        return start
+    if start.startswith('###if#'):
+        cond = start[len("###if#"):-3]
+        tree1 = parsesectiontreeswhile(section,
+            lambda section:
+                (not section[0].startswith('###else###')) and
+                (not section[0].startswith('###/if###'))
+        )
+        out = ['###if###', cond, tree1]
+        if section[0].startswith('###else###'):
+            section.pop(0) # pop ###else###
+            out.append(parsesectiontreeswhile(section,
+                lambda section: not section[0].startswith('###/if###')
+            ))
+        section.pop(0) # pop ###/if###
+        return out
+    if start.startswith('###foreach#'):
+        parts = start[len("###foreach#"):-3].split('#')
+        tree = parsesectiontreeswhile(section,
+            lambda section: not section[0].startswith('###/foreach###')
+        )
+        return ['###foreach###', parts, tree]
+    if start == '###accordion###':
+        tree = parsesectiontreeswhile(section,
+            lambda section: not section[0].startswith('###/accordion###')
+        )
+        return ['###accordion###', parts, tree]
+    return start
+
 def parseone(s):
     s = s.strip()
     #print("saerts", s[:100].encode('utf-8'))
@@ -128,6 +205,7 @@ def readfile(file):
         return f.read()
 
 def parsefile(file):
+    __import__("pprint").pprint(parse2(readfile(file)))
     return parse(readfile(file))
 
 def rendertemplates(templates):
