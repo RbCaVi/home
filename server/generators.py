@@ -249,7 +249,10 @@ def renderpagestree():
             if d not in sub[0]:
                 sub[0][d] = [{}, []] # new directory
             sub = sub[0][d]
-        sub[1].append(parts[-1])
+        name = parts[-1]
+        if name.endswith('.html'):
+            name = name[:-5]
+        sub[1].append(name)
     return rendertrees([ftreetosection(ftree, '/')], {})
 
 def generatetest(path):
