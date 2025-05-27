@@ -15,21 +15,21 @@ print("reloaded")
 base = "rbcavi.github.io/home"
 
 def renderjs(f):
-    with open(f) as f:
+    with open(os.path.join('src', f)) as f:
         e = json.load(f)
     if isinstance(e, list):
         return renderelements.renderelementsjs(e)
     return renderelements.renderelementjs(e)
 
 def renderhtml(f):
-    with open(f) as f:
+    with open(os.path.join('src', f)) as f:
         e = json.load(f)
     if isinstance(e, list):
         return renderelements.renderelementshtml(e) + '\n<script>\n' + renderelements.rendervariableshtml(e) + '\n</script>'
     return renderelements.renderelementhtml(e) + '\n<script>\n' + renderelements.rendervariablehtml(e) + '\n</script>'
 
 def rendervars(f):
-    with open(f) as f:
+    with open(os.path.join('src', f)) as f:
         e = json.load(f)
     if isinstance(e, list):
         return renderelements.rendervariablesjs(e)
@@ -42,7 +42,7 @@ def include(f):
 def escape(s):
     return f"{s}".replace("<", "&lt;")
 
-def parse2(s):
+def parse(s):
     return parseparts(lex(s))
 
 def lex(s):
@@ -92,13 +92,13 @@ def parsesectiontree(section):
     if not start.startswith('###'):
         return start
     if start.startswith('###if#'):
-        cond = start[len("###if#"):-3]
+        name = start[len("###if#"):-3]
         tree1 = parsesectiontreeswhile(section,
             lambda section:
                 (not section[0].startswith('###else###')) and
                 (not section[0].startswith('###/if###'))
         )
-        out = ['###if###', cond, tree1]
+        out = ['###if###', name, tree1]
         if section[0].startswith('###else###'):
             section.pop(0) # pop ###else###
             out.append(parsesectiontreeswhile(section,
@@ -107,96 +107,68 @@ def parsesectiontree(section):
         section.pop(0) # pop ###/if###
         return out
     if start.startswith('###foreach#'):
-        parts = start[len("###foreach#"):-3].split('#')
+        names = start[len("###foreach#"):-3].split('#')
         tree = parsesectiontreeswhile(section,
             lambda section: not section[0].startswith('###/foreach###')
         )
-        return ['###foreach###', parts, tree]
+        section.pop(0) # pop ###/foreach###
+        return ['###foreach###', names, tree]
+    if start.startswith('###call#'):
+        call = start[len("###call#"):-3]
+        return ['###call###', call]
     if start == '###accordion###':
         tree = parsesectiontreeswhile(section,
             lambda section: not section[0].startswith('###/accordion###')
         )
-        return ['###accordion###', parts, tree]
+        return ['###accordion###', tree]
     return start
 
-def parseone(s):
-    s = s.strip()
-    #print("saerts", s[:100].encode('utf-8'))
-    assert s.startswith('###')
-    _,name,rest = s.split('###', maxsplit = 2)
-    content,rest = rest.split(f'###/{name}###', maxsplit = 1)
-    return (name, content), rest
-
-def parse(s):
-    parts = []
-    while s.strip() != '':
-        part,s = parseone(s)
-        parts.append(part)
-    out = {k:[v for k2,v in parts if k == k2] for k in set(k for k,v in parts)}
-    return out
-
-def replacep(s, parts):
-    a = ''
-    while "###" in s:
-        before,name,s = s.split('###', maxsplit = 2)
-        a += before
-        #print("name:", name)
-        if name in parts:
-            #print(parts)
-            a += parts[name][0]
-        elif name.startswith("call#"):
-            a += f"{eval(name[5:])}"
-        else:
-            a += f"###{name}###"
-    return a + s
-
-def replace(s, parts):
-    while True:
-        #print("A", s)
-        i1 = s.rfind("###foreach#")
-        i2 = s.rfind("###if#")
-        if i1 != -1:
-            before = s[:i1]
-            s = s[i1 + len("###foreach#"):]
-            name,s = s.split("###", maxsplit = 1)
-            #print(s)
-            j = s.index("###/foreach###")
-            middle = s[:j]
-            after = s[j + len("###/foreach###"):]
-            parts2 = {**parts}
-            middle2 = ''
-            names = name.split('#')
-            for xs in zip(*[parts2.get(name, []) for name in names]):
-                for name,x in zip(names,xs):
-                    parts2[name] = [x]
-                middle2 += replacep(middle, parts2)
-            s = before + middle2 + after
-        elif i2 != -1:
-            before = s[:i2]
-            s = s[i2 + len("###if#"):]
-            name,s = s.split("###", maxsplit = 1)
-            #print(name)
-            j = s.index("###/if###")
-            k = s.index("###else###")
-            if k < j and k != -1:
-                middle = s[:k]
-            else:
-                middle = s[:j]
-            after = s[j + len("###/if###"):]
-            if name in parts:
-                middle = replacep(middle, parts)
-            else:
-                if k < j and k != -1:
-                    #print("beanch 1", )
-                    middle = replacep(s[k + len("###else###"):j], parts)
+def rendertrees(trees, env):
+    out = ''
+    for tree in trees:
+        if type(tree) == str:
+            if tree.startswith('###'):
+                # normal template ### part
+                name = tree.split('###')[1]
+                if name in env:
+                    #print(parts)
+                    out += env[name][0]
                 else:
-                    #print("beanch 2")
-                    middle = ''
-            s = before + middle + after
+                    print("template not found:", tree)
+                    out += tree
+            else:
+                # normal string part
+                out += tree
+        elif type(tree) == list:
+            # special template ### part
+            if tree[0] == '###if###':
+                name = tree[1]
+                if name in env:
+                    out += rendertrees(tree[2], env)
+                else:
+                    if len(tree) > 3:
+                        out += rendertrees(tree[3], env)
+            elif tree[0] == '###foreach###':
+                names = tree[1]
+                subtree = tree[2]
+                subenv = {**env}
+                for values in zip(*[env.get(name, []) for name in names]):
+                    for name,value in zip(names, values):
+                        subenv[name] = [value]
+                    out += rendertrees(subtree, subenv)
+            elif tree[0] == '###call###':
+                out += f"{eval(tree[1])}"
+            elif tree[0] == '###accordion###':
+                out += "<div class = \"accordion\"><button></button><div>"
+                out += rendertrees(tree[1], env)
+                out += "</div></div>"
+            else:
+                # ???
+                pass
         else:
-            break
-    s = replacep(s, parts)
-    return s
+            # ???
+            pass
+    return out
 
 def readfile(file):
     # surrogateescape so i don't run into utf 8 encoding errors
@@ -205,14 +177,13 @@ def readfile(file):
         return f.read()
 
 def parsefile(file):
-    __import__("pprint").pprint(parse2(readfile(file)))
     return parse(readfile(file))
 
 def rendertemplates(templates):
-    bits = {'base': [base]}
+    env = {'base': [base]}
     for template in templates:
-        bits.update({k:[replace(c, bits) for c in v] for k,v in template.items()})
-    return bits['main'][0]
+        env.update({k:[rendertrees(section, env) for section in v] for k,v in template.items()})
+    return env['main'][0]
 
 def generatesimple(path):
     return rendertemplates([parsefile(os.path.join('src', path)), parsefile('src/template.html')])
