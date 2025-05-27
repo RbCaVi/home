@@ -243,6 +243,8 @@ def renderpagestree():
     )})
     ftree = [{}, []] # subdirs and files
     for file in files:
+        if file in redirects:
+            continue
         sub = ftree
         parts = pathlib.PurePath(file).parts
         for d in parts[:-1]:
