@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import pathlib
 
 def delmodule(mod):
     if mod in sys.modules:
@@ -214,6 +215,46 @@ def generatekeypad(path):
 def generatechangelog(path):
     return rendertemplates([parsefile('src/changelogdata.html'), parsefile('src/changelog.html'), parsefile('src/template.html')])
 
+def ftreetosection(ftree, path):
+    ds = ftree[0]
+    fs = ftree[1]
+
+    out = []
+
+    for d,subftree in ds.items():
+        out.append(f'<div>\n')
+        out.append(ftreetosection(subftree, os.path.join(path, d)) + [d])
+        out.append(f'</div>\n')
+
+    out.append(f'<p>\n')
+    for f in fs:
+        out.append(f'<a href = "{os.path.join(path, f)}">{f}</a><br>\n')
+    out.append(f'</p>\n')
+
+    return ['###accordion###', out]
+
+def renderpagestree():
+    files = sorted({*(
+        [
+            os.path.join(d, f)[len('static/'):]
+            for d,ds,fs in os.walk('static')
+            for f in fs
+        ] + generatedfiles()
+    )})
+    ftree = [{}, []] # subdirs and files
+    for file in files:
+        sub = ftree
+        parts = pathlib.PurePath(file).parts
+        for d in parts[:-1]:
+            if d not in sub[0]:
+                sub[0][d] = [{}, []] # new directory
+            sub = sub[0][d]
+        sub[1].append(parts[-1])
+    return rendertrees([ftreetosection(ftree, '/')], {})
+
+def generatetest(path):
+    return rendertemplates([{'pages': [renderpagestree()]}, parsefile('src/test.html'), parsefile('src/template.html')])
+
 redirects = {
     'pl_exec_run.html': 'parserlang/online.html',
     'plc.html': 'parserlang/online.html',
@@ -227,6 +268,7 @@ def generatedfiles():
         # different
         "secrets.json",
         "changelog.html",
+        'test.html',
         
         # just simple template filling
         'generated.html',
@@ -238,7 +280,6 @@ def generatedfiles():
         '404.html',
         'desktop.html',
         'chat.html',
-        'test.html',
         'dialogue.html',
         'index.html',
         'computer.html',
@@ -303,6 +344,8 @@ def getgenerator(path):
         return generatekeypad
     if path == 'changelog.html':
         return generatechangelog
+    if path == "test.html":
+        return generatetest
     if path in redirects:
         return generateredirect
     return generatesimple
