@@ -53,23 +53,31 @@
 
 <p>guess i'll just debug in here</p>
 <p>i'll show random things maybe? idk</p>
-<div class = "accordion"><button></button>
-	<p>accordion :)</p>
-</div>
+###accordion###
+  <p>accordion :)</p>
+###/accordion###
 <p>like this</p>
 <p>system that can render as both html and js (wow)</p>
 <p>and it's mine (i made it (so it's mine))</p>
+<p>as javascript</p>
+###accordion###
 <pre>
 ###call#rendervars("chat.json")###
 ###call#renderjs("chat.json")###
 </pre>
+###/accordion###
+<p>or as html</p>
+###accordion###
 <pre>
 ###call#renderhtml("chat.json").replace('\x3c', '&lt;')###
 </pre>
-
+###/accordion###
+<p>it looks right (they're disabled though)</p>
+###accordion###
 ###call#renderhtml("chat.json")###
 
 <div id = "testing"></div>
+###/accordion###
 ###/content###
 
 ###pagescript###
@@ -84,15 +92,15 @@ redirectlog.setlog(function(...arguments) {
 
 ###pagescript###
 // generated from chat.json (https://github.com/RbCaVi/home/tree/main/chat.json)
-{
+/*{
 	###call#rendervars("chat.json")###
 	document.querySelector("#testing").append(###call#renderjs("chat.json")###);
 	###call#include("pagescripts/chat.js")###
-}
+}*/
 ###/pagescript###
 
 ###pagescript###
-###call#include("pagescripts/chat.js")###
+/*###call#include("pagescripts/chat.js")###*/
 ###/pagescript###
 
 ###pagescript###
