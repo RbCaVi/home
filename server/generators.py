@@ -120,6 +120,7 @@ def parsesectiontree(section):
         tree = parsesectiontreeswhile(section,
             lambda section: not section[0].startswith('###/accordion###')
         )
+        section.pop(0) # pop ###/accordion###
         return ['###accordion###', tree]
     return start
 
