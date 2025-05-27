@@ -18,7 +18,12 @@
 	###/if###
 	<title>###pagetitle###</title>
 </head>
-<body>
+<body
+	###if#class###
+		class = "###class###"
+	###else###
+	###/if###
+	>
 	###if#backlink###
 		###backlink###
 	###else###
