@@ -161,7 +161,11 @@ def rendertrees(trees, env):
             elif tree[0] == '###call###':
                 out += f"{eval(tree[1])}"
             elif tree[0] == '###accordion###':
-                out += "<div class = \"accordion\"><button></button><div>"
+                out += "<div class = \"accordion\"><button></button>"
+                if len(tree) > 2:
+                    out += "&nbsp;"
+                    out += rendertrees(tree[2], env)
+                out += "<div>"
                 out += rendertrees(tree[1], env)
                 out += "</div></div>"
             else:
