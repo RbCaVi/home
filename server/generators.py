@@ -36,7 +36,7 @@ def rendervars(f):
     return renderelements.rendervariablejs(e)
 
 def include(f):
-    with open(f) as f:
+    with open(os.path.join('src', f)) as f:
         return f.read()
 
 def escape(s):
@@ -202,7 +202,7 @@ def generatekeypad(path):
         ]
     else:
         success = ''.join(keys) in ['1111', '1234', '9999', '4321', '8324']
-        templates = [{"current": [f"code: {''.join(keys)}"]}, parsefile('src/keysuccess.html' if success else 'keyfail.html'), parsefile('src/template.html')]
+        templates = [{"current": [f"code: {''.join(keys)}"]}, parsefile('src/keysuccess.html' if success else 'src/keyfail.html'), parsefile('src/template.html')]
     return rendertemplates(templates)
 
 def generatechangelog(path):
