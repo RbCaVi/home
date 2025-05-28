@@ -199,3 +199,33 @@ a {
   white-space: pre;
   font-family: monospace;
 }
+
+.blue {
+    color: #0055ff;
+    font-weight: bold;
+}
+
+.green {
+    color: #44ff44;
+    font-weight: bold;
+}
+
+.grey {
+    color: #777777;
+    font-weight: bold;
+}
+
+.red {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+.orange {
+    color: #ff8811;
+    font-weight: bold;
+}
+
+.white {
+    color: #ffffff;
+    font-weight: bold;
+}
