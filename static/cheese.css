@@ -1,6 +1,6 @@
 /* (not cheese) */
 
-* {
+body, button, input, textarea, div {
     font-family: sans-serif;
     color: #00ff00;
     background: #333333;
