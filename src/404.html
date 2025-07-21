@@ -6,9 +6,6 @@
 ###title###it seems you followed a bad link###/title###
 
 ###content###
-<script type="text/javascript">
-	db.insert('badurls', {url: window.location.href});
-</script>
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
@@ -66,3 +63,13 @@
 
 <button onclick = "collect.collect('404d', 'sounds like a skill issue tbh')">clicky button</button>
 ###/content###
+
+###pagescript###
+if (location.pathname.includes('gaming')) {
+	document.querySelectorAll('br').forEach(e => e.remove());
+	[...document.body.children].slice(2).forEach(c => c.remove());
+	document.body.append('404 gaming');
+} else {
+	db.insert('badurls', {url: window.location.href});
+}
+###/pagescript###
