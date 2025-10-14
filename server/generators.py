@@ -288,6 +288,8 @@ def generatedfiles():
         'dialogue.html',
         'index.html',
         'computer.html',
+        'webrtc1.html',
+        'webrtc2.html',
 
         'parserlang.html',
         'parserlang/history.html',

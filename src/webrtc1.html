@@ -1,0 +1,48 @@
+###script###js/element.js###/script###
+###script###js/hash.js###/script###
+###script###js/db.js###/script###
+###script###js/auth.js###/script###
+###script###js/account.js###/script###
+###script###js/connect.js###/script###
+
+###pagetitle###
+webrtc server
+###/pagetitle###
+
+###title###
+webrtc server
+###/title###
+
+###content###
+<input type = 'text' id = 'username'>
+<input type = 'text' id = 'password'>
+<button id = 'login'>login</button>
+<button id = 'open'>open server</button>
+<p id = 'cid'></p>
+<button id = 'checkoffer'>check for accepted offer</button>
+<div id = 'offers'></div>
+<button id = 'sendlocaldesc'>send local description</button>
+<button id = 'checkremotedesc'>check for remote description</button>
+<p id = 'remotedesc'></p>
+<button id = 'sendlocalice'>send local ICE candidates</button>
+<button id = 'checkremoteice'>check for remote ICE candidates</button>
+<div id = 'remoteices'></div>
+<button id = 'connect'>connect</button>
+<p id = 'status'></p>
+###/content###
+
+###pagescript###
+function log(message) {
+	document.querySelector('#status').append(message);
+	document.querySelector('#status').append(element('br'));
+}
+
+let user;
+document.querySelector('#login').addEventListener('click', async () => {
+	user = await account.login(
+		document.querySelector('#username').value,
+		document.querySelector('#password').value
+	);
+	log('' + user.id + ' ' + user.token);
+});
+###/pagescript###

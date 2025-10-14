@@ -1,0 +1,42 @@
+###script###js/element.js###/script###
+###script###js/hash.js###/script###
+###script###js/db.js###/script###
+###script###js/auth.js###/script###
+###script###js/account.js###/script###
+###script###js/connect.js###/script###
+
+###pagetitle###
+webrtc client
+###/pagetitle###
+
+###title###
+webrtc client
+###/title###
+
+###content###
+<button id = 'checkoffers'>check for connection offers</button>
+<div id = 'offers'></div><!-- accept offer button is here-->
+<button id = 'checklocaldesc'>check for local description</button>
+<p id = 'remotedesc'></p>
+<button id = 'sendremotedesc'>send remote description</button>
+<button id = 'checklocalice'>check for local ICE candidates</button>
+<div id = 'remoteices'></div>
+<button id = 'sendremoteice'>send remote ICE candidates</button>
+<p id = 'status'></p>
+###/content###
+
+###pagescript###
+function log(message) {
+	document.querySelector('#status').append(message);
+	document.querySelector('#status').append(element('br'));
+}
+
+let user;
+document.querySelector('#login').addEventListener('click', async () => {
+	user = await account.login(
+		document.querySelector('#username').value,
+		document.querySelector('#password').value
+	);
+	log('' + user.id + ' ' + user.token);
+});
+###/pagescript###
