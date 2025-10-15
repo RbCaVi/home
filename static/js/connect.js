@@ -28,7 +28,22 @@ window.connect = (() => {
 			id: {value: (await db.call('create_offer', {token: this.token, info}))}
 		});
 	});
-	account.addmethod('acceptoffer', function(id) {return db.call('accept_offer', {token: this.token, offer: id});});
+	account.addmethod('acceptoffer', async function(id) {
+		let nid = await db.call('accept_offer', {token: this.token, offer: id});
+	  return (await db.select(
+	    'connectionnegotiation',
+	    {select: "id,created_at,connectionoffers(info,users(username)),users(username)", id: 'eq.' + nid}
+	  )).map(({id, created_at, connectionoffers: {info, users: {username: initiator}}, users: {username: responder}}) => {
+	    return Object.create(negotiateprototype, {
+	    	owner: {value: this},
+	    	id: {value: id},
+	      timestamp: {value: created_at},
+				info: {value: info},
+				initiator: {value: initiator},
+				responder: {value: responder},
+	    });
+	  });
+	});
 	account.addmethod('getacceptedoffers', async function(id) {
 	  return (await db.select(
 	    'connectionnegotiation',
