@@ -17,7 +17,7 @@ webrtc server
 <input type = 'text' id = 'username'>
 <input type = 'text' id = 'password'>
 <button id = 'login'>login</button>
-<button id = 'open'>open server</button>
+<button id = 'open'>open connection</button>
 <p id = 'cid'></p>
 <button id = 'checkoffer'>check for accepted offer</button>
 <div id = 'offers'></div>
@@ -44,5 +44,41 @@ document.querySelector('#login').addEventListener('click', async () => {
 		document.querySelector('#password').value
 	);
 	log('' + user.id + ' ' + user.token);
+});
+###/pagescript###
+
+###pagescript###
+// ts is from mozilla <3
+let connection;
+let channel;
+
+let icecandidates;
+
+function handleSendChannelStatusChange(event) {
+  if (channel) {
+    var state = channel.readyState;
+  	
+    console.log('state', state);
+  }
+}
+
+function handleAddCandidateError(e) {
+  console.log("Oh noes! addICECandidate failed!", e);
+}
+
+document.querySelector('#open').addEventListener('click', async () => {
+	connection = new RTCPeerConnection();
+    
+	connection.onicecandidate = e => !e.candidate || [icecandidates.push(e.candidate), log('ice ' + JSON.stringify(e.candidate))];
+
+	channel = connection.createDataChannel("channel");
+	channel.onopen = handleSendChannelStatusChange;
+	channel.onclose = handleSendChannelStatusChange;
+
+	icecandidates = [];
+
+	let offer = await user.createoffer('test');
+	document.querySelector('#cid').textContent = offer.id;
+	log('created ' + offer.id + ' ' + JSON.stringify(offer.info));
 });
 ###/pagescript###

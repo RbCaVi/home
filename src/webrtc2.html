@@ -14,6 +14,10 @@ webrtc client
 ###/title###
 
 ###content###
+<input type = 'text' id = 'username'>
+<input type = 'text' id = 'password'>
+<button id = 'login'>login</button>
+<button id = 'open'>open connection</button>
 <button id = 'checkoffers'>check for connection offers</button>
 <div id = 'offers'></div><!-- accept offer button is here-->
 <button id = 'checklocaldesc'>check for local description</button>
@@ -38,5 +42,42 @@ document.querySelector('#login').addEventListener('click', async () => {
 		document.querySelector('#password').value
 	);
 	log('' + user.id + ' ' + user.token);
+});
+###/pagescript###
+
+###pagescript###
+
+document.querySelector('#open').addEventListener('click', async () => {
+	connection = new RTCPeerConnection();
+    
+	connection.onicecandidate = e => !e.candidate || [icecandidates.push(e.candidate), log('ice ' + JSON.stringify(e.candidate))];
+
+	channel = connection.createDataChannel("channel");
+	channel.onopen = handleSendChannelStatusChange;
+	channel.onclose = handleSendChannelStatusChange;
+
+	icecandidates = [];
+
+	let offer = await user.createoffer('test');
+	document.querySelector('#cid').textContent = offer.id;
+	log('created ' + offer.id + ' ' + JSON.stringify(offer.info));
+});
+
+let negotiation;
+document.querySelector('#checkoffers').addEventListener('click', async () => {
+	for (let offer of await connect.getoffers()) {
+		log('' + offer.id + ' ' + offer.username + ' ' + JSON.stringify(offer.info));
+		document.querySelector('#offers').append(element('div', {},
+			element('button', {events: {click: async () => {
+				negotiation = await user.acceptoffer(offer.id);
+				log('accepted offer ' + offer.id);
+			}}}, 'accept'),
+			offer.id,
+			' ',
+			offer.username,
+			' ',
+			JSON.stringify(offer.info),
+		))
+	}
 });
 ###/pagescript###
