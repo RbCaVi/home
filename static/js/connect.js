@@ -23,9 +23,12 @@ window.connect = (() => {
   	getresponderices: function() {this._getnegotiations('rice')},
   };
 
+  const offerprototype = {};
+
 	account.addmethod('createoffer', async function(info) {
 		return Object.create(offerprototype, {
-			id: {value: (await db.call('create_offer', {token: this.token, info}))}
+			id: {value: (await db.call('create_offer', {token: this.token, info}))},
+			info: {value: info},
 		});
 	});
 	account.addmethod('acceptoffer', async function(id) {
@@ -66,12 +69,12 @@ window.connect = (() => {
 	      'connectionoffers',
 	      {select: "id,created_at,users(username),info"}
 	    )).map(({id, created_at, users: {username}, info}) => {
-	      return {
-	      	id,
-	        timestamp: created_at,
-	        username,
-	        info,
-	      }
+	      return Object.create(offerprototype, {
+	      	id: {value: id},
+	        timestamp: {value: created_at},
+	        username: {value: username},
+	        info: {value: info},
+	      });
 	    });
 	  },
 	};
