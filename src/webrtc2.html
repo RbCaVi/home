@@ -21,16 +21,17 @@ webrtc client
 <button id = 'checkoffers'>check for connection offers</button>
 <div id = 'offers'></div><!-- accept offer button is here-->
 <button id = 'checklocaldesc'>check for local description</button>
-<p id = 'remotedesc'></p>
+<div id = 'localdescs'></div>
 <button id = 'sendremotedesc'>send remote description</button>
 <button id = 'checklocalice'>check for local ICE candidates</button>
-<div id = 'remoteices'></div>
+<div id = 'localices'></div>
 <button id = 'sendremoteice'>send remote ICE candidates</button>
 <p id = 'status'></p>
 ###/content###
 
 ###pagescript###
 function log(message) {
+	console.log(message);
 	document.querySelector('#status').append(message);
 	document.querySelector('#status').append(element('br'));
 }
@@ -46,21 +47,29 @@ document.querySelector('#login').addEventListener('click', async () => {
 ###/pagescript###
 
 ###pagescript###
+// ts is from mozilla <3
 
+function receiveChannelCallback(event) {
+  receiveChannel = event.channel;
+  receiveChannel.onmessage = handleReceiveMessage;
+  receiveChannel.onopen = handleReceiveChannelStatusChange;
+  receiveChannel.onclose = handleReceiveChannelStatusChange;
+}
+
+function handleAddCandidateError(e) {
+  console.log("Oh noes! addICECandidate failed!", e);
+}
+
+let connection;
+let channel;
+let icecandidates;
 document.querySelector('#open').addEventListener('click', async () => {
 	connection = new RTCPeerConnection();
+	connection.ondatachannel = receiveChannelCallback;
     
 	connection.onicecandidate = e => !e.candidate || [icecandidates.push(e.candidate), log('ice ' + JSON.stringify(e.candidate))];
 
-	channel = connection.createDataChannel("channel");
-	channel.onopen = handleSendChannelStatusChange;
-	channel.onclose = handleSendChannelStatusChange;
-
 	icecandidates = [];
-
-	let offer = await user.createoffer('test');
-	document.querySelector('#cid').textContent = offer.id;
-	log('created ' + offer.id + ' ' + JSON.stringify(offer.info));
 });
 
 let negotiation;
@@ -78,6 +87,46 @@ document.querySelector('#checkoffers').addEventListener('click', async () => {
 			' ',
 			JSON.stringify(offer.info),
 		))
+	}
+});
+
+document.querySelector('#checklocaldesc').addEventListener('click', async () => {
+	let localdescs = await negotiation.getinitiatordescriptions();
+	for (let localdesc of localdescs) {
+		document.querySelector('#localdescs').append(element('div', {},
+			element('button', {events: {click: async () => {
+				await connection.setRemoteDescription(localdesc);
+			}}}, 'add'),
+			JSON.stringify(localdesc),
+		));
+		log('recv desc ' + JSON.stringify(localdesc));
+	}
+});
+
+document.querySelector('#sendremotedesc').addEventListener('click', async () => {
+	let remotedesc = await connection.createAnswer();
+	await connection.setLocalDescription(remotedesc);
+	await negotiation.sendresponderdescription(remotedesc);
+	log('send desc ' + JSON.stringify(connection.localDescription));
+});
+
+document.querySelector('#checklocalice').addEventListener('click', async () => {
+	let localices = await negotiation.getinitiatorices();
+	for (let localice of localices) {
+		document.querySelector('#localices').append(element('div', {},
+			element('button', {events: {click: async () => {
+				await connection.addIceCandidate(localice);
+			}}}, 'add'),
+			JSON.stringify(localice),
+		));
+		log('recv ice ' + JSON.stringify(localice));
+	}
+});
+
+document.querySelector('#sendremoteice').addEventListener('click', async () => {
+	for (let remoteice of icecandidates) {
+		await negotiation.sendresponderice(remoteice);
+		log('send ice ' + JSON.stringify(remoteice));
 	}
 });
 ###/pagescript###

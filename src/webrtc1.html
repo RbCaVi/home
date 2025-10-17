@@ -17,13 +17,14 @@ webrtc server
 <input type = 'text' id = 'username'>
 <input type = 'text' id = 'password'>
 <button id = 'login'>login</button>
+<button id = 'sendoffer'>send offer</button>
+<p id = 'oid'></p>
 <button id = 'open'>open connection</button>
-<p id = 'cid'></p>
-<button id = 'checkoffer'>check for accepted offer</button>
-<div id = 'offers'></div>
+<button id = 'checknegotiations'>check for negotiation</button>
+<div id = 'negotiations'></div>
 <button id = 'sendlocaldesc'>send local description</button>
 <button id = 'checkremotedesc'>check for remote description</button>
-<p id = 'remotedesc'></p>
+<div id = 'remotedescs'></div>
 <button id = 'sendlocalice'>send local ICE candidates</button>
 <button id = 'checkremoteice'>check for remote ICE candidates</button>
 <div id = 'remoteices'></div>
@@ -33,6 +34,7 @@ webrtc server
 
 ###pagescript###
 function log(message) {
+	console.log(message);
 	document.querySelector('#status').append(message);
 	document.querySelector('#status').append(element('br'));
 }
@@ -49,10 +51,13 @@ document.querySelector('#login').addEventListener('click', async () => {
 
 ###pagescript###
 // ts is from mozilla <3
-let connection;
-let channel;
 
-let icecandidates;
+let offer;
+document.querySelector('#sendoffer').addEventListener('click', async () => {
+	offer = await user.createoffer('test');
+	document.querySelector('#oid').textContent = offer.id;
+	log('created ' + offer.id + ' ' + JSON.stringify(offer.info));
+});
 
 function handleSendChannelStatusChange(event) {
   if (channel) {
@@ -66,6 +71,9 @@ function handleAddCandidateError(e) {
   console.log("Oh noes! addICECandidate failed!", e);
 }
 
+let connection;
+let channel;
+let icecandidates;
 document.querySelector('#open').addEventListener('click', async () => {
 	connection = new RTCPeerConnection();
     
@@ -76,9 +84,65 @@ document.querySelector('#open').addEventListener('click', async () => {
 	channel.onclose = handleSendChannelStatusChange;
 
 	icecandidates = [];
+});
 
-	let offer = await user.createoffer('test');
-	document.querySelector('#cid').textContent = offer.id;
-	log('created ' + offer.id + ' ' + JSON.stringify(offer.info));
+let negotiation;
+document.querySelector('#checknegotiations').addEventListener('click', async () => {
+	for (let onegotiation of await offer.getnegotiations()) {
+		log('' + onegotiation.id + ' ' + onegotiation.username + ' ' + JSON.stringify(onegotiation.info));
+		document.querySelector('#negotiations').append(element('div', {},
+			element('button', {events: {click: async () => {
+				negotiation = onegotiation;
+				log('chose negotiation ' + onegotiation.id);
+			}}}, 'choose'),
+			onegotiation.id,
+			' ',
+			onegotiation.initiator,
+			' ',
+			onegotiation.responder,
+			' ',
+			JSON.stringify(onegotiation.info),
+		))
+	}
+});
+
+document.querySelector('#sendlocaldesc').addEventListener('click', async () => {
+	let localdesc = await connection.createOffer();
+	await connection.setLocalDescription(localdesc);
+	await negotiation.sendinitiatordescription(localdesc);
+	log('send desc ' + JSON.stringify(connection.localDescription));
+});
+
+document.querySelector('#checkremotedesc').addEventListener('click', async () => {
+	let remotedescs = await negotiation.getresponderdescriptions();
+	for (let remotedesc of remotedescs) {
+		document.querySelector('#remotedescs').append(element('div', {},
+			element('button', {events: {click: async () => {
+				await connection.setRemoteDescription(remotedesc);
+			}}}, 'add'),
+			JSON.stringify(remotedesc),
+		));
+		log('recv desc ' + JSON.stringify(remotedesc));
+	}
+});
+
+document.querySelector('#sendlocalice').addEventListener('click', async () => {
+	for (let localice of icecandidates) {
+		await negotiation.sendinitiatorice(localice);
+		log('send ice ' + JSON.stringify(localice));
+	}
+});
+
+document.querySelector('#checkremoteice').addEventListener('click', async () => {
+	let remoteices = await negotiation.getresponderices();
+	for (let remoteice of remoteices) {
+		document.querySelector('#remoteices').append(element('div', {},
+			element('button', {events: {click: async () => {
+				await connection.addIceCandidate(remoteice);
+			}}}, 'add'),
+			JSON.stringify(remoteice),
+		));
+		log('recv ice ' + JSON.stringify(remoteice));
+	}
 });
 ###/pagescript###
