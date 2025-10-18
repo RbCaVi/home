@@ -10,7 +10,7 @@ sys.path = ['server'] + sys.path # so you can run it inside or outside this dire
 
 import generators
 
-hostname = "localhost"
+hostname = "0.0.0.0"
 serverPort = 7999
 
 def torelpath(path):
@@ -54,7 +54,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
         if 'generators' in sys.modules:
             del sys.modules['generators']
         import generators
-        generators.base = "%s:%s" % (hostname, serverPort)
+        generators.base = "%s:%s" % (self.headers['Host'], serverPort)
         try:
             print("trying", path)
             if path in generators.generatedfiles():
