@@ -91,6 +91,8 @@ document.querySelector('#open').addEventListener('click', async () => {
 	connection = new RTCPeerConnection({
 		iceServers
 	});
+
+	connection.onconnectionstatechange = () => log('state ' + connection.connectionState);
     
 	connection.onicecandidate = e => !e.candidate || [icecandidates.push(e.candidate), log('ice ' + JSON.stringify(e.candidate))];
 
